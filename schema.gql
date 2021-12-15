@@ -1,0 +1,20 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ProfileTypeDef {
+  name: String!
+  phone: String!
+  avatar: String!
+}
+
+type AccountTypeDef {
+  name: String!
+  email: String!
+  password: String!
+  profile: ProfileTypeDef!
+}
+
+type Query {
+  account(id: Int!): AccountTypeDef!
+}
