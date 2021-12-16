@@ -1,4 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
+import { AccountsService } from 'src/services/account.service';
 
 interface Response {
   message: string;
@@ -8,12 +9,9 @@ interface Response {
 
 @Controller('accounts')
 export class AccountsController {
+  private readonly accountService: AccountsService;
   @Get('myaccount')
-  findMyAccount(): Response {
-    return {
-      message: 'Yay',
-      success: true,
-      responseData: { name: 'Jub' },
-    };
+  account(): string {
+    return 'Do I need a controller if using graphql?';
   }
 }

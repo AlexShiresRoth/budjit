@@ -8,7 +8,6 @@ import { AccountsModule } from './modules/account.module';
 
 @Module({
   imports: [
-    AccountsModule,
     GraphQLModule.forRoot({
       autoSchemaFile: 'schema.gql',
       debug: true,
@@ -18,6 +17,7 @@ import { AccountsModule } from './modules/account.module';
       useNewUrlParser: true,
       useUnifiedTopology: true,
     }),
+    AccountsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

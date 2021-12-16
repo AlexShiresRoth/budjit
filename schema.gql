@@ -18,3 +18,21 @@ type AccountTypeDef {
 type Query {
   account(id: Int!): AccountTypeDef!
 }
+
+type Mutation {
+  createAccount(createAccountInput: CreateAccountInput!): AccountTypeDef!
+}
+
+input CreateAccountInput {
+  name: String!
+  email: String!
+  password: String!
+  passwordConfirm: String!
+  profile: ProfileInput!
+}
+
+input ProfileInput {
+  name: String!
+  phone: String!
+  avatar: String!
+}
