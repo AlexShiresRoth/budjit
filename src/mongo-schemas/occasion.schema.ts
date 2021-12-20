@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { Profile } from './profile.model';
 import { History } from './history.schema';
+import { Group } from './group.model';
 
 export type OccasionDocument = Occasion & Document;
 
@@ -10,8 +10,8 @@ export type OccasionDocument = Occasion & Document;
 export class Occasion {
   @Prop({ required: true })
   title: string;
-  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' }])
-  group: Profile[];
+  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }])
+  group: Group[];
   @Prop()
   budget: string;
   @Prop()

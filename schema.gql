@@ -15,12 +15,28 @@ type AccountTypeDef {
   profile: ProfileTypeDef!
 }
 
+type CreateAccountResponse {
+  Account: AccountTypeDef!
+  token: String!
+}
+
+type LoginResponse {
+  Account: AccountTypeDef!
+  token: String!
+}
+
 type Query {
-  account(id: Int!): AccountTypeDef!
+  account(id: String!): AccountTypeDef!
+  authenticate(loginInput: LoginInput!): LoginResponse!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
 
 type Mutation {
-  createAccount(createAccountInput: CreateAccountInput!): AccountTypeDef!
+  createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
 }
 
 input CreateAccountInput {
@@ -28,11 +44,4 @@ input CreateAccountInput {
   email: String!
   password: String!
   passwordConfirm: String!
-  profile: ProfileInput!
-}
-
-input ProfileInput {
-  name: String!
-  phone: String!
-  avatar: String!
 }

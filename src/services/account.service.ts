@@ -1,19 +1,29 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreateAccountInput } from 'src/graphql/inputs/accounts.input';
+import {
+  CreateAccountInput,
+  LoginInput,
+} from 'src/graphql/inputs/accounts.input';
+import * as bcrypt from 'bcryptjs';
 import { Account, AccountDocument } from 'src/mongo-schemas/account.model';
+import {
+  CreateAccountResponse,
+  LoginResponse,
+} from 'src/graphql/responses/account.response';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AccountsService {
   constructor(
     @InjectModel(Account.name)
     private readonly accountModel: Model<AccountDocument>,
+    private readonly authServices: AuthService,
   ) {}
 
   async createAccount(
     createAccountInput: CreateAccountInput,
-  ): Promise<Account> {
+  ): Promise<CreateAccountResponse> {
     try {
       const { name, email, password, passwordConfirm } = createAccountInput;
 
@@ -22,11 +32,37 @@ export class AccountsService {
       if (!password) throw new Error('Please create a password');
       if (!passwordConfirm) throw new Error('Please confirm your password');
 
-      const newAccount = new this.accountModel({ ...createAccountInput });
+      if (password !== passwordConfirm)
+        throw new Error('Passwords do not match');
+
+      let accountRequest: { name: string; email: string; password: string } = {
+        name: '',
+        email: '',
+        password: '',
+      };
+
+      if (name) accountRequest.name = name;
+      if (email) accountRequest.email = email;
+
+      const salt = await bcrypt.genSalt(10);
+
+      const hash = await bcrypt.hash(password, salt);
+
+      if (hash) accountRequest.password = hash;
+
+      const newAccount = new this.accountModel({ ...accountRequest });
 
       await newAccount.save();
 
-      return newAccount;
+      const payload = {
+        account: {
+          id: newAccount._id,
+        },
+      };
+
+      const token: string = await this.authServices.signToken(payload);
+
+      return { Account: newAccount, token };
     } catch (error) {
       console.error(error);
       return error;
@@ -34,10 +70,41 @@ export class AccountsService {
   }
 
   //locate the mongoose model
-  async findOneById(id: number): Promise<Account> {
+  async findOneById(id: string): Promise<Account> {
     try {
       const foundAccount = await this.accountModel.findById(id);
       return foundAccount;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async authenticate(loginInput: LoginInput): Promise<LoginResponse> {
+    try {
+      const { password, email } = loginInput;
+
+      const foundAccount = await this.accountModel.findOne({ email });
+
+      if (!foundAccount)
+        throw new Error('Could not locate an account with this email');
+
+      const match = await bcrypt.compare(password, foundAccount.password);
+
+      if (!match) throw new Error('Password is incorrect ');
+
+      const payload = {
+        account: {
+          id: foundAccount._id,
+        },
+      };
+
+      const token: string = await this.authServices.signToken(payload);
+
+      return {
+        Account: foundAccount,
+        token,
+      };
     } catch (error) {
       console.error(error);
       return error;
