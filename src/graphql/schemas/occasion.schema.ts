@@ -1,13 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { Prop } from '@nestjs/mongoose';
+import { AccountTypeDef } from './account.schema';
 import { GroupTypeDef } from './group.schema';
+import { HistoryTypeDef } from './history.schema';
 
 @ObjectType()
-export class OcassionTypeDef {
+export class OccasionTypeDef {
   @Field()
   title: string;
   @Field()
   budget: string;
-  @Prop(() => GroupTypeDef)
-  group: GroupTypeDef[];
+  @Field(() => GroupTypeDef)
+  group: GroupTypeDef;
+  @Field(() => [HistoryTypeDef])
+  history: HistoryTypeDef[];
+  @Field()
+  creator: string;
 }

@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { Profile } from './profile.model';
+import { Account } from './account.model';
 
 export type HistoryDocument = History & Document;
 
@@ -11,8 +11,8 @@ export class History {
   date: Date;
   @Prop({ required: true })
   paymentAmount: string;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' })
-  contributor: Profile;
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId }], ref: 'Account' })
+  contributor: Account[];
   @Prop()
   paymentMethod: string;
 }

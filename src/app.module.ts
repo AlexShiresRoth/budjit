@@ -4,8 +4,11 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DateScalar } from './graphql/scalars/date.scalar';
 import { AccountsModule } from './modules/account.module';
 import { AuthModule } from './modules/auth.module';
+import { InviteModule } from './modules/invite.module';
+import { OccasionModule } from './modules/occasion.module';
 
 @Module({
   imports: [
@@ -17,6 +20,9 @@ import { AuthModule } from './modules/auth.module';
         origin: 'http://localhost:3000',
         credentials: true,
       },
+      buildSchemaOptions: {
+        dateScalarMode: 'timestamp',
+      },
       context: ({ req }) => {
         return req;
       },
@@ -27,8 +33,10 @@ import { AuthModule } from './modules/auth.module';
     }),
     AccountsModule,
     AuthModule,
+    InviteModule,
+    OccasionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, DateScalar],
 })
 export class AppModule {}

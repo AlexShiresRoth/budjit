@@ -25,9 +25,48 @@ type LoginResponse {
   token: String!
 }
 
+type GroupTypeDef {
+  members: [AccountTypeDef!]!
+  invites: [InviteType!]!
+}
+
+type InviteType {
+  inviteDate: Date!
+  sender: String!
+  receiver: String!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type HistoryTypeDef {
+  date: Date!
+  paymentAmount: String!
+  contributor: AccountTypeDef!
+  paymentMethod: String!
+}
+
+type OccasionTypeDef {
+  title: String!
+  budget: String!
+  group: GroupTypeDef!
+  history: [HistoryTypeDef!]!
+  creator: String!
+}
+
+type CreateOccasionResponse {
+  Occasion: OccasionTypeDef!
+}
+
+type LoadOccasionResponse {
+  Occasion: OccasionTypeDef!
+}
+
 type Query {
   account(id: String!): AccountTypeDef!
   authenticate(loginInput: LoginInput!): LoginResponse!
+  findMyAccount: AccountTypeDef!
+  loadOccasion(id: String!): LoadOccasionResponse!
 }
 
 input LoginInput {
@@ -37,6 +76,7 @@ input LoginInput {
 
 type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
+  createOccasion(createOccsionInput: CreateOccasionInput!): CreateOccasionResponse!
 }
 
 input CreateAccountInput {
@@ -44,4 +84,18 @@ input CreateAccountInput {
   email: String!
   password: String!
   passwordConfirm: String!
+}
+
+input CreateOccasionInput {
+  title: String!
+  budget: String!
+  group: GroupInput!
+}
+
+input GroupInput {
+  invites: [Invite!]!
+}
+
+input Invite {
+  receiver: String!
 }

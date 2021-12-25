@@ -5,7 +5,15 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async verifyToken(token: string) {
+  async verifyToken(req: any) {
+    const header: string = req.headers.authorization || '';
+    console.log('req', req.user);
+    if (!header) throw new Error('No token');
+
+    const token: string = header.split(' ')[1];
+
+    // req.account =
+
     return await this.jwtService.verify(token);
   }
 
