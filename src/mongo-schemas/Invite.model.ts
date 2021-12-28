@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Account } from './account.model';
 
-@Schema({ _id: false })
+@Schema()
 export class Invite {
   @Prop({ type: Date, default: Date.now })
   inviteDate: Date;

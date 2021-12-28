@@ -1,12 +1,10 @@
+import { Group } from 'src/mongo-schemas/group.model';
+import { InviteInterface } from './invite.interface';
+
 export interface OccasionInterface {
   title: string;
   budget: string;
-  group: {
-    members: Array<{ _id: string }>;
-    invites: Array<{
-      sender: string;
-      receiver: string;
-    }>;
-  };
   creator: string;
+  group: Group;
+  invites: InviteInterface[] | Array<null>;
 }

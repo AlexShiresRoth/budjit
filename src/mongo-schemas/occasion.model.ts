@@ -5,8 +5,6 @@ import { History } from './history.schema';
 import { Group } from './group.model';
 import { Account } from './account.model';
 
-export type OccasionDocument = Occasion & Document;
-
 @Schema()
 export class Occasion {
   @Prop({ required: true })
@@ -15,10 +13,12 @@ export class Occasion {
   group: Group;
   @Prop()
   budget: string;
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId }], ref: 'History' })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'History' }] })
   history: History[];
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
   creator: Account;
 }
+
+export type OccasionDocument = Occasion & Document;
 
 export const OccasionSchema = SchemaFactory.createForClass(Occasion);

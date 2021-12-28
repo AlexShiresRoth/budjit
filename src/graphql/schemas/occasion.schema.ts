@@ -1,5 +1,4 @@
 import { Field, ObjectType } from '@nestjs/graphql';
-import { AccountTypeDef } from './account.schema';
 import { GroupTypeDef } from './group.schema';
 import { HistoryTypeDef } from './history.schema';
 
@@ -9,9 +8,9 @@ export class OccasionTypeDef {
   title: string;
   @Field()
   budget: string;
-  @Field(() => GroupTypeDef)
+  @Field(() => GroupTypeDef, { nullable: true })
   group: GroupTypeDef;
-  @Field(() => [HistoryTypeDef])
+  @Field(() => [HistoryTypeDef], { nullable: true })
   history: HistoryTypeDef[];
   @Field()
   creator: string;

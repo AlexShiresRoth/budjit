@@ -1,15 +1,12 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Invite } from './invite.input';
 
 @InputType()
-export class Invite {
-  @Field()
-  receiver: string;
-}
-
-@InputType()
-export class GroupInput {
+export class AddMembersInput {
   @Field(() => [Invite])
   invites: Invite[];
+  @Field()
+  occasionID: string;
 }
 
 @InputType()
@@ -18,6 +15,4 @@ export class CreateOccasionInput {
   title: string;
   @Field()
   budget: string;
-  @Field(() => GroupInput)
-  group: GroupInput;
 }

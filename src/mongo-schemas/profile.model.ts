@@ -2,8 +2,6 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 
-export type ProfileDocument = Profile & Document;
-
 @Schema()
 export class Profile {
   @Prop()
@@ -13,5 +11,7 @@ export class Profile {
   @Prop()
   avatar: string;
 }
+
+export type ProfileDocument = Profile & Document;
 
 export const ProfileSchema = SchemaFactory.createForClass(Profile);

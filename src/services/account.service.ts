@@ -12,6 +12,7 @@ import {
   LoginResponse,
 } from 'src/graphql/responses/account.response';
 import { AuthService } from './auth.service';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class AccountsService {
@@ -35,10 +36,20 @@ export class AccountsService {
       if (password !== passwordConfirm)
         throw new Error('Passwords do not match');
 
-      let accountRequest: { name: string; email: string; password: string } = {
+      //declare explicit id for accessing within the model
+      //This seems hacky
+      const id = new mongoose.Types.ObjectId();
+
+      let accountRequest: {
+        name: string;
+        email: string;
+        password: string;
+        _id: typeof id;
+      } = {
         name: '',
         email: '',
         password: '',
+        _id: id,
       };
 
       if (name) accountRequest.name = name;
@@ -73,6 +84,17 @@ export class AccountsService {
   async findOneById(id: string): Promise<Account> {
     try {
       const foundAccount = await this.accountModel.findById(id);
+      return foundAccount;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async findOneByEmail(email: string): Promise<Account> {
+    try {
+      const foundAccount = await this.accountModel.findOne({ email });
+
       return foundAccount;
     } catch (error) {
       console.error(error);

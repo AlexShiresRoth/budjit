@@ -1,5 +1,4 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql';
-import { DateScalar } from '../scalars/date.scalar';
 import { AccountTypeDef } from './account.schema';
 
 @ObjectType()
