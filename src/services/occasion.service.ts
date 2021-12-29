@@ -11,6 +11,7 @@ import { Occasion, OccasionDocument } from 'src/mongo-schemas/occasion.model';
 import { AccountsService } from './account.service';
 import { GroupService } from './group.service';
 
+//TODO accept invite strategy
 @Injectable()
 export class OccasionService {
   constructor(
@@ -42,6 +43,8 @@ export class OccasionService {
 
       const group = await this.groupService.create(user.account.id);
 
+      const myAccount = await this.accountService.findOneById(user.account.id);
+
       const newOccasion: OccasionInterface = {
         title,
         budget,
@@ -53,6 +56,11 @@ export class OccasionService {
       const obj = new this.occasionModel({ ...newOccasion });
 
       await obj.save();
+      //add occasions to my account
+      await this.accountService.addOccasion({
+        occasion: obj,
+        userID: myAccount._id,
+      });
 
       return obj;
     } catch (error) {

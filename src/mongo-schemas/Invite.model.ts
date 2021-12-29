@@ -10,6 +10,8 @@ export class Invite {
   sender: Account;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
   receiver: Account;
+  @Prop({ default: 'pending' })
+  status: string;
 }
 
 export type InviteDocument = Invite & Document;

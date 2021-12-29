@@ -61,6 +61,7 @@ export class GroupService {
             sender: myAccount,
             receiver: foundAccount,
             inviteDate: today,
+            status: 'pending',
           });
 
           return newInvite;

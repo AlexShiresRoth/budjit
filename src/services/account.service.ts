@@ -13,6 +13,9 @@ import {
 } from 'src/graphql/responses/account.response';
 import { AuthService } from './auth.service';
 import * as mongoose from 'mongoose';
+import { OccasionInterface } from 'src/interfaces/occasion.interface';
+import { Occasion } from 'src/mongo-schemas/occasion.model';
+import { AddInviteDTO, AddOccasionDTO } from 'src/graphql/dto/accounts.dto';
 
 @Injectable()
 export class AccountsService {
@@ -131,5 +134,29 @@ export class AccountsService {
       console.error(error);
       return error;
     }
+  }
+
+  async addOccasion(input: AddOccasionDTO): Promise<Account> {
+    const { occasion, userID } = input;
+
+    const myAccount = await this.accountModel.findById(userID);
+
+    myAccount.occasions.push(occasion);
+
+    await myAccount.save();
+
+    return myAccount;
+  }
+
+  async addInvite(input: AddInviteDTO): Promise<Account> {
+    const { invite, userID } = input;
+
+    const myAccount = await this.accountModel.findById(userID);
+
+    myAccount.invites.push(invite);
+
+    await myAccount.save();
+
+    return myAccount;
   }
 }
