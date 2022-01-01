@@ -9,11 +9,23 @@ type ProfileTypeDef {
 }
 
 type AccountTypeDef {
+  _id: String!
   name: String!
   email: String!
   password: String!
   profile: ProfileTypeDef!
 }
+
+type InvitesTypeDef {
+  sender: String!
+  receiver: String!
+  status: String!
+  inviteDate: Date!
+  groupRef: String!
+}
+
+"""Date custom scalar type"""
+scalar Date
 
 type CreateAccountResponse {
   Account: AccountTypeDef!
@@ -27,17 +39,9 @@ type LoginResponse {
 
 type GroupTypeDef {
   members: [AccountTypeDef!]!
-  invites: [InviteType!]!
+  invites: [InvitesTypeDef!]!
+  occasionRef: String!
 }
-
-type InviteType {
-  inviteDate: Date!
-  sender: String!
-  receiver: String!
-}
-
-"""Date custom scalar type"""
-scalar Date
 
 type HistoryTypeDef {
   date: Date!
@@ -62,6 +66,7 @@ type Query {
   account(id: String!): AccountTypeDef!
   authenticate(loginInput: LoginInput!): LoginResponse!
   findMyAccount: AccountTypeDef!
+  loadMyInvites: [InvitesTypeDef!]!
   loadOccasion(id: String!): LoadOccasionResponse!
 }
 

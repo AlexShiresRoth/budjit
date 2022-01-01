@@ -62,6 +62,11 @@ export class OccasionService {
         userID: myAccount._id,
       });
 
+      await this.groupService.addOccasionRef({
+        occasionRefId: obj._id,
+        groupID: group._id,
+      });
+
       return obj;
     } catch (error) {
       console.error(error);
@@ -79,6 +84,8 @@ export class OccasionService {
       if (invites.length === 0) throw new Error('Please add recipients');
 
       const foundOccasion = await this.occasionModel.findById(occasionID);
+
+      console.log('user', user);
 
       const myAccount = await this.accountService.findOneById(user.account.id);
 

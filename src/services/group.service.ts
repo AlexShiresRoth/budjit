@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { InviteInput } from 'src/graphql/inputs/invite.input';
-import { GroupInterface } from 'src/interfaces/group.interface';
+import { AddOccasionRef, GroupInterface } from 'src/interfaces/group.interface';
 import { InviteInterface } from 'src/interfaces/invite.interface';
 import { Group, GroupDocument } from 'src/mongo-schemas/group.model';
 import { AccountsService } from './account.service';
@@ -13,7 +13,9 @@ import * as mongoose from 'mongoose';
 export class GroupService {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<GroupDocument>,
+    @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
+    @Inject(forwardRef(() => InviteService))
     private readonly inviteService: InviteService,
   ) {}
 
@@ -41,6 +43,36 @@ export class GroupService {
     }
   }
 
+  async findOneById(
+    id: string | mongoose.Schema.Types.ObjectId | Group,
+  ): Promise<Group> {
+    try {
+      const foundGroup = await this.groupModel.findById(id);
+
+      return foundGroup;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async addOccasionRef(input: AddOccasionRef): Promise<Group> {
+    try {
+      const { occasionRefId, groupID } = input;
+
+      const foundGroup = await this.groupModel.findById(groupID);
+
+      foundGroup.occasionRef = occasionRefId;
+
+      await foundGroup.save();
+
+      return foundGroup;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
   async sendInvites(input: InviteInput): Promise<Group> {
     try {
       const { invites, myAccount, groupId } = input;
@@ -48,6 +80,8 @@ export class GroupService {
       const foundGroup = await this.groupModel.findById(groupId);
 
       const today = new Date();
+
+      console.log('my account', myAccount);
 
       const validInvites: InviteInterface[] = await Promise.all(
         invites.map(async (invite: { receiver: string }) => {
@@ -57,11 +91,15 @@ export class GroupService {
 
           if (!foundAccount) throw new Error('Could not locate an account');
 
+          const invite_id = new mongoose.Types.ObjectId();
+
           const newInvite = await this.inviteService.create({
             sender: myAccount,
             receiver: foundAccount,
             inviteDate: today,
             status: 'pending',
+            _id: invite_id,
+            groupRef: foundGroup._id,
           });
 
           return newInvite;

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -13,9 +13,10 @@ import {
 } from 'src/graphql/responses/account.response';
 import { AuthService } from './auth.service';
 import * as mongoose from 'mongoose';
-import { OccasionInterface } from 'src/interfaces/occasion.interface';
-import { Occasion } from 'src/mongo-schemas/occasion.model';
 import { AddInviteDTO, AddOccasionDTO } from 'src/graphql/dto/accounts.dto';
+import { Invite } from 'src/mongo-schemas/Invite.model';
+import { InviteService } from './invite.service';
+import { UpdateInvite } from 'src/graphql/dto/invite.dto';
 
 @Injectable()
 export class AccountsService {
@@ -23,6 +24,8 @@ export class AccountsService {
     @InjectModel(Account.name)
     private readonly accountModel: Model<AccountDocument>,
     private readonly authServices: AuthService,
+    @Inject(forwardRef(() => InviteService))
+    private readonly inviteService: InviteService,
   ) {}
 
   async createAccount(

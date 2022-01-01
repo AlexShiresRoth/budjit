@@ -2,6 +2,7 @@ import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Account } from './account.model';
 import * as mongoose from 'mongoose';
 import { Invite } from './Invite.model';
+import { Occasion } from './occasion.model';
 
 //this allows for ids to be passed as an object but not accessible via gql?
 @Schema()
@@ -29,6 +30,8 @@ export class Group {
     ]),
   )
   invites: Invite[];
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Occasion' })
+  occasionRef: Occasion;
 }
 
 export type GroupDocument = Group & Document;

@@ -5,3 +5,8 @@ export interface GroupInterface {
   members: Account[] | null;
   invites: Invite[] | null;
 }
+
+export interface AddOccasionRef {
+  occasionRefId: any;
+  groupID: string;
+}
