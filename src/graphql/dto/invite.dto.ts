@@ -1,4 +1,5 @@
 export interface UpdateInvite {
-  id: string;
   status: string;
+  id: string;
+  userID: string;
 }

@@ -21,9 +21,7 @@ export class Account {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' })
   profile: Profile;
   @Prop(
-    raw([
-      { group_id: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Group' }] },
-    ]),
+    raw([{ group_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' } }]),
   )
   groups: Group[];
   @Prop(

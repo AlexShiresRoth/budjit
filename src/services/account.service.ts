@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
@@ -13,10 +18,11 @@ import {
 } from 'src/graphql/responses/account.response';
 import { AuthService } from './auth.service';
 import * as mongoose from 'mongoose';
-import { AddInviteDTO, AddOccasionDTO } from 'src/graphql/dto/accounts.dto';
-import { Invite } from 'src/mongo-schemas/Invite.model';
-import { InviteService } from './invite.service';
-import { UpdateInvite } from 'src/graphql/dto/invite.dto';
+import {
+  AddGroupRefDTO,
+  AddInviteDTO,
+  AddOccasionDTO,
+} from 'src/graphql/dto/accounts.dto';
 
 @Injectable()
 export class AccountsService {
@@ -24,8 +30,6 @@ export class AccountsService {
     @InjectModel(Account.name)
     private readonly accountModel: Model<AccountDocument>,
     private readonly authServices: AuthService,
-    @Inject(forwardRef(() => InviteService))
-    private readonly inviteService: InviteService,
   ) {}
 
   async createAccount(
@@ -161,5 +165,24 @@ export class AccountsService {
     await myAccount.save();
 
     return myAccount;
+  }
+
+  async addGroupRefToAccount(input: AddGroupRefDTO): Promise<Account> {
+    try {
+      const { groupID, userID } = input;
+
+      const myAccount = await this.accountModel.findById(userID);
+
+      if (!myAccount) throw new NotFoundException('Could not locate account');
+
+      myAccount.groups.push(groupID);
+
+      await myAccount.save();
+
+      return myAccount;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
   }
 }

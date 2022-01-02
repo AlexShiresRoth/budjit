@@ -6,7 +6,8 @@ import { InviteInterface } from 'src/interfaces/invite.interface';
 import { AccountsService } from './account.service';
 import { UpdateInvite } from 'src/graphql/dto/invite.dto';
 import { GroupService } from './group.service';
-import { Group } from 'src/mongo-schemas/group.model';
+import { Group, GroupDocument } from 'src/mongo-schemas/group.model';
+import { UpdateInviteStatusInput } from 'src/graphql/inputs/invite.input';
 
 @Injectable()
 export class InviteService {
@@ -50,7 +51,7 @@ export class InviteService {
   }
   async updateStatus(input: UpdateInvite): Promise<Invite> {
     try {
-      const { id, status } = input;
+      const { id, status, userID } = input;
 
       const foundInvite = await this.inviteModel.findById(id);
 
@@ -65,9 +66,13 @@ export class InviteService {
 
       await foundInvite.save();
       //if status is accept add the user to the members array on the group
-      const foundGroup: Group = await this.groupService.findOneById(
-        foundInvite.groupRef,
-      );
+      if (status === 'accept') {
+        //pass to group service to finish adding members in group document
+        await this.groupService.addMembers({
+          groupID: foundInvite.groupRef,
+          userID,
+        });
+      }
 
       return foundInvite;
     } catch (error) {

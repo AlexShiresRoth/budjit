@@ -1,4 +1,9 @@
-import { forwardRef, Inject, Injectable } from '@nestjs/common';
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { InviteInput } from 'src/graphql/inputs/invite.input';
@@ -8,6 +13,7 @@ import { Group, GroupDocument } from 'src/mongo-schemas/group.model';
 import { AccountsService } from './account.service';
 import { InviteService } from './invite.service';
 import * as mongoose from 'mongoose';
+import { AddMembersDTO } from 'src/graphql/dto/group.dto';
 
 @Injectable()
 export class GroupService {
@@ -111,6 +117,35 @@ export class GroupService {
         //this isn't pushing an object
         foundGroup.invites.push(invite),
       );
+
+      await foundGroup.save();
+
+      return foundGroup;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async addMembers(input: AddMembersDTO): Promise<Group> {
+    try {
+      const { groupID, userID } = input;
+
+      const foundGroup = await this.groupModel.findById(groupID);
+
+      if (!foundGroup) throw new NotFoundException('Could not locate group');
+
+      const foundAccount = await this.accountService.findOneById(userID);
+
+      if (!foundAccount)
+        throw new NotFoundException('Could not locate account');
+
+      foundGroup.members.push(foundAccount);
+      //pass to account service to add group to account document
+      await this.accountService.addGroupRefToAccount({
+        groupID,
+        userID: foundAccount,
+      });
 
       await foundGroup.save();
 

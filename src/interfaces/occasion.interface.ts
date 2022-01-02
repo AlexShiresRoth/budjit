@@ -7,4 +7,5 @@ export interface OccasionInterface {
   creator: string;
   group: Group;
   invites: InviteInterface[] | Array<null>;
+  initialBudget: string;
 }

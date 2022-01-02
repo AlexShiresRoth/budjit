@@ -56,6 +56,7 @@ type OccasionTypeDef {
   group: GroupTypeDef
   history: [HistoryTypeDef!]
   creator: String!
+  initialBudget: String!
 }
 
 type LoadOccasionResponse {
@@ -77,8 +78,10 @@ input LoginInput {
 
 type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
+  updateInviteStatus(updateInviteStatusInput: UpdateInviteStatusInput!): InvitesTypeDef!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   sendInvites(addMembersInput: AddMembersInput!): OccasionTypeDef!
+  contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
 input CreateAccountInput {
@@ -86,6 +89,11 @@ input CreateAccountInput {
   email: String!
   password: String!
   passwordConfirm: String!
+}
+
+input UpdateInviteStatusInput {
+  status: String!
+  id: String!
 }
 
 input CreateOccasionInput {
@@ -100,4 +108,11 @@ input AddMembersInput {
 
 input Invite {
   receiver: String!
+}
+
+input ContributeToBudgetInput {
+  paymentAmount: String!
+  paymentMethod: String
+  date: Date
+  occasionID: String!
 }

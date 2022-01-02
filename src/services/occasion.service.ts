@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
   AddMembersInput,
+  ContributeToBudgetInput,
   CreateOccasionInput,
 } from 'src/graphql/inputs/ocassion.input';
 import { AuthPayload } from 'src/interfaces/auth.interface';
@@ -10,6 +11,7 @@ import { OccasionInterface } from 'src/interfaces/occasion.interface';
 import { Occasion, OccasionDocument } from 'src/mongo-schemas/occasion.model';
 import { AccountsService } from './account.service';
 import { GroupService } from './group.service';
+import { HistoryService } from './history.service';
 
 //TODO accept invite strategy
 @Injectable()
@@ -19,6 +21,7 @@ export class OccasionService {
     private readonly occasionModel: Model<OccasionDocument>,
     private readonly groupService: GroupService,
     private readonly accountService: AccountsService,
+    private readonly historyService: HistoryService,
   ) {}
 
   async findOneById(id: string): Promise<Occasion> {
@@ -45,12 +48,23 @@ export class OccasionService {
 
       const myAccount = await this.accountService.findOneById(user.account.id);
 
+      const manipulateBudgetString = (str: string) => {
+        const split = str.split('');
+
+        if (split.includes('.')) return budget;
+
+        return str + '.00';
+      };
+
+      const assessedBudget = manipulateBudgetString(budget);
+
       const newOccasion: OccasionInterface = {
         title,
-        budget,
+        budget: assessedBudget,
         creator: user.account.id,
         group,
         invites: [],
+        initialBudget: assessedBudget,
       };
 
       const obj = new this.occasionModel({ ...newOccasion });
@@ -61,7 +75,12 @@ export class OccasionService {
         occasion: obj,
         userID: myAccount._id,
       });
-
+      //add group to my account
+      await this.accountService.addGroupRefToAccount({
+        groupID: group,
+        userID: myAccount,
+      });
+      //add the occasion reference to the created group doc
       await this.groupService.addOccasionRef({
         occasionRefId: obj._id,
         groupID: group._id,
@@ -97,6 +116,55 @@ export class OccasionService {
 
       //update group object via groupservice
       foundOccasion.group = group;
+
+      await foundOccasion.save();
+
+      return foundOccasion;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async contributeToBudget(
+    input: ContributeToBudgetInput,
+    user: AuthPayload,
+  ): Promise<Occasion> {
+    try {
+      const { occasionID, paymentAmount, date, paymentMethod } = input;
+      //date is malleable
+      const foundOccasion = await this.occasionModel.findById(occasionID);
+
+      const myAccount = await this.accountService.findOneById(user.account.id);
+
+      //dont allow for excess payment
+      if (parseFloat(foundOccasion.budget) < parseFloat(paymentAmount))
+        throw new Error('Payment amount cannot be more than budget');
+
+      //handle calc via numbers obvi, must return a string
+      const getNewTotal = (total: string, contribution: string): string => {
+        const diff = Math.abs(
+          parseFloat(total) - parseFloat(contribution),
+        ).toFixed(2);
+
+        return String(diff);
+      };
+
+      const newBudget = getNewTotal(foundOccasion.budget, paymentAmount);
+
+      const historyObj = await this.historyService.create({
+        paymentAmount,
+        date,
+        currentBudgetAmount: newBudget,
+        contributor: myAccount,
+        paymentMethod,
+        occasionRef: foundOccasion,
+      });
+
+      //change budget accordingly based upon new contributution
+      foundOccasion.budget = newBudget;
+      //add new history object to occasion doc
+      foundOccasion.history.push(historyObj);
 
       await foundOccasion.save();
 

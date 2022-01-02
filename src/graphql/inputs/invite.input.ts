@@ -17,3 +17,11 @@ export class InviteInput {
   @Field(() => Invite)
   invites: Invite[];
 }
+
+@InputType()
+export class UpdateInviteStatusInput {
+  @Field()
+  status: string;
+  @Field(() => String)
+  id: string;
+}

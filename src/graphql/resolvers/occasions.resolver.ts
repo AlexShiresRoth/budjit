@@ -5,7 +5,11 @@ import { AuthPayload } from 'src/interfaces/auth.interface';
 import { Occasion } from 'src/mongo-schemas/occasion.model';
 import { AuthService } from 'src/services/auth.service';
 import { OccasionService } from 'src/services/occasion.service';
-import { AddMembersInput, CreateOccasionInput } from '../inputs/ocassion.input';
+import {
+  AddMembersInput,
+  ContributeToBudgetInput,
+  CreateOccasionInput,
+} from '../inputs/ocassion.input';
 import { LoadOccasionResponse } from '../responses/occasion.response';
 import { OccasionTypeDef } from '../schemas/occasion.schema';
 
@@ -18,10 +22,7 @@ export class OccasionResolver {
 
   @Query(() => LoadOccasionResponse)
   @UseGuards(GraphqlAuthGuard)
-  async loadOccasion(
-    @Args('id') id: string,
-    @CurrentAccount() user: AuthPayload,
-  ) {
+  async loadOccasion(@Args('id') id: string) {
     return await this.occasionService.findOneById(id);
   }
 
@@ -41,5 +42,18 @@ export class OccasionResolver {
     @CurrentAccount() user: AuthPayload,
   ) {
     return await this.occasionService.sendInvites(addMembersInput, user);
+  }
+
+  @Mutation(() => OccasionTypeDef)
+  @UseGuards(GraphqlAuthGuard)
+  async contributeToBudget(
+    @Args('contributeToBudgetInput')
+    contributeToBudgetInput: ContributeToBudgetInput,
+    @CurrentAccount() user: AuthPayload,
+  ) {
+    return await this.occasionService.contributeToBudget(
+      contributeToBudgetInput,
+      user,
+    );
   }
 }

@@ -14,4 +14,6 @@ export class OccasionTypeDef {
   history: HistoryTypeDef[];
   @Field()
   creator: string;
+  @Field()
+  initialBudget: string;
 }

@@ -6,6 +6,7 @@ import { OccasionService } from 'src/services/occasion.service';
 import { AccountsModule } from './account.module';
 import { AuthModule } from './auth.module';
 import { GroupModule } from './group.module';
+import { HistoryModule } from './history.module';
 import { InviteModule } from './invite.module';
 
 @Module({
@@ -14,6 +15,7 @@ import { InviteModule } from './invite.module';
     AccountsModule,
     InviteModule,
     GroupModule,
+    HistoryModule,
     MongooseModule.forFeature([
       { name: Occasion.name, schema: OccasionSchema },
     ]),
