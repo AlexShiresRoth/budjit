@@ -65,23 +65,23 @@ type LoadOccasionResponse {
 
 type Query {
   account(id: String!): AccountTypeDef!
-  authenticate(loginInput: LoginInput!): LoginResponse!
   findMyAccount: AccountTypeDef!
   loadMyInvites: [InvitesTypeDef!]!
   loadOccasion(id: String!): LoadOccasionResponse!
 }
 
-input LoginInput {
-  email: String!
-  password: String!
-}
-
 type Mutation {
+  authenticate(loginInput: LoginInput!): LoginResponse!
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
   updateInviteStatus(updateInviteStatusInput: UpdateInviteStatusInput!): InvitesTypeDef!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   sendInvites(addMembersInput: AddMembersInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
 }
 
 input CreateAccountInput {

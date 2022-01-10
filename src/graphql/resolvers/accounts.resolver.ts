@@ -20,15 +20,15 @@ export class AccountsResolver {
     return await this.accountsService.findOneById(user.account.id);
   }
 
-  @Query(() => LoginResponse)
-  async authenticate(@Args('loginInput') loginInput: LoginInput) {
-    return this.accountsService.authenticate(loginInput);
-  }
-
   @Query(() => AccountTypeDef)
   @UseGuards(GraphqlAuthGuard)
   async findMyAccount(@CurrentAccount() user: AuthPayload) {
     return this.accountsService.findOneById(user.account.id);
+  }
+
+  @Mutation(() => LoginResponse)
+  async authenticate(@Args('loginInput') loginInput: LoginInput) {
+    return this.accountsService.authenticate(loginInput);
   }
 
   @Mutation(() => CreateAccountResponse)

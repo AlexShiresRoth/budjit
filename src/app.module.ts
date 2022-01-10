@@ -17,7 +17,7 @@ import { OccasionModule } from './modules/occasion.module';
       debug: true,
       playground: true,
       cors: {
-        origin: 'http://localhost:3000',
+        origin: ['http://localhost:3000', 'https://faec-108-29-6-138.ngrok.io'],
         credentials: true,
       },
       buildSchemaOptions: {
