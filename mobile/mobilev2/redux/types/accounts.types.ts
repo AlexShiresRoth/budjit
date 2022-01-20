@@ -1,0 +1,2 @@
+export const AUTHENTICATE = 'AUTHENTICATE';
+export const CREATE_ACCOUNT = 'CREATE_ACCOUNT';
