@@ -23,6 +23,10 @@ import {
   AddInviteDTO,
   AddOccasionDTO,
 } from 'src/graphql/dto/accounts.dto';
+import { Profile } from 'src/mongo-schemas/profile.model';
+import { ProfileService } from './profile.service';
+import { MyProfile, ProfileInterface } from 'src/interfaces/profile.interface';
+import { AnyRecord } from 'dns';
 
 @Injectable()
 export class AccountsService {
@@ -30,6 +34,8 @@ export class AccountsService {
     @InjectModel(Account.name)
     private readonly accountModel: Model<AccountDocument>,
     private readonly authServices: AuthService,
+    @Inject(forwardRef(() => ProfileService))
+    private readonly profileService: ProfileService,
   ) {}
 
   async createAccount(
@@ -74,6 +80,21 @@ export class AccountsService {
       const newAccount = new this.accountModel({ ...accountRequest });
 
       await newAccount.save();
+
+      //generate a default profile as a base
+      const newProfile: MyProfile = await this.profileService.create({
+        name,
+        avatar: null,
+        accountId: newAccount._id,
+      });
+
+      //add profile id to account
+      //TODO perhaps come up with another way.
+      //This does not return the profile in the query GQL
+      await this.addProfileToAccount({
+        profile_id: newProfile._id,
+        account_id: newAccount._id,
+      });
 
       const payload = {
         account: {
@@ -176,6 +197,25 @@ export class AccountsService {
       if (!myAccount) throw new NotFoundException('Could not locate account');
 
       myAccount.groups.push(groupID);
+
+      await myAccount.save();
+
+      return myAccount;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+  async addProfileToAccount(input: {
+    profile_id: string;
+    account_id: string;
+  }): Promise<Account> {
+    try {
+      const { profile_id, account_id } = input;
+      console.log('is this reaching', profile_id, account_id);
+      const myAccount = await this.accountModel.findById(account_id);
+
+      myAccount.profile = profile_id;
 
       await myAccount.save();
 

@@ -1,7 +1,6 @@
 import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
-import { Profile } from './profile.model';
 import { Occasion } from './occasion.model';
 import { Group } from './group.model';
 import { Invite } from './Invite.model';
@@ -19,7 +18,7 @@ export class Account {
   @Prop()
   password: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' })
-  profile: Profile;
+  profile: string;
   @Prop(
     raw([{ group_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' } }]),
   )

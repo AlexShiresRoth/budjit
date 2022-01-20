@@ -1,6 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
-import { ObjectId } from 'mongoose';
-import { ProfileTypeDef } from './profile.schema';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
 export class AccountTypeDef {
@@ -12,6 +10,6 @@ export class AccountTypeDef {
   email: string;
   @Field()
   password: string;
-  @Field((type) => ProfileTypeDef)
-  profile: ProfileTypeDef;
+  @Field(() => String, { nullable: true })
+  profile: string;
 }

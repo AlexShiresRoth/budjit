@@ -9,6 +9,7 @@ import { AccountsModule } from './modules/account.module';
 import { AuthModule } from './modules/auth.module';
 import { InviteModule } from './modules/invite.module';
 import { OccasionModule } from './modules/occasion.module';
+import { ProfileModule } from './modules/profile.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { OccasionModule } from './modules/occasion.module';
     AuthModule,
     InviteModule,
     OccasionModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService, DateScalar],

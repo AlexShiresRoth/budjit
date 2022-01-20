@@ -1,14 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
-import * as mongoose from 'mongoose';
+import { Document, Schema as MongooseSchema } from 'mongoose';
+export const defaultAvatar =
+  'https://res.cloudinary.com/snackmanproductions/image/upload/v1642559391/budjit-app/jeffgoldie.jpg';
 
 @Schema()
 export class Profile {
+  @Prop({ type: MongooseSchema.Types.ObjectId })
+  _id: string;
   @Prop()
   name: string;
-  @Prop()
-  phone: string;
-  @Prop()
+  @Prop({ default: defaultAvatar })
   avatar: string;
 }
 

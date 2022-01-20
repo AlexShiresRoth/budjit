@@ -2,18 +2,12 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type ProfileTypeDef {
-  name: String!
-  phone: String!
-  avatar: String!
-}
-
 type AccountTypeDef {
   _id: String!
   name: String!
   email: String!
   password: String!
-  profile: ProfileTypeDef!
+  profile: String
 }
 
 type InvitesTypeDef {
@@ -35,6 +29,12 @@ type CreateAccountResponse {
 type LoginResponse {
   Account: AccountTypeDef!
   token: String!
+}
+
+type ProfileTypeDef {
+  name: String!
+  phone: String!
+  avatar: String!
 }
 
 type GroupTypeDef {
@@ -67,6 +67,7 @@ type Query {
   account(id: String!): AccountTypeDef!
   findMyAccount: AccountTypeDef!
   loadMyInvites: [InvitesTypeDef!]!
+  loadMyProfile: ProfileTypeDef!
   loadOccasion(id: String!): LoadOccasionResponse!
 }
 
@@ -74,6 +75,8 @@ type Mutation {
   authenticate(loginInput: LoginInput!): LoginResponse!
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
   updateInviteStatus(updateInviteStatusInput: UpdateInviteStatusInput!): InvitesTypeDef!
+  create(createProfileInput: ProfileInput!): ProfileTypeDef!
+  update(updateProfileInput: UpdateProfileInput!): ProfileTypeDef!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   sendInvites(addMembersInput: AddMembersInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
@@ -94,6 +97,17 @@ input CreateAccountInput {
 input UpdateInviteStatusInput {
   status: String!
   id: String!
+}
+
+input ProfileInput {
+  name: String
+  avatar: String
+}
+
+input UpdateProfileInput {
+  name: String
+  avatar: String
+  profileId: String!
 }
 
 input CreateOccasionInput {

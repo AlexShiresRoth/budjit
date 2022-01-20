@@ -6,8 +6,6 @@ import { InviteInterface } from 'src/interfaces/invite.interface';
 import { AccountsService } from './account.service';
 import { UpdateInvite } from 'src/graphql/dto/invite.dto';
 import { GroupService } from './group.service';
-import { Group, GroupDocument } from 'src/mongo-schemas/group.model';
-import { UpdateInviteStatusInput } from 'src/graphql/inputs/invite.input';
 
 @Injectable()
 export class InviteService {
