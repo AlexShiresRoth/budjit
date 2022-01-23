@@ -40,7 +40,7 @@ export default {
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
     secondary: tintColorDark + '55',
-    danger: '#A30015',
-    success: '#35FF69',
+    danger: '#FF8484',
+    success: '#4DCCBD',
   },
 };
