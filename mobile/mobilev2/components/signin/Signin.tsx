@@ -6,7 +6,6 @@ import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import { SIGN_IN } from '../../graphql/mutations/accounts.mutations';
 import useColorScheme from '../../hooks/useColorScheme';
-import { action_authenticateUser } from '../../redux/actions/accounts.actions';
 import { RootStackParamList } from '../../types';
 import { ReduxThunkActionAuth } from '../../types/ReduxActions.types';
 import { AccountTypes } from '../../types/RootState.types';
@@ -14,6 +13,13 @@ import Input from '../reusable/Input';
 import PrimaryButton from '../reusable/PrimaryButton';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import Alert from '../alerts/Alert';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
+import { AnyAction, Dispatch } from 'redux';
+import { AppDispatch } from '../../redux/store';
+import {
+  authenticate,
+  selectAccount,
+} from '../../redux/reducers/accounts.reducers';
 
 const Container = styled.View`
   flex: 1;
@@ -59,29 +65,31 @@ interface DataProp {
 }
 
 const Signin = ({
-  accounts,
-  action_authenticateUser,
   navigation,
 }: ReduxThunkActionAuth &
   AccountTypes &
   BottomTabScreenProps<RootStackParamList, 'Signin'>) => {
-  const { isAuthenticated } = accounts;
+  //action handler
+  const dispatch = useAppDispatch();
+
+  const accountState = useAppSelector(selectAccount);
+  console.log('account state', accountState);
   useEffect(() => {
-    if (isAuthenticated) {
+    if (accountState.isAuthenticated) {
       navigation.navigate('Account');
     }
-  }, [isAuthenticated]);
+  }, [accountState.isAuthenticated]);
 
   return (
     <Container>
       <Heading>Welcome Back</Heading>
       <Subheading>Sign in to access your account</Subheading>
-      <Inputs action_authenticateUser={action_authenticateUser} />
+      <Inputs dispatch={dispatch} />
     </Container>
   );
 };
 
-const Inputs = ({ action_authenticateUser }: ReduxThunkActionAuth) => {
+const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
   const colorScheme = useColorScheme();
 
   const [inputs, setInputs] = useState({
@@ -138,11 +146,18 @@ const Inputs = ({ action_authenticateUser }: ReduxThunkActionAuth) => {
     }
   };
 
-  const handleReduxAction = () =>
-    action_authenticateUser({
-      account: data.authenticate.Account,
-      token: data.authenticate.token,
-    });
+  const handleReduxAction = () => {
+    dispatch(
+      authenticate({
+        myAccount: {
+          email: data.authenticate.Account.email,
+          name: data.authenticate.Account.name,
+          profile: data.authenticate.Account.profile,
+        },
+        token: data.authenticate.token,
+      }),
+    );
+  };
 
   useEffect(() => {
     if (!error && data) {
@@ -194,8 +209,4 @@ const Inputs = ({ action_authenticateUser }: ReduxThunkActionAuth) => {
   );
 };
 
-const mapStateToProps = (state: RootStateOrAny) => ({
-  accounts: state.accounts,
-});
-
-export default connect(mapStateToProps, { action_authenticateUser })(Signin);
+export default Signin;

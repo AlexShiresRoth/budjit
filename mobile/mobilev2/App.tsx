@@ -11,14 +11,14 @@ import { setContext } from '@apollo/client/link/context';
 import useCachedResources from './hooks/useCachedResources';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Provider } from 'react-redux';
-import store from './redux/store';
+import { store } from './redux/store';
 import { AppRegistry } from 'react-native';
 import { expo } from './app.json';
 import Navigation from './navigation';
 import useColorScheme from './hooks/useColorScheme';
 
 const appName = expo.name;
-const ngrok = 'https://7fbc-108-29-6-138.ngrok.io';
+const ngrok = 'https://c3d3-108-29-6-138.ngrok.io';
 const link = createHttpLink({
   uri: `${ngrok}/graphql`,
   credentials: 'same-origin',

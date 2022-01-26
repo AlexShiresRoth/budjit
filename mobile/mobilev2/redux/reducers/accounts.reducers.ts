@@ -1,43 +1,59 @@
-import { AUTHENTICATE, CREATE_ACCOUNT } from '../types/accounts.types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { RootState } from '../store';
 
 interface InitialStateParams {
-  myAccount: undefined | null;
+  myAccount: {
+    email: string;
+    name: string;
+    profile: string;
+  };
   isAuthenticated: boolean;
 }
 
-interface ActionParams {
-  type: string;
-  payload: any;
-}
+export type AccountParams = {
+  myAccount: {
+    email: string;
+    name: string;
+    profile: string;
+  };
+  token: string;
+};
 
 const initialState: InitialStateParams = {
-  myAccount: null,
+  myAccount: {
+    email: '',
+    name: '',
+    profile: '',
+  },
   isAuthenticated: false,
 };
 
-export const accounts = (
-  state: InitialStateParams = initialState,
-  action: ActionParams,
-) => {
-  const { type, payload } = action;
+//TODO keep updating redux to more modern pattern
 
-  switch (type) {
-    case AUTHENTICATE:
-      AsyncStorage.setItem('@auth_token', payload.token);
-      return {
-        ...state,
-        myAccount: payload.account,
-        isAuthenticated: true,
-      };
-    case CREATE_ACCOUNT:
-      AsyncStorage.setItem('@auth_token', payload.token);
-      return {
-        ...state,
-        myAccount: payload.account,
-        isAuthenticated: true,
-      };
-    default:
-      return state;
-  }
-};
+export const accountSlice = createSlice({
+  name: 'account',
+  initialState,
+  reducers: {
+    authenticate: (state, action: PayloadAction<AccountParams>) => {
+      AsyncStorage.setItem('@auth_token', action.payload.token);
+      /////////////////////////////
+      state.isAuthenticated = true;
+      ////////////////////////////////
+      state.myAccount = action.payload.myAccount;
+    },
+    createAccount: (state, action: PayloadAction<AccountParams>) => {
+      AsyncStorage.setItem('@auth_token', action.payload.token);
+      /////////////////////////////
+      state.isAuthenticated = true;
+      ////////////////////////////////
+      state.myAccount = action.payload.myAccount;
+    },
+  },
+});
+
+export const { authenticate, createAccount } = accountSlice.actions;
+
+export const selectAccount = (state: RootState) => state.accounts;
+
+export default accountSlice.reducer;
