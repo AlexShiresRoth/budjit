@@ -7,6 +7,8 @@ import { LOAD_MY_PROFILE } from '../../../../graphql/queries/profiles.query';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import DisplayName from './DisplayName';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
+import { selectProfile } from '../../../../redux/reducers/profiles.reducers';
 
 const ScrollArea = styled.ScrollView`
   flex: 1;
@@ -94,12 +96,17 @@ type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 
 const Profile = ({ route, navigation }: Props) => {
   const colorScheme = useColorScheme();
-  const { data, loading, error } = useQuery(LOAD_MY_PROFILE);
+
+  const { data, loading, error, refetch } = useQuery(LOAD_MY_PROFILE);
 
   const [profileData, setProfileData] = useState({
     avatar: '',
     name: '',
   });
+
+  const profileState = useAppSelector(selectProfile);
+
+  console.log('profile data', data, loading);
 
   const { name, avatar } = profileData;
 
@@ -111,6 +118,11 @@ const Profile = ({ route, navigation }: Props) => {
       });
     }
   }, [error, data]);
+
+  //need to re query the profile if an update is made elsewhere
+  useEffect(() => {
+    refetch();
+  }, [profileState]);
 
   const DATA: DataProps = [
     {

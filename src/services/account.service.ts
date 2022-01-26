@@ -23,10 +23,8 @@ import {
   AddInviteDTO,
   AddOccasionDTO,
 } from 'src/graphql/dto/accounts.dto';
-import { Profile } from 'src/mongo-schemas/profile.model';
 import { ProfileService } from './profile.service';
-import { MyProfile, ProfileInterface } from 'src/interfaces/profile.interface';
-import { AnyRecord } from 'dns';
+import { MyProfile } from 'src/interfaces/profile.interface';
 
 @Injectable()
 export class AccountsService {
@@ -53,7 +51,6 @@ export class AccountsService {
         throw new Error('Passwords do not match');
 
       //declare explicit id for accessing within the model
-      //This seems hacky
       const id = new mongoose.Types.ObjectId();
 
       let accountRequest: {
@@ -91,10 +88,9 @@ export class AccountsService {
       //add profile id to account
       //TODO perhaps come up with another way.
       //This does not return the profile in the query GQL
-      await this.addProfileToAccount({
-        profile_id: newProfile._id,
-        account_id: newAccount._id,
-      });
+      newAccount.profile = newProfile._id;
+
+      await newAccount.save();
 
       const payload = {
         account: {

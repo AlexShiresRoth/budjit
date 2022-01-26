@@ -73,7 +73,7 @@ const Signin = ({
   const dispatch = useAppDispatch();
 
   const accountState = useAppSelector(selectAccount);
-  console.log('account state', accountState);
+
   useEffect(() => {
     if (accountState.isAuthenticated) {
       navigation.navigate('Account');

@@ -29,8 +29,6 @@ const initialState: InitialStateParams = {
   isAuthenticated: false,
 };
 
-//TODO keep updating redux to more modern pattern
-
 export const accountSlice = createSlice({
   name: 'account',
   initialState,

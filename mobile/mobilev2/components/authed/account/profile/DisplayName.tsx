@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
@@ -7,6 +7,9 @@ import { connect, RootStateOrAny } from 'react-redux';
 import { AccountTypes } from '../../../../types/RootState.types';
 import { useMutation } from '@apollo/client';
 import { UPDATE_PROFILE } from '../../../../graphql/mutations/profiles.mutations';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
+import { selectAccount } from '../../../../redux/reducers/accounts.reducers';
+import { updateMyProfile } from '../../../../redux/reducers/profiles.reducers';
 
 const Column = styled.View``;
 const ProfileName = styled.Text`
@@ -65,18 +68,18 @@ type SetNameState = { editEvent: Dispatch<SetStateAction<string>> };
 
 type UpdateProps = { handleProfileUpdate: ({ ...args }) => void };
 //TODO finish edit mutation by reloading account and showing updated name!
-const DisplayName = ({ name, accounts }: Name & AccountTypes) => {
+const DisplayName = ({ name }: Name) => {
   const colorScheme = useColorScheme();
-
-  const { myAccount } = accounts;
+  //access redux store
+  const accounts = useAppSelector(selectAccount);
+  //action dispatcher
+  const dispatch = useAppDispatch();
 
   const [editable, toggleEdit] = useState<boolean>(false);
 
   const [newName, setName] = useState<string>('');
 
   const [updateProfile, { error, data, loading }] = useMutation(UPDATE_PROFILE);
-
-  console.log('accoutns', accounts, error, newName, myAccount?.profile);
 
   const handleProfileUpdate = async () => {
     try {
@@ -85,7 +88,7 @@ const DisplayName = ({ name, accounts }: Name & AccountTypes) => {
           updateProfileInput: {
             name: newName,
             avatar: null,
-            profileId: myAccount?.profile,
+            profileId: accounts.myAccount.profile,
           },
         },
       });
@@ -94,6 +97,26 @@ const DisplayName = ({ name, accounts }: Name & AccountTypes) => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    if (data && !error) {
+      toggleEdit(false);
+      dispatch(
+        updateMyProfile({
+          displayName: data.update.name,
+          avatar: data.update.avatar,
+        }),
+      );
+    }
+  }, [data, error]);
+
+  if (loading) {
+    return (
+      <ProfileRow>
+        <Span>Loading...</Span>
+      </ProfileRow>
+    );
+  }
 
   return (
     <ProfileRow
@@ -106,6 +129,7 @@ const DisplayName = ({ name, accounts }: Name & AccountTypes) => {
         <Span style={{ color: Colors[colorScheme].text + '90' }}>
           Display Name
         </Span>
+
         {!editable ? (
           <ProfileName style={{ color: Colors[colorScheme].text }}>
             {name && name}
@@ -120,12 +144,16 @@ const DisplayName = ({ name, accounts }: Name & AccountTypes) => {
         )}
       </Column>
       <Column>
-        <EditDisplayNameButton
-          colorScheme={colorScheme}
-          toggleEvent={toggleEdit}
-          editable={editable}
-          handleProfileUpdate={handleProfileUpdate}
-        />
+        {loading ? (
+          <Text style={{ color: '#fff' }}>Loading...</Text>
+        ) : (
+          <EditDisplayNameButton
+            colorScheme={colorScheme}
+            toggleEvent={toggleEdit}
+            editable={editable}
+            handleProfileUpdate={handleProfileUpdate}
+          />
+        )}
       </Column>
     </ProfileRow>
   );
@@ -212,8 +240,4 @@ const Editable = ({
   );
 };
 
-const mapStateToProps = (state: RootStateOrAny) => ({
-  accounts: state.accounts,
-});
-
-export default connect(mapStateToProps, {})(DisplayName);
+export default DisplayName;

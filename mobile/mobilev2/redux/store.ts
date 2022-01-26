@@ -1,10 +1,12 @@
 import { createStore, applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import accountsReducers from './reducers/accounts.reducers';
+import profilesReducers from './reducers/profiles.reducers';
 
 export const store = configureStore({
   reducer: {
     accounts: accountsReducers,
+    profiles: profilesReducers,
   },
 });
 

@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import Input from '../reusable/Input';
 import PrimaryButton from '../reusable/PrimaryButton';
 import {
-  MaterialIcons,
   MaterialCommunityIcons,
   FontAwesome5,
   Ionicons,
 } from '@expo/vector-icons';
 import { useMutation } from '@apollo/client';
 import { SIGN_UP } from '../../graphql/mutations/accounts.mutations';
-import { connect, RootStateOrAny } from 'react-redux';
 import { AccountTypes } from '../../types/RootState.types';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../../types';
-import { action_createUser } from '../../redux/actions/accounts.actions';
-import { ReduxThunkActionCreateUser } from '../../types/ReduxActions.types';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
+import {
+  createAccount,
+  selectAccount,
+} from '../../redux/reducers/accounts.reducers';
+import { AnyAction } from 'redux';
 
 const Container = styled.View``;
 
@@ -55,34 +57,34 @@ interface DataProp {
 
 const Signup = ({
   colorScheme,
-  accounts,
   navigation,
-  action_createUser,
 }: ColorScheme &
   AccountTypes &
-  BottomTabScreenProps<RootStackParamList, 'Signup'> &
-  ReduxThunkActionCreateUser) => {
-  const { isAuthenticated } = accounts;
+  BottomTabScreenProps<RootStackParamList, 'Signup'>) => {
+  //redux action dispatcher
+  const dispatch = useAppDispatch();
+
+  const accountState = useAppSelector(selectAccount);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (accountState.isAuthenticated) {
       navigation.navigate('Account');
     }
-  }, [isAuthenticated]);
+  }, [accountState.isAuthenticated]);
 
   return (
     <Container>
       <Heading>Get Started</Heading>
       <Subheading>Create an account to access features</Subheading>
-      <Form colorScheme={colorScheme} action_createUser={action_createUser} />
+      <Form colorScheme={colorScheme} dispatch={dispatch} />
     </Container>
   );
 };
 
 const Form = ({
   colorScheme,
-  action_createUser,
-}: ColorScheme & ReduxThunkActionCreateUser) => {
+  dispatch,
+}: ColorScheme & { dispatch: Dispatch<AnyAction> }) => {
   const [inputs, setInputs] = useState({
     email: '',
     name: '',
@@ -152,16 +154,19 @@ const Form = ({
   const handleTextChange = (arg: string, value: string) =>
     setInputs({ ...inputs, [arg]: value });
 
-  console.log('data?', data, error);
-
+  //pass retrieve data to redux store
   useEffect(() => {
     if (data && !error) {
-      action_createUser({
-        token: data.createAccount.token,
-        account: data.createAccount.account,
-      });
+      //not sure if this is correct yet
+      dispatch(
+        createAccount({
+          token: data.createAccount.token,
+          myAccount: { ...data.createAccount.Account },
+        }),
+      );
     }
   }, [data, error]);
+
   return (
     <FormContainer>
       {DATA.map((item: DataProp, key: number) => {
@@ -193,8 +198,4 @@ const Form = ({
   );
 };
 
-const mapStateToProps = (state: RootStateOrAny) => ({
-  accounts: state.accounts,
-});
-
-export default connect(mapStateToProps, { action_createUser })(Signup);
+export default Signup;
