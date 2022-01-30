@@ -106,10 +106,10 @@ export class ProfileService {
       const myProfile = await this.profileModel.findById(profileId);
 
       if (!myProfile) throw new Error('Something went horribly wrong');
-
+      //have to upload to cloudinary via react atm
       if (avatar) {
-        const upload = await this.upploadImage(avatar);
-        myProfile.avatar = upload;
+        // const upload = await this.upploadImage(avatar);
+        myProfile.avatar = avatar;
       }
       if (name) myProfile.name = name;
 

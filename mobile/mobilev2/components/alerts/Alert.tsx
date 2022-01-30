@@ -1,20 +1,24 @@
-import React, {
-  MutableRefObject,
-  ReactElement,
-  ReactNode,
-  useRef,
-} from 'react';
+import React, { MutableRefObject, useRef } from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
 import { AntDesign } from '@expo/vector-icons';
 import { View } from 'react-native';
+import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
+import {
+  resetAlert,
+  selectAlert,
+  setAlert,
+} from '../../redux/reducers/alerts.reducers';
+
 const Container = styled.View`
-  margin-top: 40px;
   padding: 20px;
-  border-radius: 5px;
   display: flex;
   justify-content: center;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  elevation: 3;
 `;
 const Content = styled.View`
   width: 90%;
@@ -37,23 +41,46 @@ type AlertParams = {
   callback: (args: any) => any;
 };
 
-function Alert({ message, status, callback }: AlertParams) {
+function Alert() {
+  ////////////////////////////////////////
   const colorScheme = useColorScheme();
+  /////////////////////////
   const ref: MutableRefObject<null | View> = useRef(null);
+  ///select alert state
+  const alertState = useAppSelector(selectAlert);
+
+  const dispatch = useAppDispatch();
+
+  const {
+    alert: { type, message },
+    isVisible,
+  } = alertState;
+
+  const handleAlertVisibility = () => {
+    if (isVisible) {
+      dispatch(resetAlert(null));
+    }
+  };
 
   return (
     <Container
       style={{
         backgroundColor:
-          status === 'danger'
-            ? Colors[colorScheme].danger + '64'
-            : Colors[colorScheme].success + '44',
+          type === 'danger'
+            ? Colors[colorScheme].danger + '84'
+            : Colors[colorScheme].success,
+        borderBottomWidth: 5,
+        borderBottomColor: Colors[colorScheme].tint + '66',
       }}
       ref={ref}
     >
       <Content>
-        <CloseBtn onPress={callback}>
-          <AntDesign color="#fefefe" size={24} name="closecircleo" />
+        <CloseBtn onPress={() => handleAlertVisibility()}>
+          <AntDesign
+            color={Colors[colorScheme].text}
+            size={24}
+            name="closecircleo"
+          />
         </CloseBtn>
         <Message>{message}</Message>
       </Content>

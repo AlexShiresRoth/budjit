@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
@@ -28,18 +27,25 @@ const initialState: InitialStateParams = {
   },
 };
 
-export const accountSlice = createSlice({
+export const profileSlice = createSlice({
   name: 'profile',
   initialState,
   reducers: {
+    setProfileState: (state, action: PayloadAction<UpdateProfileParams>) => {
+      state.myProfile = action.payload;
+    },
     updateMyProfile: (state, action: PayloadAction<UpdateProfileParams>) => {
       state.myProfile = action.payload;
+    },
+    updateAvatar: (state, action: PayloadAction<{ avatar: string }>) => {
+      state.myProfile.avatar = action.payload.avatar;
     },
   },
 });
 
-export const { updateMyProfile } = accountSlice.actions;
+export const { updateMyProfile, updateAvatar, setProfileState } =
+  profileSlice.actions;
 
 export const selectProfile = (state: RootState) => state.profiles;
 
-export default accountSlice.reducer;
+export default profileSlice.reducer;

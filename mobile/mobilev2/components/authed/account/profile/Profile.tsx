@@ -7,8 +7,14 @@ import { LOAD_MY_PROFILE } from '../../../../graphql/queries/profiles.query';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import DisplayName from './DisplayName';
-import { useAppSelector } from '../../../../hooks/reduxHooks';
-import { selectProfile } from '../../../../redux/reducers/profiles.reducers';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
+import {
+  selectProfile,
+  setProfileState,
+} from '../../../../redux/reducers/profiles.reducers';
+import LoadingSpinner from '../../../reusable/LoadingSpinner';
+import Alert from '../../../alerts/Alert';
+import AvatarEdit from './AvatarEdit';
 
 const ScrollArea = styled.ScrollView`
   flex: 1;
@@ -94,28 +100,27 @@ type ColorScheme = { colorScheme: 'light' | 'dark' };
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 
-const Profile = ({ route, navigation }: Props) => {
+//TODO set alert status for display name update in profile
+const Profile = () => {
   const colorScheme = useColorScheme();
 
   const { data, loading, error, refetch } = useQuery(LOAD_MY_PROFILE);
 
-  const [profileData, setProfileData] = useState({
-    avatar: '',
-    name: '',
-  });
+  const dispatch = useAppDispatch();
 
   const profileState = useAppSelector(selectProfile);
 
-  console.log('profile data', data, loading);
+  const { myProfile } = profileState;
 
-  const { name, avatar } = profileData;
-
+  //set state in redux store
   useEffect(() => {
     if (data && !error) {
-      setProfileData({
-        avatar: data.loadMyProfile.avatar,
-        name: data.loadMyProfile.name,
-      });
+      dispatch(
+        setProfileState({
+          avatar: data.loadMyProfile.avatar,
+          displayName: data.loadMyProfile.name,
+        }),
+      );
     }
   }, [error, data]);
 
@@ -149,10 +154,12 @@ const Profile = ({ route, navigation }: Props) => {
       </Container>
     );
   }
+
   if (loading) {
     return (
-      <Container>
-        <Text>Loading Profile...</Text>
+      <Container style={{ justifyContent: 'center' }}>
+        <LoadingSpinner />
+        <Text style={{ color: '#eee' }}>Loading Profile...</Text>
       </Container>
     );
   }
@@ -172,24 +179,10 @@ const Profile = ({ route, navigation }: Props) => {
           }}
         />
         <Content>
-          {avatar ? (
-            <AvatarContainer
-              style={{
-                elevation: 1,
-                borderColor: Colors[colorScheme].tint,
-                backgroundColor: Colors[colorScheme].tint,
-                shadowColor: '#222',
-                shadowOffset: {
-                  width: 20,
-                  height: 10,
-                },
-                shadowOpacity: 1,
-              }}
-            >
-              <Avatar source={{ uri: avatar }} />
-            </AvatarContainer>
-          ) : null}
-          <DisplayName name={name} />
+          {/* //avatar conntainer */}
+          <AvatarEdit />
+          {/* //display name for profile */}
+          <DisplayName name={myProfile.displayName} />
           <StatsSection DATA={DATA} colorScheme={colorScheme} />
           <CreationBlock DATA={DATA} colorScheme={colorScheme} />
         </Content>

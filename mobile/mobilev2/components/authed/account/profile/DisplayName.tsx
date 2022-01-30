@@ -3,13 +3,13 @@ import styled from 'styled-components/native';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import { FontAwesome5, FontAwesome, MaterialIcons } from '@expo/vector-icons';
-import { connect, RootStateOrAny } from 'react-redux';
-import { AccountTypes } from '../../../../types/RootState.types';
 import { useMutation } from '@apollo/client';
 import { UPDATE_PROFILE } from '../../../../graphql/mutations/profiles.mutations';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
 import { selectAccount } from '../../../../redux/reducers/accounts.reducers';
 import { updateMyProfile } from '../../../../redux/reducers/profiles.reducers';
+import LoadingSpinner from '../../../reusable/LoadingSpinner';
+import Alert from '../../../alerts/Alert';
 
 const Column = styled.View``;
 const ProfileName = styled.Text`
@@ -83,7 +83,7 @@ const DisplayName = ({ name }: Name) => {
 
   const handleProfileUpdate = async () => {
     try {
-      const response = await updateProfile({
+      await updateProfile({
         variables: {
           updateProfileInput: {
             name: newName,
@@ -92,7 +92,6 @@ const DisplayName = ({ name }: Name) => {
           },
         },
       });
-      console.log('response', response);
     } catch (error) {
       console.error(error);
     }
@@ -100,7 +99,9 @@ const DisplayName = ({ name }: Name) => {
 
   useEffect(() => {
     if (data && !error) {
+      //back out of editable
       toggleEdit(false);
+      //update the redux store with the new profile name
       dispatch(
         updateMyProfile({
           displayName: data.update.name,
@@ -110,13 +111,12 @@ const DisplayName = ({ name }: Name) => {
     }
   }, [data, error]);
 
-  if (loading) {
-    return (
-      <ProfileRow>
-        <Span>Loading...</Span>
-      </ProfileRow>
-    );
-  }
+  //reset name if user cancels
+  useEffect(() => {
+    if (!editable) {
+      setName('');
+    }
+  }, [editable]);
 
   return (
     <ProfileRow
@@ -145,7 +145,12 @@ const DisplayName = ({ name }: Name) => {
       </Column>
       <Column>
         {loading ? (
-          <Text style={{ color: '#fff' }}>Loading...</Text>
+          <Column>
+            <Text style={{ color: Colors[colorScheme].text + '90' }}>
+              Saving...
+            </Text>
+            <LoadingSpinner />
+          </Column>
         ) : (
           <EditDisplayNameButton
             colorScheme={colorScheme}
@@ -225,10 +230,10 @@ const Editable = ({
 }: Name & ColorScheme & { newName: string } & SetNameState) => {
   return (
     <Input
-      placeholder={name}
+      placeholder={'Enter a profile name'}
       value={newName}
-      defaultValue={name}
-      placeholderTextColor={Colors[colorScheme].text}
+      defaultValue={newName}
+      placeholderTextColor={Colors[colorScheme].text + '86'}
       style={{
         color: Colors[colorScheme].text,
         fontSize: 22,
