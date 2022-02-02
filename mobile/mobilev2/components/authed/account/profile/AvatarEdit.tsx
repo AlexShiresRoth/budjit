@@ -33,7 +33,6 @@ const Avatar = styled.Image`
 `;
 
 const Edit = styled.TouchableOpacity`
-  elevation: 1;
   position: absolute;
   bottom: 0;
   right: 0;

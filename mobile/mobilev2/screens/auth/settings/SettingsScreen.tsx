@@ -6,6 +6,7 @@ import Colors from '../../../constants/Colors';
 import AuthRoute from '../../../navigation/authed/AuthRoute';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types';
+import { View } from 'react-native';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Settings'>;
 
@@ -14,7 +15,7 @@ const SettingsScreen = ({ route, navigation }: Props) => {
 
   return (
     <AuthRoute>
-      <SafeAreaView
+      <View
         style={{
           backgroundColor: Colors[colorScheme].background,
           flex: 1,
@@ -22,7 +23,7 @@ const SettingsScreen = ({ route, navigation }: Props) => {
         }}
       >
         <Settings route={route} navigation={navigation} />
-      </SafeAreaView>
+      </View>
     </AuthRoute>
   );
 };

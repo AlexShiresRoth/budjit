@@ -10,6 +10,7 @@ import { selectAccount } from '../../../../redux/reducers/accounts.reducers';
 import { updateMyProfile } from '../../../../redux/reducers/profiles.reducers';
 import LoadingSpinner from '../../../reusable/LoadingSpinner';
 import Alert from '../../../alerts/Alert';
+import { setAlert } from '../../../../redux/reducers/alerts.reducers';
 
 const Column = styled.View``;
 const ProfileName = styled.Text`
@@ -106,6 +107,13 @@ const DisplayName = ({ name }: Name) => {
         updateMyProfile({
           displayName: data.update.name,
           avatar: data.update.avatar,
+        }),
+      );
+      //update success alert
+      dispatch(
+        setAlert({
+          message: 'Successfully updated profile name',
+          type: 'success',
         }),
       );
     }

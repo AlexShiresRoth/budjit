@@ -47,10 +47,15 @@ export const accountSlice = createSlice({
       ////////////////////////////////
       state.myAccount = action.payload.myAccount;
     },
+    signOutOfAccount: (state, action: PayloadAction<undefined>) => {
+      state.isAuthenticated = false;
+      state.myAccount = { email: '', name: '', profile: '' };
+    },
   },
 });
 
-export const { authenticate, createAccount } = accountSlice.actions;
+export const { authenticate, createAccount, signOutOfAccount } =
+  accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;
 

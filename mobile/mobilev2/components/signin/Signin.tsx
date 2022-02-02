@@ -20,6 +20,7 @@ import {
   authenticate,
   selectAccount,
 } from '../../redux/reducers/accounts.reducers';
+import { setAlert } from '../../redux/reducers/alerts.reducers';
 
 const Container = styled.View`
   flex: 1;
@@ -66,9 +67,7 @@ interface DataProp {
 
 const Signin = ({
   navigation,
-}: ReduxThunkActionAuth &
-  AccountTypes &
-  BottomTabScreenProps<RootStackParamList, 'Signin'>) => {
+}: BottomTabScreenProps<RootStackParamList, 'Signin'>) => {
   //action handler
   const dispatch = useAppDispatch();
 
@@ -98,8 +97,6 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
   });
 
   const { email, password } = inputs;
-
-  const [alertError, setAlertError] = useState<Error | null>();
 
   const DATA = [
     {
@@ -160,16 +157,21 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
   };
 
   useEffect(() => {
+    if (error) {
+      dispatch(
+        setAlert({
+          type: 'danger',
+          message: error.message,
+        }),
+      );
+    }
+  }, [error]);
+
+  useEffect(() => {
     if (!error && data) {
       handleReduxAction();
     }
   }, [error, data]);
-
-  useEffect(() => {
-    if (error) {
-      setAlertError(error);
-    }
-  }, [error]);
 
   return (
     <Form>
@@ -197,13 +199,6 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
         />
       ) : (
         <Text>Loading...</Text>
-      )}
-      {error && alertError && (
-        <Alert
-          message={error.message}
-          status="danger"
-          callback={() => setAlertError(null)}
-        />
       )}
     </Form>
   );

@@ -4,12 +4,16 @@ import styled from 'styled-components/native';
 import useColorScheme from '../../../hooks/useColorScheme';
 import Colors from '../../../constants/Colors';
 import AuthRoute from '../../../navigation/authed/AuthRoute';
+import { RootStackParamList, RootStackScreenProps } from '../../../types';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 const Container = styled.View`
   width: 100%;
 `;
 
-const AccountScreen = () => {
+type Props = NativeStackScreenProps<RootStackParamList, 'Account'>;
+
+const AccountScreen = ({ route, navigation }: Props) => {
   const colorScheme = useColorScheme();
 
   return (
@@ -20,7 +24,7 @@ const AccountScreen = () => {
           backgroundColor: Colors[colorScheme].background,
         }}
       >
-        <AccountSpace />
+        <AccountSpace route={route} navigation={navigation} />
       </Container>
     </AuthRoute>
   );

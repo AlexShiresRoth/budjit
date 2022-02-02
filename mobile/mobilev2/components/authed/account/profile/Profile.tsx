@@ -15,6 +15,7 @@ import {
 import LoadingSpinner from '../../../reusable/LoadingSpinner';
 import Alert from '../../../alerts/Alert';
 import AvatarEdit from './AvatarEdit';
+import { setAlert } from '../../../../redux/reducers/alerts.reducers';
 
 const ScrollArea = styled.ScrollView`
   flex: 1;
@@ -129,6 +130,18 @@ const Profile = () => {
     refetch();
   }, [profileState]);
 
+  //update alerts
+  useEffect(() => {
+    if (error) {
+      dispatch(
+        setAlert({
+          message: error.message,
+          type: 'danger',
+        }),
+      );
+    }
+  }, [error, data]);
+
   const DATA: DataProps = [
     {
       title: 'Occasions',
@@ -163,6 +176,7 @@ const Profile = () => {
       </Container>
     );
   }
+
   return (
     <ScrollArea>
       <Container>

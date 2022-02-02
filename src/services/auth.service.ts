@@ -12,8 +12,6 @@ export class AuthService {
 
     const token: string = header.split(' ')[1];
 
-    // req.account =
-
     return await this.jwtService.verify(token);
   }
 

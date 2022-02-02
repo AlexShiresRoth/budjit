@@ -11,14 +11,14 @@ import {
   setAlert,
 } from '../../redux/reducers/alerts.reducers';
 
-const Container = styled.View`
+const Container = styled.TouchableOpacity`
   padding: 20px;
   display: flex;
   justify-content: center;
   position: absolute;
-  top: 0;
+  top: 2%;
   width: 100%;
-  elevation: 3;
+  elevation: 4;
 `;
 const Content = styled.View`
   width: 90%;
@@ -28,6 +28,7 @@ const Content = styled.View`
 `;
 const CloseBtn = styled.TouchableOpacity`
   margin-right: 10px;
+  elevation: 5;
 `;
 
 const Message = styled.Text`
@@ -57,12 +58,13 @@ function Alert() {
   } = alertState;
 
   const handleAlertVisibility = () => {
-    if (isVisible) {
-      dispatch(resetAlert(null));
-    }
+    console.log('click');
+    dispatch(resetAlert(null));
   };
 
-  return (
+  console.log('alert state', alertState);
+
+  return isVisible ? (
     <Container
       style={{
         backgroundColor:
@@ -70,9 +72,11 @@ function Alert() {
             ? Colors[colorScheme].danger + '84'
             : Colors[colorScheme].success,
         borderBottomWidth: 5,
-        borderBottomColor: Colors[colorScheme].tint + '66',
+        borderBottomColor:
+          type === 'danger'
+            ? Colors[colorScheme].danger + '84'
+            : Colors[colorScheme].success + '77',
       }}
-      ref={ref}
     >
       <Content>
         <CloseBtn onPress={() => handleAlertVisibility()}>
@@ -85,7 +89,7 @@ function Alert() {
         <Message>{message}</Message>
       </Content>
     </Container>
-  );
+  ) : null;
 }
 
 export default Alert;

@@ -1,6 +1,8 @@
 const tintColorLight = '#2f95dc';
 const tintColorDark = '#8980F5';
 
+export type ColorScheme = { colorScheme: 'light' | 'dark' };
+
 export interface ColorsInterface {
   light: {
     text: string;
