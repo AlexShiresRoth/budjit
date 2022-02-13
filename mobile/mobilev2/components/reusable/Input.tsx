@@ -33,6 +33,9 @@ const TextInput = styled.TextInput`
   padding-bottom: 5px;
   color: #f5f5f5;
   width: 100%;
+  flex-wrap: wrap;
+  display: flex;
+  flex-direction: row;
 `;
 
 type Props = {
@@ -65,6 +68,8 @@ const Input = ({
           secureTextEntry={isSecure}
           placeholder={label}
           placeholderTextColor="#ffffff75"
+          multiline={true}
+          textAlignVertical="auto"
         />
       </Column>
     </Container>

@@ -1,14 +1,17 @@
-import React, { SetStateAction, useState } from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
-import { Modal, Text, TextInput, TouchableOpacity } from 'react-native';
+import {
+  FlatList,
+  Modal,
+  ScrollView,
+  Text,
+  TextInput,
+  TouchableOpacity,
+} from 'react-native';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import Colors from '../../../../constants/Colors';
 import { AntDesign } from '@expo/vector-icons';
 import Input from '../../../reusable/Input';
-
-const ModalContainer = styled.View`
-  flex: 1;
-`;
 
 const ModalView = styled.View`
   flex: 1;
@@ -42,7 +45,7 @@ const CloseBtn = styled.TouchableOpacity`
 `;
 
 const Content = styled.View`
-  margin-top: 100px;
+  margin-top: 40px;
   justify-content: center;
   width: 90%;
   padding: 30px 0;
@@ -75,6 +78,10 @@ const SearchContent = styled.View`
   margin-top: 50px;
 `;
 
+const InvitesContainer = styled.View``;
+
+const Invite = styled.View``;
+
 type ModalProps = {
   showModal: boolean;
   setModalVisibility: (val: boolean) => void;
@@ -93,7 +100,7 @@ const CreateInvite = ({ showModal, setModalVisibility }: ModalProps) => {
   const [showSearch, toggleSearch] = useState<boolean>(false);
 
   return (
-    <ModalContainer style={{ backgroundColor: Colors[colorScheme].background }}>
+    <ScrollView style={{ flex: 1 }}>
       <Modal
         animationType="slide"
         visible={showModal}
@@ -126,7 +133,7 @@ const CreateInvite = ({ showModal, setModalVisibility }: ModalProps) => {
           )}
         </ModalView>
       </Modal>
-    </ModalContainer>
+    </ScrollView>
   );
 };
 
@@ -311,12 +318,17 @@ const CreateGroup = ({
 }) => {
   const [step, setStep] = useState<number>(0);
 
-  const [group, setGroup] = useState({
+  const [group, setGroup] = useState<{
+    groupName: string;
+    invite: string;
+    invites: Array<string>;
+  }>({
     groupName: '',
-    invites: '',
+    invite: '',
+    invites: [],
   });
 
-  const { groupName, invites } = group;
+  const { groupName, invites, invite } = group;
 
   const handleTextChange = ({ e, name }: { e: string; name: string }) =>
     setGroup({ ...group, [name]: e });
@@ -326,6 +338,27 @@ const CreateGroup = ({
 
     setStep((prev: number) => prev + 1);
   };
+
+  const handleAddInvite = async () => {
+    if (invite !== '') {
+      //add invite to group
+      //check if invite already exists
+      if (invites.includes(invite)) return;
+
+      const newInvites = [...invites, invite];
+      console.log('invites!', newInvites);
+      setGroup({ ...group, invites: newInvites });
+    }
+  };
+
+  const handleSubmit = () => {};
+
+  useEffect(() => {
+    //clear added invitee
+    setGroup({ ...group, invite: '', ...invites });
+  }, [invites]);
+
+  console.log('group[', group, invites);
 
   return (
     <Content
@@ -371,8 +404,7 @@ const CreateGroup = ({
           }}
         >
           {step === 0 && 'Step 1: Name The Group'}
-          {step === 1 &&
-            'Step 2: Send invites by entering emails, separated by a comma or space'}
+          {step === 1 && 'Step 2: Send invites by entering emails'}
         </Text>
         {step === 0 && (
           <Input
@@ -396,9 +428,9 @@ const CreateGroup = ({
         )}
         {step === 1 && (
           <Input
-            value={invites}
-            callback={(e) => handleTextChange({ e, name: 'invites' })}
-            label="example@gmail.com, example2@yahoo.com"
+            value={invite}
+            callback={(e) => handleTextChange({ e, name: 'invite' })}
+            label="example@gmail.com"
             isSecure={false}
             icon={
               <AntDesign
@@ -435,26 +467,116 @@ const CreateGroup = ({
           </TouchableOpacity>
         )}
         {step === 1 && (
-          <TouchableOpacity
-            style={{
-              backgroundColor: Colors[colorScheme].success,
-              padding: 10,
-              paddingLeft: 20,
-              paddingRight: 20,
-              borderRadius: 5,
-              marginTop: 10,
-              flexDirection: 'row',
-              alignItems: 'center',
-              borderWidth: 2,
-              borderColor: Colors[colorScheme].background,
-            }}
-          >
-            <Text>Submit</Text>
-            <AntDesign name="arrowright" style={{ marginLeft: 10 }} />
-          </TouchableOpacity>
+          <Row style={{ justifyContent: 'space-between' }}>
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors[colorScheme].secondary,
+                padding: 10,
+                paddingLeft: 20,
+                paddingRight: 20,
+                borderRadius: 5,
+                marginTop: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderWidth: 2,
+                borderColor: Colors[colorScheme].background,
+              }}
+              onPress={() => handleAddInvite()}
+            >
+              <Text style={{ color: Colors[colorScheme].text }}>Add</Text>
+              <AntDesign
+                name="plus"
+                style={{ marginLeft: 10 }}
+                color={Colors[colorScheme].text}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors[colorScheme].success,
+                padding: 10,
+                paddingLeft: 20,
+                paddingRight: 20,
+                borderRadius: 5,
+                marginTop: 10,
+                flexDirection: 'row',
+                alignItems: 'center',
+                borderWidth: 2,
+                borderColor: Colors[colorScheme].background,
+              }}
+              onPress={() => handleSubmit()}
+            >
+              <Text>Submit</Text>
+              <AntDesign name="arrowright" style={{ marginLeft: 10 }} />
+            </TouchableOpacity>
+          </Row>
         )}
       </InputContainer>
+      {invites.length > 0 && step === 1 && (
+        <>
+          <Row
+            style={{
+              marginTop: 20,
+              borderBottomWidth: 1,
+              borderBottomColor: Colors[colorScheme].tint + '30',
+              paddingBottom: 10,
+              marginBottom: 10,
+              justifyContent: 'space-between',
+            }}
+          >
+            <Text
+              style={{ color: Colors[colorScheme].text, fontWeight: '700' }}
+            >
+              Current Invites
+            </Text>
+            <Text style={{ color: Colors[colorScheme].text }}>
+              People: {invites.length}
+            </Text>
+          </Row>
+          <InviteGroup invites={invites} colorScheme={colorScheme} />
+        </>
+      )}
     </Content>
+  );
+};
+
+const InviteGroup = ({
+  invites,
+  colorScheme,
+}: {
+  invites: Array<string>;
+  colorScheme: InviteProps['colorScheme'];
+}) => {
+  const renderItem = ({ item }: any) => {
+    return (
+      <Row
+        style={{
+          marginTop: 5,
+          marginBottom: 5,
+          backgroundColor: Colors[colorScheme].tint + '60',
+          padding: 10,
+        }}
+      >
+        <AntDesign
+          name="user"
+          color={Colors[colorScheme].tint}
+          style={{ marginRight: 10 }}
+        />
+        <Invite>
+          <Text style={{ color: Colors[colorScheme].text }}>{item}</Text>
+        </Invite>
+      </Row>
+    );
+  };
+
+  return (
+    <InvitesContainer style={{ height: 150 }}>
+      <FlatList
+        data={invites}
+        renderItem={renderItem}
+        keyExtractor={(item) => item}
+        keyboardShouldPersistTaps="always"
+      />
+    </InvitesContainer>
   );
 };
 
