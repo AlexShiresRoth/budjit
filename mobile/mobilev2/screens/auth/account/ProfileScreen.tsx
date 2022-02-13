@@ -5,7 +5,6 @@ import Profile from '../../../components/authed/account/profile/Profile';
 import { RootStackParamList } from '../../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View } from 'react-native';
-import Alert from '../../../components/alerts/Alert';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Profile'>;
 

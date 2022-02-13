@@ -52,6 +52,8 @@ const Avatar = styled.Image`
   border-radius: 900px;
 `;
 
+const Button = styled.TouchableOpacity``;
+
 type Props = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
 const AccountHeader = ({
@@ -74,6 +76,8 @@ const AccountHeader = ({
 
   const handleNavToProfile = () => navigation.navigate('Profile');
 
+  const handleNavToInvitations = () => navigation.navigate('InvitationsScreen');
+
   return (
     <Header
       style={{
@@ -87,7 +91,7 @@ const AccountHeader = ({
             <AvatarContainer
               style={{
                 borderWidth: 2,
-                borderColor: Colors[colorScheme].success,
+                borderColor: Colors[colorScheme].danger,
               }}
               onPress={handleNavToProfile}
             >
@@ -96,11 +100,13 @@ const AccountHeader = ({
             <UserName>Hello, {myAccount?.name || 'Unknown'}</UserName>
           </HeaderColumn>
           <HeaderColumn>
-            <Feather
-              name="mail"
-              size={20}
-              style={{ color: Colors[colorScheme].text }}
-            />
+            <Button onPress={handleNavToInvitations}>
+              <Feather
+                name="mail"
+                size={20}
+                style={{ color: Colors[colorScheme].text }}
+              />
+            </Button>
           </HeaderColumn>
         </HeaderRow>
       </Content>

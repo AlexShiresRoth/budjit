@@ -11,6 +11,7 @@ import { ColorSchemeName, TouchableOpacity } from 'react-native';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import AccountScreen from '../screens/auth/account/AccountScreen';
+import InvitationsScreen from '../screens/auth/account/InvitationsScreen';
 import ProfileScreen from '../screens/auth/account/ProfileScreen';
 import SettingsScreen from '../screens/auth/settings/SettingsScreen';
 import SigninScreen from '../screens/auth/SigninScreen';
@@ -72,6 +73,15 @@ function RootNavigator() {
         })}
       />
       <Stack.Screen component={SettingsScreen} name="Settings" />
+      <Stack.Screen
+        component={InvitationsScreen}
+        name="InvitationsScreen"
+        options={({
+          navigation,
+        }: RootStackScreenProps<'InvitationsScreen'>) => ({
+          title: 'Invitations',
+        })}
+      />
       <Stack.Screen
         name="NotFound"
         component={NotFoundScreen}
