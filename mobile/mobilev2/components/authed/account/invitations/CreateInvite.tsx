@@ -358,8 +358,6 @@ const CreateGroup = ({
     setGroup({ ...group, invite: '', ...invites });
   }, [invites]);
 
-  console.log('group[', group, invites);
-
   return (
     <Content
       style={{
@@ -515,7 +513,7 @@ const CreateGroup = ({
         <>
           <Row
             style={{
-              marginTop: 20,
+              marginTop: 30,
               borderBottomWidth: 1,
               borderBottomColor: Colors[colorScheme].tint + '30',
               paddingBottom: 10,
@@ -569,7 +567,14 @@ const InviteGroup = ({
   };
 
   return (
-    <InvitesContainer style={{ height: 150 }}>
+    <InvitesContainer
+      style={{
+        height: 150,
+        backgroundColor: Colors[colorScheme].tint + '30',
+        padding: 10,
+        borderRadius: 5,
+      }}
+    >
       <FlatList
         data={invites}
         renderItem={renderItem}

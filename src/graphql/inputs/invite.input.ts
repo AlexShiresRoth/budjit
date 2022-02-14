@@ -1,6 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { ObjectId } from 'mongoose';
 import { Account } from 'src/mongo-schemas/account.model';
+import { Group } from 'src/mongo-schemas/group.model';
 
 @InputType()
 export class Invite {
@@ -16,6 +17,28 @@ export class InviteInput {
   myAccount: Account;
   @Field(() => Invite)
   invites: Invite[];
+}
+
+@InputType()
+export class SendInvitesToNewGroupInput {
+  @Field()
+  groupName: string;
+  @Field(() => [String])
+  invites: Array<string>;
+}
+
+@InputType()
+export class CreateInviteInput {
+  @Field(() => Account)
+  sender: Account;
+  @Field()
+  receiver: string;
+  @Field()
+  status: string;
+  @Field(() => Group)
+  groupRef: Group;
+  @Field(() => Date)
+  inviteDate: Date;
 }
 
 @InputType()

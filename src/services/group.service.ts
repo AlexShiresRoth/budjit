@@ -7,13 +7,18 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { InviteInput } from 'src/graphql/inputs/invite.input';
-import { AddOccasionRef, GroupInterface } from 'src/interfaces/group.interface';
+import { AddOccasionRef } from 'src/interfaces/group.interface';
 import { InviteInterface } from 'src/interfaces/invite.interface';
 import { Group, GroupDocument } from 'src/mongo-schemas/group.model';
 import { AccountsService } from './account.service';
 import { InviteService } from './invite.service';
 import * as mongoose from 'mongoose';
 import { AddMembersDTO } from 'src/graphql/dto/group.dto';
+import {
+  AddInviteToGroupInput,
+  CreateGroupInput,
+} from 'src/graphql/inputs/group.input';
+import { CreateGroupResponse } from 'src/graphql/responses/group.response';
 
 @Injectable()
 export class GroupService {
@@ -25,24 +30,38 @@ export class GroupService {
     private readonly inviteService: InviteService,
   ) {}
 
-  async create(creator: string): Promise<Group> {
+  async create(input: CreateGroupInput): Promise<CreateGroupResponse> {
     try {
+      const { creator, groupName } = input;
+
       const foundAccount = await this.accountService.findOneById(creator);
 
       if (!foundAccount) throw new Error('Could not locate account');
 
       const id = new mongoose.Types.ObjectId();
 
-      const newGroup: GroupInterface & { _id: typeof id } = {
+      const newGroup = {
         members: [foundAccount],
         invites: [],
         _id: id,
+        name: groupName,
+        creator: foundAccount,
       };
+
       const group = new this.groupModel(newGroup);
 
       await group.save();
 
-      return group;
+      await this.accountService.addGroupRefToAccount({
+        groupId: group._id,
+        userID: creator,
+      });
+
+      return {
+        message: 'Created a new group',
+        success: true,
+        Group: group,
+      };
     } catch (error) {
       console.error(error);
       return error;
@@ -79,44 +98,15 @@ export class GroupService {
     }
   }
 
-  async sendInvites(input: InviteInput): Promise<Group> {
+  async addInviteToGroup(input: AddInviteToGroupInput) {
     try {
-      const { invites, myAccount, groupId } = input;
+      const { groupId, invite } = input;
 
       const foundGroup = await this.groupModel.findById(groupId);
 
-      const today = new Date();
+      if (!foundGroup) throw new Error('Could not locate a group');
 
-      console.log('my account', myAccount);
-
-      const validInvites: InviteInterface[] = await Promise.all(
-        invites.map(async (invite: { receiver: string }) => {
-          const foundAccount = await this.accountService.findOneByEmail(
-            invite.receiver,
-          );
-
-          if (!foundAccount) throw new Error('Could not locate an account');
-
-          const invite_id = new mongoose.Types.ObjectId();
-
-          const newInvite = await this.inviteService.create({
-            sender: myAccount,
-            receiver: foundAccount,
-            inviteDate: today,
-            status: 'pending',
-            _id: invite_id,
-            groupRef: foundGroup._id,
-          });
-
-          return newInvite;
-        }),
-      );
-
-      //push the invites to the group model
-      validInvites.forEach((invite: InviteInterface) =>
-        //this isn't pushing an object
-        foundGroup.invites.push(invite),
-      );
+      foundGroup.invites.push(invite);
 
       await foundGroup.save();
 
@@ -143,8 +133,8 @@ export class GroupService {
       foundGroup.members.push(foundAccount);
       //pass to account service to add group to account document
       await this.accountService.addGroupRefToAccount({
-        groupID,
-        userID: foundAccount,
+        groupId: foundGroup,
+        userID: foundAccount._id,
       });
 
       await foundGroup.save();

@@ -7,22 +7,22 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import {
+  AddGroupRefToAccountInput,
+  AddInviteToAccountInput,
   CreateAccountInput,
   LoginInput,
 } from 'src/graphql/inputs/accounts.input';
 import * as bcrypt from 'bcryptjs';
 import { Account, AccountDocument } from 'src/mongo-schemas/account.model';
 import {
+  AddGroupToAccountResponse,
+  AddInviteToAccountResponse,
   CreateAccountResponse,
   LoginResponse,
 } from 'src/graphql/responses/account.response';
 import { AuthService } from './auth.service';
 import * as mongoose from 'mongoose';
-import {
-  AddGroupRefDTO,
-  AddInviteDTO,
-  AddOccasionDTO,
-} from 'src/graphql/dto/accounts.dto';
+import { AddOccasionDTO } from 'src/graphql/dto/accounts.dto';
 import { ProfileService } from './profile.service';
 import { MyProfile } from 'src/interfaces/profile.interface';
 
@@ -172,31 +172,53 @@ export class AccountsService {
     return myAccount;
   }
 
-  async addInvite(input: AddInviteDTO): Promise<Account> {
-    const { invite, userID } = input;
+  async addInvite(
+    input: AddInviteToAccountInput,
+  ): Promise<AddInviteToAccountResponse> {
+    const { invite, receiver } = input;
 
-    const myAccount = await this.accountModel.findById(userID);
+    const myAccount = await this.accountModel.findOne({ email: receiver });
+
+    if (!myAccount) {
+      //if no acocunt exists, send an email to the email
+
+      return {
+        message: 'Could not locate an account',
+        success: false,
+        Account: null,
+      };
+    }
 
     myAccount.invites.push(invite);
 
     await myAccount.save();
 
-    return myAccount;
+    return {
+      message: 'Added invite to account',
+      success: true,
+      Account: myAccount,
+    };
   }
 
-  async addGroupRefToAccount(input: AddGroupRefDTO): Promise<Account> {
+  async addGroupRefToAccount(
+    input: AddGroupRefToAccountInput,
+  ): Promise<AddGroupToAccountResponse> {
     try {
-      const { groupID, userID } = input;
+      const { groupId, userID } = input;
 
       const myAccount = await this.accountModel.findById(userID);
 
       if (!myAccount) throw new NotFoundException('Could not locate account');
 
-      myAccount.groups.push(groupID);
+      myAccount.groups.push(groupId);
 
       await myAccount.save();
 
-      return myAccount;
+      return {
+        message: 'Added group to account',
+        success: true,
+        account: myAccount,
+      };
     } catch (error) {
       console.error(error);
       return error;

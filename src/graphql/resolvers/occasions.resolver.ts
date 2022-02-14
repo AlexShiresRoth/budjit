@@ -15,10 +15,7 @@ import { OccasionTypeDef } from '../schemas/occasion.schema';
 
 @Resolver(() => OccasionTypeDef)
 export class OccasionResolver {
-  constructor(
-    private readonly occasionService: OccasionService,
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly occasionService: OccasionService) {}
 
   @Query(() => LoadOccasionResponse)
   @UseGuards(GraphqlAuthGuard)
@@ -33,15 +30,6 @@ export class OccasionResolver {
     @CurrentAccount() user: AuthPayload,
   ): Promise<Occasion> {
     return await this.occasionService.create(createOccasionInput, user);
-  }
-
-  @Mutation(() => OccasionTypeDef)
-  @UseGuards(GraphqlAuthGuard)
-  async sendInvites(
-    @Args('addMembersInput') addMembersInput: AddMembersInput,
-    @CurrentAccount() user: AuthPayload,
-  ) {
-    return await this.occasionService.sendInvites(addMembersInput, user);
   }
 
   @Mutation(() => OccasionTypeDef)

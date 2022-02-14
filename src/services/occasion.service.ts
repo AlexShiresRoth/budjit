@@ -44,7 +44,10 @@ export class OccasionService {
       if (!title) throw new Error('Please provide a title');
       if (!budget) throw new Error('Please set a budget');
 
-      const group = await this.groupService.create(user.account.id);
+      const group = await this.groupService.create({
+        creator: user.account.id,
+        groupName: title,
+      });
 
       const myAccount = await this.accountService.findOneById(user.account.id);
 
@@ -62,7 +65,7 @@ export class OccasionService {
         title,
         budget: assessedBudget,
         creator: user.account.id,
-        group,
+        group: group.Group,
         invites: [],
         initialBudget: assessedBudget,
       };
@@ -76,53 +79,20 @@ export class OccasionService {
         userID: myAccount._id,
       });
       //add group to my account
-      await this.accountService.addGroupRefToAccount({
-        groupID: group,
-        userID: myAccount,
-      });
-      //add the occasion reference to the created group doc
-      await this.groupService.addOccasionRef({
-        occasionRefId: obj._id,
-        groupID: group._id,
-      });
+      // await this.accountService.addGroupRefToAccount({
+      //   groupID: group,
+      //   userID: myAccount,
+      // });
+      // //add the occasion reference to the created group doc
+      // await this.groupService.addOccasionRef({
+      //   occasionRefId: obj._id,
+      //   groupID: group._id,
+      // });
 
       return obj;
     } catch (error) {
       console.error(error);
       throw new Error(error);
-    }
-  }
-
-  async sendInvites(
-    input: AddMembersInput,
-    user: AuthPayload,
-  ): Promise<Occasion> {
-    try {
-      const { occasionID, invites } = input;
-
-      if (invites.length === 0) throw new Error('Please add recipients');
-
-      const foundOccasion = await this.occasionModel.findById(occasionID);
-
-      console.log('user', user);
-
-      const myAccount = await this.accountService.findOneById(user.account.id);
-
-      const group = await this.groupService.sendInvites({
-        groupId: foundOccasion.group._id,
-        myAccount,
-        invites,
-      });
-
-      //update group object via groupservice
-      foundOccasion.group = group;
-
-      await foundOccasion.save();
-
-      return foundOccasion;
-    } catch (error) {
-      console.error(error);
-      return error;
     }
   }
 

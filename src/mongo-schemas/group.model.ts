@@ -24,7 +24,7 @@ export class Group {
       {
         invite_id: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'Account',
+          ref: 'Invite',
         },
       },
     ]),
@@ -32,6 +32,10 @@ export class Group {
   invites: Invite[];
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Occasion' })
   occasionRef: Occasion;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
+  creator: Account;
+  @Prop()
+  name: string;
 }
 
 export type GroupDocument = Group & Document;

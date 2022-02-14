@@ -11,8 +11,8 @@ export class Invite {
   inviteDate: Date;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
   sender: Account;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
-  receiver: Account;
+  @Prop()
+  receiver: string;
   @Prop({ default: 'pending' })
   status: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Group' })

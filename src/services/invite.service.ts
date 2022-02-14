@@ -6,6 +6,16 @@ import { InviteInterface } from 'src/interfaces/invite.interface';
 import { AccountsService } from './account.service';
 import { UpdateInvite } from 'src/graphql/dto/invite.dto';
 import { GroupService } from './group.service';
+import {
+  CreateInviteInput,
+  SendInvitesToNewGroupInput,
+} from 'src/graphql/inputs/invite.input';
+import {
+  CreateInviteResponse,
+  CreateInvitesResponse,
+} from 'src/graphql/responses/invite.response';
+import { AuthPayload } from 'src/interfaces/auth.interface';
+import * as mongoose from 'mongoose';
 
 @Injectable()
 export class InviteService {
@@ -18,18 +28,76 @@ export class InviteService {
     private readonly groupService: GroupService,
   ) {}
 
-  async create(input: InviteInterface): Promise<Invite> {
+  async create(input: CreateInviteInput): Promise<CreateInviteResponse> {
     try {
-      const newInvite = new this.inviteModel(input);
+      const id = new mongoose.Types.ObjectId();
 
-      await newInvite.save();
+      const newInvite = new this.inviteModel({ ...input, _id: id });
       //save the new invite on account
+      await newInvite.save();
+
+      //save the invite into account
       await this.accountService.addInvite({
         invite: newInvite,
-        userID: newInvite.receiver._id,
+        receiver: newInvite.receiver,
       });
 
-      return newInvite;
+      return {
+        message: 'Created a new invite',
+        success: true,
+        invite: newInvite,
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  //TODO add invites to account under SENT
+  async sendInvitesToNewGroup(input: {
+    input: SendInvitesToNewGroupInput;
+    user: AuthPayload;
+  }): Promise<CreateInvitesResponse> {
+    try {
+      const {
+        input: { groupName, invites },
+        user,
+      } = input;
+
+      const myAccount = await this.accountService.findOneById(user.account.id);
+
+      const currentDate = new Date();
+
+      const newGroup = await this.groupService.create({
+        groupName,
+        creator: user.account.id,
+      });
+
+      //create all new invites
+      const newInvites = await Promise.all(
+        invites.map(async (invite) => {
+          const newInvite = await this.create({
+            sender: myAccount,
+            receiver: invite,
+            status: 'pending',
+            groupRef: newGroup.Group,
+            inviteDate: currentDate,
+          });
+
+          await this.groupService.addInviteToGroup({
+            groupId: newGroup.Group._id,
+            invite: newInvite.invite,
+          });
+
+          return newInvite.invite;
+        }),
+      );
+
+      return {
+        message: 'Created new invites',
+        success: true,
+        invites: newInvites,
+      };
     } catch (error) {
       console.error(error);
       return error;

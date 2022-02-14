@@ -10,12 +10,21 @@ type AccountTypeDef {
   profile: String
 }
 
+type GroupTypeDef {
+  members: [AccountTypeDef!]!
+  invites: [InvitesTypeDef!]!
+  occasionRef: String!
+  name: String!
+  creator: AccountTypeDef!
+}
+
 type InvitesTypeDef {
-  sender: String!
+  _id: String!
+  sender: AccountTypeDef!
   receiver: String!
   status: String!
   inviteDate: Date!
-  groupRef: String!
+  groupRef: GroupTypeDef!
 }
 
 """Date custom scalar type"""
@@ -31,16 +40,16 @@ type LoginResponse {
   token: String!
 }
 
+type CreateInvitesResponse {
+  message: String!
+  success: Boolean!
+  invites: [InvitesTypeDef!]!
+}
+
 type ProfileTypeDef {
   name: String!
   phone: String!
   avatar: String!
-}
-
-type GroupTypeDef {
-  members: [AccountTypeDef!]!
-  invites: [InvitesTypeDef!]!
-  occasionRef: String!
 }
 
 type HistoryTypeDef {
@@ -74,11 +83,11 @@ type Query {
 type Mutation {
   authenticate(loginInput: LoginInput!): LoginResponse!
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
+  sendInvitesToNewGroup(sendInvitesInput: SendInvitesToNewGroupInput!): CreateInvitesResponse!
   updateInviteStatus(updateInviteStatusInput: UpdateInviteStatusInput!): InvitesTypeDef!
   create(createProfileInput: ProfileInput!): ProfileTypeDef!
   update(updateProfileInput: UpdateProfileInput!): ProfileTypeDef!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
-  sendInvites(addMembersInput: AddMembersInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
@@ -92,6 +101,11 @@ input CreateAccountInput {
   email: String!
   password: String!
   passwordConfirm: String!
+}
+
+input SendInvitesToNewGroupInput {
+  groupName: String!
+  invites: [String!]!
 }
 
 input UpdateInviteStatusInput {
@@ -113,15 +127,6 @@ input UpdateProfileInput {
 input CreateOccasionInput {
   title: String!
   budget: String!
-}
-
-input AddMembersInput {
-  invites: [Invite!]!
-  occasionID: String!
-}
-
-input Invite {
-  receiver: String!
 }
 
 input ContributeToBudgetInput {
