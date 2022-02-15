@@ -1,13 +1,23 @@
 import { gql } from '@apollo/client';
 
 export const LOAD_INVITES = gql`
-  query loadMyInvites {
+  query loadMyInvitess {
     loadMyInvites {
-      sender
-      receiver
+      sender {
+        name
+        profile
+        password
+        _id
+      }
       status
-      inviteDate
-      groupRef
+      groupRef {
+        name
+        creator {
+          name
+          _id
+        }
+      }
+      receiver
     }
   }
 `;

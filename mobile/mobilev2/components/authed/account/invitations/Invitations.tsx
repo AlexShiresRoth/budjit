@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
+import React, { Dispatch, SetStateAction, useState } from 'react';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../types';
 import Colors from '../../../../constants/Colors';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, Feather } from '@expo/vector-icons';
 import { useQuery } from '@apollo/client';
 import LoadingSpinner from '../../../reusable/LoadingSpinner';
 import { LOAD_INVITES } from '../../../../graphql/queries/invites.query';
-import CreateInvite from './CreateInvite';
+import CreateInvite from './group-invite-components/CreateInvite';
+import { TouchableOpacity } from 'react-native';
 
 const Container = styled.View`
   flex: 1;
@@ -22,6 +23,21 @@ const Heading = styled.View`
   justify-content: space-between;
   align-items: center;
   width: 100%;
+`;
+
+const ToggleHeading = styled.View`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border-bottom-width: 1px;
+`;
+
+const ToggleHeadingColumn = styled.TouchableOpacity`
+  width: 50%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
 `;
 
 const Content = styled.View``;
@@ -47,37 +63,15 @@ type Props = NativeStackScreenProps<RootStackParamList, 'InvitationsScreen'>;
 const Invitations = ({ route, navigation }: Props) => {
   const colorScheme = useColorScheme();
 
-  const [showModal, setModal] = useState<boolean>(false);
+  const [inviteType, setInviteType] = useState<'group' | 'occasion'>('group');
 
-  const { error, data, loading } = useQuery(LOAD_INVITES);
-
-  if (loading) {
-    return (
-      <Container>
-        <Text style={{ color: Colors[colorScheme].text }}>
-          Loading Invites...
-        </Text>
-        <LoadingSpinner />
-      </Container>
-    );
-  }
-
-  if (error) {
-    return (
-      <Container>
-        <Text>Hmm something went wrong...</Text>
-        <Text>{error.message}</Text>
-      </Container>
-    );
-  }
-
-  if (showModal) {
-    return (
-      <Container>
-        <CreateInvite showModal={showModal} setModalVisibility={setModal} />
-      </Container>
-    );
-  }
+  const [modal, setModal] = useState<{
+    type: 'group' | 'occasion';
+    show: boolean;
+  }>({
+    type: 'group',
+    show: false,
+  });
 
   return (
     <Container>
@@ -98,7 +92,11 @@ const Invitations = ({ route, navigation }: Props) => {
         </Text>
         <CreateButton
           style={{ borderColor: Colors[colorScheme].text, borderWidth: 2 }}
-          onPress={() => setModal(true)}
+          onPress={
+            inviteType === 'group'
+              ? () => setModal({ type: 'group', show: true })
+              : () => setModal({ type: 'occasion', show: true })
+          }
         >
           <Text
             style={{
@@ -117,49 +115,304 @@ const Invitations = ({ route, navigation }: Props) => {
           />
         </CreateButton>
       </Heading>
+      <ToggleInviteTypes
+        colorScheme={colorScheme}
+        toggleInviteType={setInviteType}
+        currentInviteType={inviteType}
+      />
       <Content>
-        {data.loadMyInvites.length > 0 ? (
-          <InviteArray />
+        {inviteType === 'group' ? (
+          <GroupInvites
+            showModal={setModal}
+            modal={modal}
+            inviteType={inviteType}
+          />
         ) : (
-          <NoInviteContainer>
-            <Text
-              style={{
-                color: Colors[colorScheme].text,
-                fontWeight: '700',
-                fontSize: 30,
-              }}
-            >
-              No Invites yet!
-            </Text>
-            <CreateButton
-              style={{
-                backgroundColor: Colors[colorScheme].tint,
-                marginTop: 10,
-                paddingTop: 10,
-                paddingBottom: 10,
-                paddingRight: 10,
-                paddingLeft: 10,
-              }}
-              onPress={() => setModal(true)}
-            >
-              <Text
-                style={{
-                  color: Colors[colorScheme].background,
-                  fontWeight: '100',
-                }}
-              >
-                Send Invites
-              </Text>
-            </CreateButton>
-          </NoInviteContainer>
+          <OccasionInvites
+            showModal={setModal}
+            modal={modal}
+            inviteType={inviteType}
+          />
         )}
       </Content>
     </Container>
   );
 };
 
-const InviteArray = () => {
-  return <Text></Text>;
+const ToggleInviteTypes = ({
+  colorScheme,
+  toggleInviteType,
+  currentInviteType,
+}: {
+  colorScheme: 'light' | 'dark';
+  toggleInviteType: Dispatch<SetStateAction<'group' | 'occasion'>>;
+  currentInviteType: 'group' | 'occasion';
+}) => {
+  return (
+    <ToggleHeading
+      style={{
+        borderBottomColor: Colors[colorScheme].tint + '90',
+      }}
+    >
+      <ToggleHeadingColumn
+        style={{
+          backgroundColor:
+            currentInviteType === 'group'
+              ? Colors[colorScheme].tint
+              : Colors[colorScheme].secondary,
+          paddingTop: 20,
+          paddingBottom: 20,
+          borderRightWidth: 0.2,
+          borderRightColor: Colors[colorScheme].tint + '90',
+          borderBottomWidth: 1,
+          borderBottomColor: Colors[colorScheme].tint,
+        }}
+        onPress={() => toggleInviteType('group')}
+      >
+        {currentInviteType === 'group' && (
+          <Feather
+            name="chevrons-right"
+            color={Colors[colorScheme].success}
+            size={20}
+          />
+        )}
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            textAlign: 'center',
+            marginLeft: 10,
+          }}
+        >
+          Groups
+        </Text>
+      </ToggleHeadingColumn>
+      <ToggleHeadingColumn
+        style={{
+          backgroundColor:
+            currentInviteType === 'occasion'
+              ? Colors[colorScheme].tint
+              : Colors[colorScheme].secondary,
+          paddingBottom: 20,
+          paddingTop: 20,
+          borderLeftWidth: 0.2,
+          borderLeftColor: Colors[colorScheme].tint + '90',
+        }}
+        onPress={() => toggleInviteType('occasion')}
+      >
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            textAlign: 'center',
+            marginRight: 10,
+          }}
+        >
+          Occasions
+        </Text>
+        {currentInviteType === 'occasion' && (
+          <Feather
+            name="chevrons-left"
+            color={Colors[colorScheme].success}
+            size={20}
+          />
+        )}
+      </ToggleHeadingColumn>
+    </ToggleHeading>
+  );
+};
+
+const GroupInvites = ({
+  modal,
+  showModal,
+  inviteType,
+}: {
+  modal: { type: 'group' | 'occasion'; show: boolean };
+  showModal: Dispatch<
+    SetStateAction<{ type: 'group' | 'occasion'; show: boolean }>
+  >;
+  inviteType: 'group' | 'occasion';
+}) => {
+  const colorScheme = useColorScheme();
+
+  const { error, data, loading, refetch } = useQuery(LOAD_INVITES);
+
+  if (loading) {
+    return (
+      <Container>
+        <Text style={{ color: Colors[colorScheme].text }}>
+          Loading Invites...
+        </Text>
+        <LoadingSpinner />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontSize: 20,
+            fontWeight: '700',
+            marginBottom: 20,
+          }}
+        >
+          Hmm something went wrong...
+        </Text>
+        <Text style={{ color: Colors[colorScheme].text + '90' }}>
+          {error.message}
+        </Text>
+        <TouchableOpacity
+          onPress={() => refetch()}
+          style={{
+            backgroundColor: Colors[colorScheme].tint,
+            padding: 10,
+            marginTop: 20,
+            borderRadius: 5,
+          }}
+        >
+          <Text style={{ color: Colors[colorScheme].text }}>Reload</Text>
+        </TouchableOpacity>
+      </Container>
+    );
+  }
+
+  if (modal.type === 'group' && modal.show) {
+    return (
+      <Container>
+        <CreateInvite showModal={modal.show} setModalVisibility={showModal} />
+      </Container>
+    );
+  }
+
+  if (data.loadMyInvites.length === 0) {
+    return (
+      <NoInviteComponent
+        setModal={showModal}
+        inviteType={inviteType}
+        colorScheme={colorScheme}
+      />
+    );
+  }
+  return <></>;
+};
+
+const OccasionInvites = ({
+  modal,
+  showModal,
+  inviteType,
+}: {
+  modal: { type: 'group' | 'occasion'; show: boolean };
+  showModal: Dispatch<
+    SetStateAction<{ type: 'group' | 'occasion'; show: boolean }>
+  >;
+  inviteType: 'group' | 'occasion';
+}) => {
+  const colorScheme = useColorScheme();
+
+  const { error, data, loading, refetch } = useQuery(LOAD_INVITES);
+
+  if (loading) {
+    return (
+      <Container>
+        <Text style={{ color: Colors[colorScheme].text }}>
+          Loading Invites...
+        </Text>
+        <LoadingSpinner />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container
+        style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontSize: 20,
+            fontWeight: '700',
+            marginBottom: 20,
+          }}
+        >
+          Hmm something went wrong...
+        </Text>
+        <Text style={{ color: Colors[colorScheme].text + '90' }}>
+          {error.message}
+        </Text>
+        <TouchableOpacity
+          onPress={() => refetch()}
+          style={{
+            backgroundColor: Colors[colorScheme].tint,
+            padding: 10,
+            marginTop: 20,
+            borderRadius: 5,
+          }}
+        >
+          <Text style={{ color: Colors[colorScheme].text }}>Reload</Text>
+        </TouchableOpacity>
+      </Container>
+    );
+  }
+
+  if (modal.show && modal.type === 'occasion') {
+    return <Container></Container>;
+  }
+  return <></>;
+};
+
+const NoInviteComponent = ({
+  colorScheme,
+  setModal,
+  inviteType,
+}: {
+  inviteType: 'group' | 'occasion';
+  colorScheme: 'light' | 'dark';
+  setModal: Dispatch<
+    SetStateAction<{ type: 'group' | 'occasion'; show: boolean }>
+  >;
+}) => {
+  return (
+    <NoInviteContainer>
+      <Text
+        style={{
+          color: Colors[colorScheme].text,
+          fontWeight: '700',
+          fontSize: 30,
+        }}
+      >
+        No Invites yet!
+      </Text>
+      <CreateButton
+        style={{
+          backgroundColor: Colors[colorScheme].tint,
+          marginTop: 10,
+          paddingTop: 10,
+          paddingBottom: 10,
+          paddingRight: 10,
+          paddingLeft: 10,
+        }}
+        onPress={() =>
+          setModal({
+            type: inviteType,
+            show: true,
+          })
+        }
+      >
+        <Text
+          style={{
+            color: Colors[colorScheme].background,
+            fontWeight: '100',
+          }}
+        >
+          Send Invites
+        </Text>
+      </CreateButton>
+    </NoInviteContainer>
+  );
 };
 
 export default Invitations;

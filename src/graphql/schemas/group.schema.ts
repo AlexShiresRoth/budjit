@@ -1,4 +1,4 @@
-import { Field, ObjectType, ID } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Account } from 'src/mongo-schemas/account.model';
 import { AccountTypeDef } from './account.schema';
 import { InvitesTypeDef } from './invite.schema';

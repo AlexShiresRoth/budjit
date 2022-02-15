@@ -1,48 +1,12 @@
-import React, { SetStateAction, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
-import {
-  FlatList,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-} from 'react-native';
-import useColorScheme from '../../../../hooks/useColorScheme';
-import Colors from '../../../../constants/Colors';
+import { FlatList, Text, TouchableOpacity } from 'react-native';
+import Colors from '../../../../../constants/Colors';
 import { AntDesign } from '@expo/vector-icons';
-import Input from '../../../reusable/Input';
-
-const ModalView = styled.View`
-  flex: 1;
-  align-items: center;
-`;
-
-const Heading = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
-  width: 100%;
-`;
-const HeadingContent = styled.View`
-  width: 90%;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const CloseBtn = styled.TouchableOpacity`
-  padding: 5px;
-  border-radius: 5px;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  border-color: #ffffff33;
-  border-width: 2px;
-`;
+import Input from '../../../../reusable/Input';
+import { useMutation } from '@apollo/client';
+import { SEND_INVITES_TO_NEW_GROUP } from '../../../../../graphql/mutations/invites.mutations';
+import LoadingSpinner from '../../../../reusable/LoadingSpinner';
 
 const Content = styled.View`
   margin-top: 40px;
@@ -57,258 +21,11 @@ const Row = styled.View`
   align-items: center;
 `;
 
-const Switch = styled.TouchableOpacity`
-  padding: 10px;
-  border-radius: 5px;
-  align-self: center;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-`;
-const IconContainer = styled.TouchableOpacity`
-  border-radius: 900px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 5px;
-`;
-
-const SearchContent = styled.View`
-  width: 90%;
-  margin-top: 50px;
-`;
-
-const InvitesContainer = styled.View``;
-
-const Invite = styled.View``;
-
-type ModalProps = {
-  showModal: boolean;
-  setModalVisibility: (val: boolean) => void;
-};
-
 type InviteProps = {
   colorScheme: 'light' | 'dark';
   showSearch: boolean;
   setModalVisibility: (val: boolean) => void;
   toggleSearch: (val: boolean) => void;
-};
-
-const CreateInvite = ({ showModal, setModalVisibility }: ModalProps) => {
-  const colorScheme = useColorScheme();
-
-  const [showSearch, toggleSearch] = useState<boolean>(false);
-
-  return (
-    <ScrollView style={{ flex: 1 }}>
-      <Modal
-        animationType="slide"
-        visible={showModal}
-        onRequestClose={() => setModalVisibility(false)}
-      >
-        <ModalView style={{ backgroundColor: Colors[colorScheme].background }}>
-          <Heading
-            style={{
-              borderBottomWidth: 1,
-              borderBottomColor: Colors[colorScheme].tint + '80',
-            }}
-          >
-            <HeadingComponent
-              toggleSearch={toggleSearch}
-              setModalVisibility={setModalVisibility}
-              colorScheme={colorScheme}
-              showSearch={showSearch}
-            />
-          </Heading>
-          {!showSearch ? (
-            <>
-              <CreateGroup colorScheme={colorScheme} />
-              <ToggleSearchButton
-                colorScheme={colorScheme}
-                toggleSearch={toggleSearch}
-              />
-            </>
-          ) : (
-            <SearchContainer colorScheme={colorScheme} />
-          )}
-        </ModalView>
-      </Modal>
-    </ScrollView>
-  );
-};
-
-const HeadingComponent = ({
-  colorScheme,
-  showSearch,
-  setModalVisibility,
-  toggleSearch,
-}: InviteProps) => {
-  return (
-    <HeadingContent>
-      {!showSearch ? (
-        <>
-          <Text
-            style={{
-              color: Colors[colorScheme].text,
-              fontWeight: '700',
-              fontSize: 16,
-            }}
-          >
-            Send Invites
-          </Text>
-          <CloseBtn
-            onPress={() => setModalVisibility(false)}
-            style={{ backgroundColor: Colors[colorScheme].tint }}
-          >
-            <Text
-              style={{
-                color: Colors[colorScheme].text,
-                marginRight: 10,
-              }}
-            >
-              Close{' '}
-            </Text>
-            <AntDesign
-              name="closecircleo"
-              size={14}
-              color={Colors[colorScheme].text}
-            />
-          </CloseBtn>
-        </>
-      ) : (
-        <Row>
-          <TouchableOpacity
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              padding: 5,
-            }}
-            onPress={() => toggleSearch(false)}
-          >
-            <AntDesign
-              name="back"
-              color={Colors[colorScheme].text}
-              size={20}
-              style={{ marginRight: 10 }}
-            />
-            <Text
-              style={{
-                color: Colors[colorScheme].text,
-                fontSize: 16,
-                fontWeight: '700',
-              }}
-            >
-              Back
-            </Text>
-          </TouchableOpacity>
-        </Row>
-      )}
-    </HeadingContent>
-  );
-};
-
-const ToggleSearchButton = ({
-  colorScheme,
-  toggleSearch,
-}: {
-  colorScheme: 'light' | 'dark';
-  toggleSearch: (val: boolean) => void;
-}) => {
-  return (
-    <InputContainer>
-      <Switch
-        style={{
-          marginTop: 40,
-          backgroundColor: Colors[colorScheme].tint + '90',
-        }}
-        onPress={() => toggleSearch(true)}
-      >
-        <IconContainer
-          style={{
-            backgroundColor: Colors[colorScheme].background,
-            borderWidth: 1,
-            borderColor: Colors[colorScheme].background,
-          }}
-        >
-          <AntDesign
-            name="search1"
-            color={Colors[colorScheme].tint}
-            size={14}
-          />
-        </IconContainer>
-        <Text
-          style={{
-            color: Colors[colorScheme].text,
-            textAlign: 'center',
-            marginLeft: 10,
-            fontSize: 14,
-          }}
-        >
-          Search For An Existing Group
-        </Text>
-      </Switch>
-    </InputContainer>
-  );
-};
-
-const SearchContainer = ({
-  colorScheme,
-}: {
-  colorScheme: 'light' | 'dark';
-}) => {
-  return (
-    <SearchContent>
-      <InputContainer style={{ marginTop: 100, width: '100%' }}>
-        <Row>
-          <AntDesign
-            name="search1"
-            color={Colors[colorScheme].text}
-            size={20}
-          />
-          <Text
-            style={{
-              color: Colors[colorScheme].text,
-              fontSize: 20,
-              fontWeight: '700',
-              marginLeft: 10,
-            }}
-          >
-            Search My Groups
-          </Text>
-        </Row>
-        <TextInput
-          style={{
-            borderBottomWidth: 1,
-            borderColor: Colors[colorScheme].tint,
-            marginTop: 10,
-            paddingTop: 5,
-            paddingBottom: 5,
-            color: Colors[colorScheme].text,
-          }}
-          placeholder="Start Typing..."
-          placeholderTextColor={Colors[colorScheme].text + '80'}
-          autoFocus={true}
-        />
-        <TouchableOpacity
-          style={{
-            backgroundColor: Colors[colorScheme].success,
-            marginTop: 20,
-            padding: 10,
-            paddingLeft: 20,
-            paddingRight: 20,
-            borderRadius: 5,
-            alignSelf: 'flex-end',
-          }}
-        >
-          <Text
-            style={{ color: Colors[colorScheme].background, fontWeight: '700' }}
-          >
-            Select
-          </Text>
-        </TouchableOpacity>
-      </InputContainer>
-    </SearchContent>
-  );
 };
 
 const CreateGroup = ({
@@ -330,6 +47,10 @@ const CreateGroup = ({
 
   const { groupName, invites, invite } = group;
 
+  const [sendInvites, { error, data, loading }] = useMutation(
+    SEND_INVITES_TO_NEW_GROUP,
+  );
+
   const handleTextChange = ({ e, name }: { e: string; name: string }) =>
     setGroup({ ...group, [name]: e });
 
@@ -346,17 +67,39 @@ const CreateGroup = ({
       if (invites.includes(invite)) return;
 
       const newInvites = [...invites, invite];
-      console.log('invites!', newInvites);
+
       setGroup({ ...group, invites: newInvites });
     }
   };
 
-  const handleSubmit = () => {};
+  const handleSubmit = async () => {
+    try {
+      const request = await sendInvites({
+        variables: {
+          sendInvitesInput: { groupName, invites },
+        },
+      });
+
+      console.log('success', request);
+    } catch (err) {
+      console.error(err);
+      return err;
+    }
+  };
 
   useEffect(() => {
     //clear added invitee
     setGroup({ ...group, invite: '', ...invites });
   }, [invites]);
+
+  if (loading) {
+    <Content>
+      <Text style={{ color: Colors[colorScheme].text }}>
+        Sending invites to new group...
+      </Text>
+      <LoadingSpinner />
+    </Content>;
+  }
 
   return (
     <Content
@@ -537,6 +280,10 @@ const CreateGroup = ({
   );
 };
 
+const InvitesContainer = styled.View``;
+
+const Invite = styled.View``;
+
 const InviteGroup = ({
   invites,
   colorScheme,
@@ -585,4 +332,4 @@ const InviteGroup = ({
   );
 };
 
-export default CreateInvite;
+export default CreateGroup;
