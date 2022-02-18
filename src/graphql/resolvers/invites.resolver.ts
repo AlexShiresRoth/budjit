@@ -8,7 +8,11 @@ import {
   SendInvitesToNewGroupInput,
   UpdateInviteStatusInput,
 } from '../inputs/invite.input';
-import { CreateInvitesResponse } from '../responses/invite.response';
+import {
+  CreateInvitesResponse,
+  LoadReceivedInvitesResponse,
+  LoadSentInvitesResponse,
+} from '../responses/invite.response';
 import { InvitesTypeDef } from '../schemas/invite.schema';
 
 @Resolver(() => InvitesTypeDef)
@@ -19,10 +23,15 @@ export class InviteResolver {
     private readonly accountsService: AccountsService,
   ) {}
 
-  @Query(() => [InvitesTypeDef])
+  @Query(() => LoadReceivedInvitesResponse)
   @UseGuards(GraphqlAuthGuard)
   async loadMyInvites(@CurrentAccount() user: AuthPayload) {
     return this.inviteService.loadMyInvites(user.account.id);
+  }
+  @Query(() => LoadSentInvitesResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async loadSentInvites(@CurrentAccount() user: AuthPayload) {
+    return this.inviteService.loadSentInvites(user.account.id);
   }
 
   @Mutation(() => CreateInvitesResponse)

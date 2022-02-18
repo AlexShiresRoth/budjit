@@ -13,6 +13,8 @@ import {
 import {
   CreateInviteResponse,
   CreateInvitesResponse,
+  LoadReceivedInvitesResponse,
+  LoadSentInvitesResponse,
 } from 'src/graphql/responses/invite.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import * as mongoose from 'mongoose';
@@ -37,9 +39,11 @@ export class InviteService {
       await newInvite.save();
 
       //save the invite into account
+      //grouping declares whether invite is sent or received
       await this.accountService.addInvite({
         invite: newInvite,
         receiver: newInvite.receiver,
+        sender: input.sender,
       });
 
       return {
@@ -54,6 +58,7 @@ export class InviteService {
   }
 
   //TODO add invites to account under SENT
+
   async sendInvitesToNewGroup(input: {
     input: SendInvitesToNewGroupInput;
     user: AuthPayload;
@@ -82,6 +87,7 @@ export class InviteService {
             status: 'pending',
             groupRef: newGroup.Group,
             inviteDate: currentDate,
+            inviteType: 'group',
           });
 
           await this.groupService.addInviteToGroup({
@@ -96,7 +102,7 @@ export class InviteService {
       return {
         message: 'Created new invites',
         success: true,
-        invites: newInvites,
+        sentInvites: newInvites,
       };
     } catch (error) {
       console.error(error);
@@ -146,14 +152,14 @@ export class InviteService {
       return error;
     }
   }
-  async loadMyInvites(userID: string): Promise<Invite[]> {
+  async loadMyInvites(userID: string): Promise<LoadReceivedInvitesResponse> {
     try {
       const myAccount = await this.accountService.findOneById(userID);
 
       if (!myAccount) throw new Error('could not load account');
 
       const foundInvites = await Promise.all(
-        myAccount.invites.map(async (invite: { _id: string }) => {
+        myAccount.receivedInvites.map(async (invite: { _id: string }) => {
           const foundInvite = await this.findOneById(invite._id);
 
           return foundInvite;
@@ -161,7 +167,34 @@ export class InviteService {
       );
 
       console.log('my invites', foundInvites);
-      return foundInvites;
+      return {
+        message: 'Located received invites',
+        success: true,
+        receivedInvites: foundInvites,
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+  async loadSentInvites(myAccountID: string): Promise<LoadSentInvitesResponse> {
+    try {
+      const myAccount = await this.accountService.findOneById(myAccountID);
+
+      if (!myAccount) throw new Error('Could not locate an account');
+
+      const foundSentInvites = await Promise.all(
+        myAccount.sentInvites.map(async (invite: { _id: string }) => {
+          const foundInvite = await this.findOneById(invite._id);
+          return foundInvite;
+        }),
+      );
+
+      return {
+        message: 'Located sent invites',
+        success: true,
+        sentInvites: foundSentInvites,
+      };
     } catch (error) {
       console.error(error);
       return error;

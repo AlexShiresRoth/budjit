@@ -39,6 +39,8 @@ export class CreateInviteInput {
   groupRef: Group;
   @Field(() => Date)
   inviteDate: Date;
+  @Field(() => String)
+  inviteType: 'group' | 'occasion';
 }
 
 @InputType()

@@ -175,13 +175,14 @@ export class AccountsService {
   async addInvite(
     input: AddInviteToAccountInput,
   ): Promise<AddInviteToAccountResponse> {
-    const { invite, receiver } = input;
+    const { invite, receiver, sender } = input;
 
-    const myAccount = await this.accountModel.findOne({ email: receiver });
+    console.log('receiver', receiver);
+
+    const myAccount = await this.accountModel.findById(sender._id);
 
     if (!myAccount) {
       //if no acocunt exists, send an email to the email
-
       return {
         message: 'Could not locate an account',
         success: false,
@@ -189,12 +190,27 @@ export class AccountsService {
       };
     }
 
-    myAccount.invites.push(invite);
+    const receiverAccount = await this.accountModel.findOne({
+      email: receiver,
+    });
 
+    if (!receiverAccount) {
+      //todo send email to receiver of invite to join app
+    }
+
+    if (receiverAccount) {
+      receiverAccount.receivedInvites.push(invite);
+
+      await receiverAccount.save();
+    }
+
+    ///////////////////////
+    myAccount.sentInvites.push(invite);
+    /////////////////////////
     await myAccount.save();
-
+    /////////////////////
     return {
-      message: 'Added invite to account',
+      message: 'Group invite saved in sent',
       success: true,
       Account: myAccount,
     };

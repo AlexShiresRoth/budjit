@@ -361,6 +361,16 @@ const OccasionInvites = ({
   if (modal.show && modal.type === 'occasion') {
     return <Container></Container>;
   }
+
+  if (data.loadMyInvites.length === 0) {
+    return (
+      <NoInviteComponent
+        setModal={showModal}
+        inviteType={inviteType}
+        colorScheme={colorScheme}
+      />
+    );
+  }
   return <></>;
 };
 

@@ -36,7 +36,13 @@ export class Account {
       { invite_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Invite' } },
     ]),
   )
-  invites: Invite[];
+  sentInvites: Invite[];
+  @Prop(
+    raw([
+      { invite_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Invite' } },
+    ]),
+  )
+  receivedInvites: Invite[];
 }
 
 export type AccountDocument = Account & Document;

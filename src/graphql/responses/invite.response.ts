@@ -18,5 +18,25 @@ export class CreateInvitesResponse {
   @Field()
   success: boolean;
   @Field(() => [InvitesTypeDef])
-  invites: Invite[];
+  sentInvites: Invite[];
+}
+
+@ObjectType()
+export class LoadSentInvitesResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => [InvitesTypeDef])
+  sentInvites: Invite[];
+}
+
+@ObjectType()
+export class LoadReceivedInvitesResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => [InvitesTypeDef])
+  receivedInvites: Invite[];
 }

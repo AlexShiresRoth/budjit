@@ -65,10 +65,10 @@ const Input = ({
         <TextInput
           value={value}
           onChangeText={callback}
-          secureTextEntry={isSecure}
+          secureTextEntry={isSecure ? true : false}
           placeholder={label}
           placeholderTextColor="#ffffff75"
-          multiline={true}
+          multiline={isSecure ? false : true}
           textAlignVertical="auto"
         />
       </Column>

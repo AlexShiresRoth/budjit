@@ -18,6 +18,25 @@ type GroupTypeDef {
   creator: AccountTypeDef!
 }
 
+type HistoryTypeDef {
+  date: Date!
+  paymentAmount: String!
+  contributor: AccountTypeDef!
+  paymentMethod: String!
+}
+
+"""Date custom scalar type"""
+scalar Date
+
+type OccasionTypeDef {
+  title: String!
+  budget: String!
+  group: GroupTypeDef
+  history: [HistoryTypeDef!]
+  creator: String!
+  initialBudget: String!
+}
+
 type InvitesTypeDef {
   _id: String!
   sender: AccountTypeDef!
@@ -25,10 +44,9 @@ type InvitesTypeDef {
   status: String!
   inviteDate: Date!
   groupRef: GroupTypeDef!
+  occasionRef: OccasionTypeDef!
+  inviteType: String!
 }
-
-"""Date custom scalar type"""
-scalar Date
 
 type CreateAccountResponse {
   Account: AccountTypeDef!
@@ -43,29 +61,25 @@ type LoginResponse {
 type CreateInvitesResponse {
   message: String!
   success: Boolean!
-  invites: [InvitesTypeDef!]!
+  sentInvites: [InvitesTypeDef!]!
+}
+
+type LoadSentInvitesResponse {
+  message: String!
+  success: Boolean!
+  sentInvites: [InvitesTypeDef!]!
+}
+
+type LoadReceivedInvitesResponse {
+  message: String!
+  success: Boolean!
+  receivedInvites: [InvitesTypeDef!]!
 }
 
 type ProfileTypeDef {
   name: String!
   phone: String!
   avatar: String!
-}
-
-type HistoryTypeDef {
-  date: Date!
-  paymentAmount: String!
-  contributor: AccountTypeDef!
-  paymentMethod: String!
-}
-
-type OccasionTypeDef {
-  title: String!
-  budget: String!
-  group: GroupTypeDef
-  history: [HistoryTypeDef!]
-  creator: String!
-  initialBudget: String!
 }
 
 type LoadOccasionResponse {
@@ -75,7 +89,8 @@ type LoadOccasionResponse {
 type Query {
   account(id: String!): AccountTypeDef!
   findMyAccount: AccountTypeDef!
-  loadMyInvites: [InvitesTypeDef!]!
+  loadMyInvites: LoadReceivedInvitesResponse!
+  loadSentInvites: LoadSentInvitesResponse!
   loadMyProfile: ProfileTypeDef!
   loadOccasion(id: String!): LoadOccasionResponse!
 }

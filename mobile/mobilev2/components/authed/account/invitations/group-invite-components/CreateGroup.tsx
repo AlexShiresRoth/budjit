@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { FlatList, Text, TouchableOpacity } from 'react-native';
 import Colors from '../../../../../constants/Colors';
-import { AntDesign } from '@expo/vector-icons';
+import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import Input from '../../../../reusable/Input';
 import { useMutation } from '@apollo/client';
 import { SEND_INVITES_TO_NEW_GROUP } from '../../../../../graphql/mutations/invites.mutations';
@@ -60,7 +60,7 @@ const CreateGroup = ({
     setStep((prev: number) => prev + 1);
   };
 
-  const handleAddInvite = async () => {
+  const handleAddInvite = () => {
     if (invite !== '') {
       //add invite to group
       //check if invite already exists
@@ -70,6 +70,16 @@ const CreateGroup = ({
 
       setGroup({ ...group, invites: newInvites });
     }
+  };
+
+  //removes invite from local state NOT db obvi
+  const handleRemoveInvite = (invite: string) => {
+    return setGroup((prevState) => ({
+      ...prevState,
+      invites: [...invites].filter(
+        (existingInvite: string) => existingInvite !== invite,
+      ),
+    }));
   };
 
   const handleSubmit = async () => {
@@ -273,7 +283,11 @@ const CreateGroup = ({
               People: {invites.length}
             </Text>
           </Row>
-          <InviteGroup invites={invites} colorScheme={colorScheme} />
+          <InviteGroup
+            invites={invites}
+            colorScheme={colorScheme}
+            handleRemoveInvite={handleRemoveInvite}
+          />
         </>
       )}
     </Content>
@@ -282,14 +296,22 @@ const CreateGroup = ({
 
 const InvitesContainer = styled.View``;
 
-const Invite = styled.View``;
+const Invite = styled.View`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+`;
 
 const InviteGroup = ({
   invites,
   colorScheme,
+  handleRemoveInvite,
 }: {
   invites: Array<string>;
   colorScheme: InviteProps['colorScheme'];
+  handleRemoveInvite: (val: string) => void;
 }) => {
   const renderItem = ({ item }: any) => {
     return (
@@ -308,6 +330,24 @@ const InviteGroup = ({
         />
         <Invite>
           <Text style={{ color: Colors[colorScheme].text }}>{item}</Text>
+          <TouchableOpacity
+            style={{
+              backgroundColor: Colors[colorScheme].danger,
+              height: 25,
+              width: 25,
+              borderRadius: 900,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+            onPress={() => handleRemoveInvite(item)}
+          >
+            <FontAwesome
+              name="trash-o"
+              color={Colors[colorScheme].text}
+              size={16}
+            />
+          </TouchableOpacity>
         </Invite>
       </Row>
     );
@@ -316,7 +356,7 @@ const InviteGroup = ({
   return (
     <InvitesContainer
       style={{
-        height: 150,
+        maxHeight: 150,
         backgroundColor: Colors[colorScheme].tint + '30',
         padding: 10,
         borderRadius: 5,

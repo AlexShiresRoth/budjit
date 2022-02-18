@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Account } from './account.model';
 import { Group } from './group.model';
+import { Occasion } from './occasion.model';
 
 @Schema()
 export class Invite {
@@ -17,6 +18,10 @@ export class Invite {
   status: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Group' })
   groupRef: Group;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Occasion' })
+  occasionRef: Occasion;
+  @Prop()
+  inviteType: 'group' | 'occasion';
 }
 
 export type InviteDocument = Invite & Document;

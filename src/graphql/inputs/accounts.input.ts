@@ -1,6 +1,9 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Account } from 'src/mongo-schemas/account.model';
 import { Group } from 'src/mongo-schemas/group.model';
 import { Invite } from 'src/mongo-schemas/Invite.model';
+import { AccountTypeDef } from '../schemas/account.schema';
+import { InvitesTypeDef } from '../schemas/invite.schema';
 
 @InputType()
 export class CreateAccountInput {
@@ -32,8 +35,10 @@ export class AddGroupRefToAccountInput {
 
 @InputType()
 export class AddInviteToAccountInput {
-  @Field(() => Invite)
+  @Field(() => InvitesTypeDef)
   invite: Invite;
   @Field()
   receiver: string;
+  @Field(() => AccountTypeDef)
+  sender: Account;
 }

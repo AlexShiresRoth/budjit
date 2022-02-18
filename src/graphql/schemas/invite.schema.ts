@@ -1,8 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Account } from 'src/mongo-schemas/account.model';
 import { Group } from 'src/mongo-schemas/group.model';
+import { Occasion } from 'src/mongo-schemas/occasion.model';
 import { AccountTypeDef } from './account.schema';
 import { GroupTypeDef } from './group.schema';
+import { OccasionTypeDef } from './occasion.schema';
 
 @ObjectType()
 export class InvitesTypeDef {
@@ -18,4 +20,8 @@ export class InvitesTypeDef {
   inviteDate: Date;
   @Field(() => GroupTypeDef)
   groupRef: Group;
+  @Field(() => OccasionTypeDef)
+  occasionRef: Occasion;
+  @Field(() => String)
+  inviteType: 'group' | 'occasion';
 }
