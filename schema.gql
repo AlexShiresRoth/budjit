@@ -11,11 +11,11 @@ type AccountTypeDef {
 }
 
 type GroupTypeDef {
-  members: [AccountTypeDef!]!
-  invites: [InvitesTypeDef!]!
+  members: [String!]!
+  invites: [String!]!
   occasionRef: String!
   name: String!
-  creator: AccountTypeDef!
+  creator: String!
 }
 
 type HistoryTypeDef {
@@ -39,11 +39,11 @@ type OccasionTypeDef {
 
 type InvitesTypeDef {
   _id: String!
-  sender: AccountTypeDef!
+  sender: String!
   receiver: String!
   status: String!
   inviteDate: Date!
-  groupRef: GroupTypeDef!
+  groupRef: String!
   occasionRef: OccasionTypeDef!
   inviteType: String!
 }
@@ -76,6 +76,18 @@ type LoadReceivedInvitesResponse {
   receivedInvites: [InvitesTypeDef!]!
 }
 
+type LoadGroupInvitesResponse {
+  message: String!
+  success: Boolean!
+  groupInvites: [InvitesTypeDef!]!
+}
+
+type LoadGroupResponse {
+  message: String!
+  success: Boolean!
+  Group: GroupTypeDef!
+}
+
 type ProfileTypeDef {
   name: String!
   phone: String!
@@ -91,8 +103,15 @@ type Query {
   findMyAccount: AccountTypeDef!
   loadMyInvites: LoadReceivedInvitesResponse!
   loadSentInvites: LoadSentInvitesResponse!
+  loadSentGroupInvites: LoadGroupInvitesResponse!
+  loadReceivedGroupInvites: LoadGroupInvitesResponse!
   loadMyProfile: ProfileTypeDef!
+  loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
+}
+
+input LoadGroupInput {
+  groupID: String!
 }
 
 type Mutation {

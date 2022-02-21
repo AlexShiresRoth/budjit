@@ -11,3 +11,13 @@ export class CreateGroupResponse {
   @Field(() => Group)
   Group: Group;
 }
+
+@ObjectType()
+export class LoadGroupResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => GroupTypeDef)
+  Group: Group;
+}

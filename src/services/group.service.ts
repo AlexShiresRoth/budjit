@@ -18,7 +18,10 @@ import {
   AddInviteToGroupInput,
   CreateGroupInput,
 } from 'src/graphql/inputs/group.input';
-import { CreateGroupResponse } from 'src/graphql/responses/group.response';
+import {
+  CreateGroupResponse,
+  LoadGroupResponse,
+} from 'src/graphql/responses/group.response';
 
 @Injectable()
 export class GroupService {
@@ -70,14 +73,26 @@ export class GroupService {
 
   async findOneById(
     id: string | mongoose.Schema.Types.ObjectId | Group,
-  ): Promise<Group> {
+  ): Promise<LoadGroupResponse> {
     try {
       const foundGroup = await this.groupModel.findById(id);
 
-      return foundGroup;
+      console.log('found group', foundGroup);
+
+      if (!foundGroup) throw new Error('Could not locate a group');
+
+      return {
+        message: 'Found a group',
+        success: true,
+        Group: foundGroup,
+      };
     } catch (error) {
       console.error(error);
-      return error;
+      return {
+        message: error,
+        success: false,
+        Group: null,
+      };
     }
   }
 

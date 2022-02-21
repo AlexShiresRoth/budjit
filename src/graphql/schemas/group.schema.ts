@@ -1,18 +1,18 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Account } from 'src/mongo-schemas/account.model';
+import { Invite } from 'src/mongo-schemas/Invite.model';
 import { AccountTypeDef } from './account.schema';
-import { InvitesTypeDef } from './invite.schema';
 
 @ObjectType()
 export class GroupTypeDef {
-  @Field(() => [AccountTypeDef])
+  @Field(() => [String])
   members: AccountTypeDef[];
-  @Field(() => [InvitesTypeDef])
-  invites: InvitesTypeDef[];
+  @Field(() => [String])
+  invites: Invite[];
   @Field(() => String)
   occasionRef: string;
   @Field()
   name: string;
-  @Field(() => AccountTypeDef)
+  @Field(() => String)
   creator: Account;
 }

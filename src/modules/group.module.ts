@@ -1,5 +1,6 @@
-import { forwardRef, Inject, Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { GroupResolver } from 'src/graphql/resolvers/groups.resolver';
 import { Group, GroupSchema } from 'src/mongo-schemas/group.model';
 import { GroupService } from 'src/services/group.service';
 import { AccountsModule } from './account.module';
@@ -13,7 +14,7 @@ import { InviteModule } from './invite.module';
     forwardRef(() => InviteModule),
     MongooseModule.forFeature([{ name: Group.name, schema: GroupSchema }]),
   ],
-  providers: [GroupService, Group],
+  providers: [GroupService, Group, GroupResolver],
   exports: [GroupService],
 })
 export class GroupModule {}

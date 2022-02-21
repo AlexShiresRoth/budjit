@@ -1,5 +1,5 @@
 const tintColorLight = '#2f95dc';
-const tintColorDark = '#8980F5';
+const tintColorDark = '#1B9AAA';
 
 export type ColorScheme = { colorScheme: 'light' | 'dark' };
 
@@ -42,7 +42,7 @@ export default {
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
     secondary: tintColorDark + '55',
-    danger: '#FF8484',
-    success: '#4DCCBD',
+    danger: '#F0544F',
+    success: '#1B9AAA',
   },
 };

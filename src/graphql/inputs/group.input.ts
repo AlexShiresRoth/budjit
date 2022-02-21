@@ -16,3 +16,9 @@ export class CreateGroupInput {
   @Field()
   creator: string;
 }
+
+@InputType()
+export class LoadGroupInput {
+  @Field()
+  groupID: string;
+}

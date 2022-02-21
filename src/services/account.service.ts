@@ -182,7 +182,7 @@ export class AccountsService {
     const myAccount = await this.accountModel.findById(sender._id);
 
     if (!myAccount) {
-      //if no acocunt exists, send an email to the email
+      //if no accaunt exists, send an email to the email
       return {
         message: 'Could not locate an account',
         success: false,
@@ -202,6 +202,7 @@ export class AccountsService {
       receiverAccount.receivedInvites.push(invite);
 
       await receiverAccount.save();
+      console.log('found an account for the receiver');
     }
 
     ///////////////////////

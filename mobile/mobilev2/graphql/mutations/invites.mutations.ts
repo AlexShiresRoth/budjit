@@ -5,22 +5,10 @@ export const SEND_INVITES_TO_NEW_GROUP = gql`
     sendInvitesToNewGroup(sendInvitesInput: $sendInvitesInput) {
       message
       success
-      invites {
-        sender {
-          name
-        }
-        receiver
-        groupRef {
-          name
-          creator {
-            name
-          }
-          invites {
-            inviteDate
-            receiver
-          }
-        }
+      sentInvites {
         inviteDate
+        inviteType
+        receiver
       }
     }
   }

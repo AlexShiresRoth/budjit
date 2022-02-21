@@ -10,6 +10,7 @@ import {
 } from '../inputs/invite.input';
 import {
   CreateInvitesResponse,
+  LoadGroupInvitesResponse,
   LoadReceivedInvitesResponse,
   LoadSentInvitesResponse,
 } from '../responses/invite.response';
@@ -32,6 +33,18 @@ export class InviteResolver {
   @UseGuards(GraphqlAuthGuard)
   async loadSentInvites(@CurrentAccount() user: AuthPayload) {
     return this.inviteService.loadSentInvites(user.account.id);
+  }
+
+  @Query(() => LoadGroupInvitesResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async loadSentGroupInvites(@CurrentAccount() user: AuthPayload) {
+    return this.inviteService.loadSentGroupInvites(user.account.id);
+  }
+
+  @Query(() => LoadGroupInvitesResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async loadReceivedGroupInvites(@CurrentAccount() user: AuthPayload) {
+    return this.inviteService.loadReceivedGroupInvites(user.account.id);
   }
 
   @Mutation(() => CreateInvitesResponse)

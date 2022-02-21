@@ -47,12 +47,10 @@ const linking: LinkingOptions<RootStackParamList> = {
           ProfileScreen: 'Profile',
         },
       },
-      InvitationsScreen: {
-        screens: {
-          Invitations: 'Invitations',
-        },
-      },
-
+      InvitationsScreen: 'InvitationsScreen',
+      GroupInvites: 'GroupInvites',
+      OccasionInvitationsScreen: 'OccasionInviationsScreen',
+      OccasionInvites: 'OccasionInvites',
       Modal: 'modal',
       NotFound: '*',
     },

@@ -13,6 +13,8 @@ import {
 import {
   CreateInviteResponse,
   CreateInvitesResponse,
+  FindInviteResponse,
+  LoadGroupInvitesResponse,
   LoadReceivedInvitesResponse,
   LoadSentInvitesResponse,
 } from 'src/graphql/responses/invite.response';
@@ -56,8 +58,6 @@ export class InviteService {
       return error;
     }
   }
-
-  //TODO add invites to account under SENT
 
   async sendInvitesToNewGroup(input: {
     input: SendInvitesToNewGroupInput;
@@ -109,16 +109,30 @@ export class InviteService {
       return error;
     }
   }
-  async findOneById(id: string): Promise<Invite> {
+  async findOneById(id: string): Promise<FindInviteResponse> {
     try {
       const foundInvite = await this.inviteModel.findById(id);
 
-      if (!foundInvite) throw new Error('Could not locate invite');
+      if (!foundInvite) {
+        return {
+          message: 'Could not locate an invite',
+          success: false,
+          invite: null,
+        };
+      }
 
-      return foundInvite;
+      return {
+        message: 'Found an invite',
+        success: true,
+        invite: foundInvite,
+      };
     } catch (error) {
       console.error(error);
-      return error;
+      return {
+        message: error,
+        success: false,
+        invite: null,
+      };
     }
   }
   async updateStatus(input: UpdateInvite): Promise<Invite> {
@@ -161,8 +175,8 @@ export class InviteService {
       const foundInvites = await Promise.all(
         myAccount.receivedInvites.map(async (invite: { _id: string }) => {
           const foundInvite = await this.findOneById(invite._id);
-
-          return foundInvite;
+          if (!foundInvite.success) return;
+          return foundInvite.invite;
         }),
       );
 
@@ -186,7 +200,7 @@ export class InviteService {
       const foundSentInvites = await Promise.all(
         myAccount.sentInvites.map(async (invite: { _id: string }) => {
           const foundInvite = await this.findOneById(invite._id);
-          return foundInvite;
+          return foundInvite.invite;
         }),
       );
 
@@ -194,6 +208,64 @@ export class InviteService {
         message: 'Located sent invites',
         success: true,
         sentInvites: foundSentInvites,
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async loadSentGroupInvites(
+    myAccountID: string,
+  ): Promise<LoadGroupInvitesResponse> {
+    try {
+      const myAccount = await this.accountService.findOneById(myAccountID);
+
+      if (!myAccount) throw new Error('Could not locate an account');
+
+      const foundSentGroupInvites = await Promise.all(
+        [...myAccount.sentInvites].map(async (invite: { _id: string }) => {
+          const foundInvite = await this.findOneById(invite._id);
+          if (!foundInvite.invite) return;
+          return foundInvite.invite.inviteType === 'group'
+            ? foundInvite.invite
+            : null;
+        }),
+      );
+
+      return {
+        message: 'Located group invites',
+        success: true,
+        groupInvites: foundSentGroupInvites.filter(Boolean),
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async loadReceivedGroupInvites(
+    myAccountID: string,
+  ): Promise<LoadGroupInvitesResponse> {
+    try {
+      const myAccount = await this.accountService.findOneById(myAccountID);
+
+      if (!myAccount) throw new Error('Could not locate an account');
+
+      const foundSentGroupInvites = await Promise.all(
+        [...myAccount.receivedInvites].map(async (invite: { _id: string }) => {
+          const foundInvite = await this.findOneById(invite._id);
+          if (!foundInvite.invite) return;
+          return foundInvite.invite.inviteType === 'group'
+            ? foundInvite.invite
+            : null;
+        }),
+      );
+
+      return {
+        message: 'Located group invites',
+        success: true,
+        groupInvites: foundSentGroupInvites.filter(Boolean),
       };
     } catch (error) {
       console.error(error);

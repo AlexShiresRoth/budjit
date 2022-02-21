@@ -40,3 +40,23 @@ export class LoadReceivedInvitesResponse {
   @Field(() => [InvitesTypeDef])
   receivedInvites: Invite[];
 }
+
+@ObjectType()
+export class LoadGroupInvitesResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => [InvitesTypeDef])
+  groupInvites: Invite[];
+}
+
+@ObjectType()
+export class FindInviteResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => InvitesTypeDef)
+  invite: Invite;
+}

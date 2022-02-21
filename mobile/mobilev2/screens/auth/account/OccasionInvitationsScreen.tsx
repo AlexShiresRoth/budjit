@@ -8,13 +8,12 @@ import Colors from '../../../constants/Colors';
 import useColorScheme from '../../../hooks/useColorScheme';
 import { RootStackParamList } from '../../../types';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'InvitationsScreen'>;
+type Props = NativeStackScreenProps<
+  RootStackParamList,
+  'OccasionInvitationsScreen'
+>;
 
-const Main = styled.View`
-  flex: 1;
-`;
-
-const InvitationsScreen = ({ route, navigation }: Props) => {
+const OccasionInvitationsScreen = ({ route, navigation }: Props) => {
   const colorScheme = useColorScheme();
 
   const fadeAnim = useRef(new Animated.Value(0)).current; // Initial value for opacity: 0
@@ -33,7 +32,7 @@ const InvitationsScreen = ({ route, navigation }: Props) => {
   }, [fadeAnim]);
 
   useEffect(() => {
-    navigation.setParams({ name: 'group' });
+    navigation.setParams({ name: 'occasion' });
   }, []);
 
   return (
@@ -51,4 +50,4 @@ const InvitationsScreen = ({ route, navigation }: Props) => {
   );
 };
 
-export default InvitationsScreen;
+export default OccasionInvitationsScreen;

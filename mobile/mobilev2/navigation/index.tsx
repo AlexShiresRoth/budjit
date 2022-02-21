@@ -1,5 +1,9 @@
 import { FontAwesome } from '@expo/vector-icons';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  BottomTabBarProps,
+  BottomTabScreenProps,
+  createBottomTabNavigator,
+} from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
   DefaultTheme,
@@ -12,6 +16,7 @@ import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import AccountScreen from '../screens/auth/account/AccountScreen';
 import InvitationsScreen from '../screens/auth/account/InvitationsScreen';
+import OccasionInvitationsScreen from '../screens/auth/account/OccasionInvitationsScreen';
 import ProfileScreen from '../screens/auth/account/ProfileScreen';
 import SettingsScreen from '../screens/auth/settings/SettingsScreen';
 import SigninScreen from '../screens/auth/SigninScreen';
@@ -74,12 +79,23 @@ function RootNavigator() {
       />
       <Stack.Screen component={SettingsScreen} name="Settings" />
       <Stack.Screen
-        component={InvitationsScreen}
+        component={InviteTabNavigator}
         name="InvitationsScreen"
         options={({
           navigation,
         }: RootStackScreenProps<'InvitationsScreen'>) => ({
-          title: 'Invitations',
+          title: 'Group Invites',
+          headerShown: false,
+        })}
+      />
+      <Stack.Screen
+        component={OccasionInviteTabNavigator}
+        name="OccasionInvitationsScreen"
+        options={({
+          navigation,
+        }: RootStackScreenProps<'OccasionInvitationsScreen'>) => ({
+          title: 'Occasion Invites',
+          headerShown: false,
         })}
       />
       <Stack.Screen
@@ -142,6 +158,93 @@ function BottomTabNavigator() {
         }}
       />
     </BottomTab.Navigator>
+  );
+}
+
+const InviteBottomTab = createBottomTabNavigator<RootTabParamList>();
+
+function InviteTabNavigator() {
+  const colorScheme = useColorScheme();
+  return (
+    <InviteBottomTab.Navigator
+      initialRouteName="GroupInvites"
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme].tint,
+          height: 70,
+          paddingBottom: 10,
+        },
+        tabBarActiveTintColor: Colors[colorScheme].text,
+        tabBarInactiveTintColor: Colors[colorScheme].background + '77',
+      }}
+    >
+      <InviteBottomTab.Screen
+        component={InvitationsScreen}
+        name="SentGroupInvites"
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Sent',
+          tabBarIcon: ({ color }) => <TabBarIcon name="send" color={color} />,
+        }}
+      />
+      <InviteBottomTab.Screen
+        component={InvitationsScreen}
+        name="ReceivedGroupInvites"
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Received',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="mail-reply" color={color} />
+          ),
+        }}
+      />
+    </InviteBottomTab.Navigator>
+  );
+}
+
+const OccasionNavigator = createBottomTabNavigator<RootTabParamList>();
+
+function OccasionInviteTabNavigator() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <OccasionNavigator.Navigator
+      initialRouteName="OccasionInvites"
+      screenOptions={{
+        tabBarStyle: {
+          backgroundColor: Colors[colorScheme].tint,
+          height: 70,
+          paddingBottom: 10,
+        },
+        tabBarActiveTintColor: Colors[colorScheme].text,
+        tabBarInactiveTintColor: Colors[colorScheme].background + '77',
+        headerShown: false,
+      }}
+      defaultScreenOptions={{ title: 'OccasionInvites' }}
+    >
+      <OccasionNavigator.Screen
+        component={OccasionInvitationsScreen}
+        name="SentOccasionInvites"
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Sent',
+          tabBarIcon: ({ color }) => <TabBarIcon name="send" color={color} />,
+          title: 'OccasionInvites',
+        }}
+      />
+      <OccasionNavigator.Screen
+        component={OccasionInvitationsScreen}
+        name="ReceivedOccasionInvites"
+        options={{
+          headerShown: false,
+          tabBarLabel: 'Received',
+          tabBarIcon: ({ color }) => (
+            <TabBarIcon name="mail-reply" color={color} />
+          ),
+          title: 'OccasionInvites',
+        }}
+      />
+    </OccasionNavigator.Navigator>
   );
 }
 

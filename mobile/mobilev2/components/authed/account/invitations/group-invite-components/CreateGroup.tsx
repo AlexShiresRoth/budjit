@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import { FlatList, Text, TouchableOpacity } from 'react-native';
 import Colors from '../../../../../constants/Colors';
@@ -24,14 +24,18 @@ const Row = styled.View`
 type InviteProps = {
   colorScheme: 'light' | 'dark';
   showSearch: boolean;
-  setModalVisibility: (val: boolean) => void;
+  setModalVisibility: Dispatch<
+    SetStateAction<{ type: 'group' | 'occasion'; show: boolean }>
+  >;
   toggleSearch: (val: boolean) => void;
 };
 
 const CreateGroup = ({
   colorScheme,
+  setModalVisibility,
 }: {
   colorScheme: InviteProps['colorScheme'];
+  setModalVisibility: InviteProps['setModalVisibility'];
 }) => {
   const [step, setStep] = useState<number>(0);
 
@@ -50,7 +54,6 @@ const CreateGroup = ({
   const [sendInvites, { error, data, loading }] = useMutation(
     SEND_INVITES_TO_NEW_GROUP,
   );
-
   const handleTextChange = ({ e, name }: { e: string; name: string }) =>
     setGroup({ ...group, [name]: e });
 
@@ -90,7 +93,10 @@ const CreateGroup = ({
         },
       });
 
-      console.log('success', request);
+      if (request.data.sendInvitesToNewGroup.success) {
+        console.log('success', request);
+        setModalVisibility({ type: 'group', show: false });
+      }
     } catch (err) {
       console.error(err);
       return err;
@@ -102,13 +108,73 @@ const CreateGroup = ({
     setGroup({ ...group, invite: '', ...invites });
   }, [invites]);
 
+  console.log('data', data, 'error', error, 'loading', loading);
+
+  if (error) {
+    return (
+      <Content
+        style={{
+          flex: 0.8,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'column',
+        }}
+      >
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontWeight: '700',
+            fontSize: 20,
+          }}
+        >
+          Hmm something went wrong creating invites...
+          {error.message}
+        </Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: Colors[colorScheme].danger,
+            padding: 10,
+            paddingLeft: 20,
+            paddingRight: 20,
+            borderRadius: 5,
+            marginTop: 10,
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderWidth: 2,
+            borderColor: Colors[colorScheme].background,
+          }}
+          onPress={() => setStep(0)}
+        >
+          <Text
+            style={{
+              color: Colors[colorScheme].text,
+              fontSize: 20,
+            }}
+          >
+            Retry
+          </Text>
+        </TouchableOpacity>
+      </Content>
+    );
+  }
+
   if (loading) {
-    <Content>
-      <Text style={{ color: Colors[colorScheme].text }}>
-        Sending invites to new group...
-      </Text>
-      <LoadingSpinner />
-    </Content>;
+    return (
+      <Content
+        style={{ flex: 0.7, justifyContent: 'center', alignItems: 'center' }}
+      >
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontWeight: '700',
+            fontSize: 20,
+          }}
+        >
+          Sending invites to new group...
+        </Text>
+        <LoadingSpinner />
+      </Content>
+    );
   }
 
   return (

@@ -59,7 +59,10 @@ const CreateInvite = ({ showModal, setModalVisibility }: ModalProps) => {
           </Heading>
           {!showSearch ? (
             <>
-              <CreateGroup colorScheme={colorScheme} />
+              <CreateGroup
+                colorScheme={colorScheme}
+                setModalVisibility={setModalVisibility}
+              />
               <ToggleSearchButton
                 colorScheme={colorScheme}
                 toggleSearch={toggleSearch}
