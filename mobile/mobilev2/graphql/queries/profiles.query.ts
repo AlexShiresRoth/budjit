@@ -8,3 +8,17 @@ export const LOAD_MY_PROFILE = gql`
     }
   }
 `;
+
+export const FIND_PROFILE_BY_EMAIL = gql`
+  query findProfileByEmail($input: FindProfileByEmailInput!) {
+    findProfileByEmail(input: $input) {
+      message
+      success
+      defaultAvatar
+      profile {
+        name
+        avatar
+      }
+    }
+  }
+`;

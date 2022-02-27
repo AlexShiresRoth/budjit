@@ -13,6 +13,8 @@ import {
 import { AccountsService } from './account.service';
 import * as cloudinary from 'cloudinary';
 import { v4 } from 'uuid';
+import { FindProfileByEmailInput } from 'src/graphql/inputs/profile.input';
+import { FindProfileByEmailResponse } from 'src/graphql/responses/profile.response';
 
 @Injectable()
 export class ProfileService {
@@ -40,6 +42,52 @@ export class ProfileService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+  async findOneByEmail(
+    input: FindProfileByEmailInput,
+  ): Promise<FindProfileByEmailResponse> {
+    try {
+      const { email } = input;
+
+      console.log('email!', email);
+
+      const foundAccount = await this.accountService.findOneByEmail(email);
+
+      if (!foundAccount) {
+        return {
+          message: 'Could not locate an account with that email',
+          success: false,
+          profile: null,
+          defaultAvatar:
+            'https://res.cloudinary.com/snackmanproductions/image/upload/v1642559391/budjit-app/jeffgoldie.jpg',
+        };
+      }
+
+      const foundProfile = await this.profileModel.findById(
+        foundAccount.profile,
+      );
+
+      console.log('profile', foundProfile);
+
+      if (!foundProfile) throw new Error('Could not locate a profile');
+
+      return {
+        message: 'Located account',
+        success: true,
+        profile: foundProfile,
+        defaultAvatar:
+          'https://res.cloudinary.com/snackmanproductions/image/upload/v1642559391/budjit-app/jeffgoldie.jpg',
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error,
+        success: false,
+        profile: null,
+        defaultAvatar:
+          'https://res.cloudinary.com/snackmanproductions/image/upload/v1642559391/budjit-app/jeffgoldie.jpg',
+      };
     }
   }
   async upploadImage(imgUrl: string): Promise<string> {

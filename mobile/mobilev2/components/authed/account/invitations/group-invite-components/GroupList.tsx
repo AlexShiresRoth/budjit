@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { FlatList, Text } from 'react-native';
+import { FlatList, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useAppSelector } from '../../../../../hooks/reduxHooks';
 import { selectAccount } from '../../../../../redux/reducers/accounts.reducers';
@@ -10,7 +10,8 @@ import { View } from '../../../../Themed';
 import { useQuery } from '@apollo/client';
 import { LOAD_GROUP } from '../../../../../graphql/queries/group.query';
 import LoadingSpinner from '../../../../reusable/LoadingSpinner';
-import { FontAwesome } from '@expo/vector-icons';
+import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import { FIND_PROFILE_BY_EMAIL } from '../../../../../graphql/queries/profiles.query';
 
 const InviteRow = styled.View`
   flex-direction: row;
@@ -19,13 +20,18 @@ const InviteRow = styled.View`
   width: 100%;
   padding: 20px;
 `;
-const Group = styled.Text`
+
+const Text = styled.Text`
   font-size: 16px;
+`;
+const UserColumn = styled.View``;
+const Avatar = styled.Image`
+  height: 30px;
+  width: 30px;
+  border-radius: 900px;
+  display: flex;
 `;
 
-const Receiver = styled.Text`
-  font-size: 16px;
-`;
 export type InviteType = {
   receiver: string;
   sender: string;
@@ -51,7 +57,7 @@ const GroupList = ({ invites }: { invites: InviteType[] }) => {
           width: '100%',
           backgroundColor: Colors[colorScheme].tint + '30',
         }}
-      ></View>
+      />
     );
   };
 
@@ -78,6 +84,7 @@ const RenderItem = ({
     variables: { input: { groupID: item.groupRef } },
   });
 
+  console.log('item', item);
   if (loading) {
     return (
       <InviteRow>
@@ -90,25 +97,66 @@ const RenderItem = ({
   }
   return (
     <InviteRow>
-      <Group
+      <User item={item} colorScheme={colorScheme} />
+      <Text
         style={{
-          color: Colors[colorScheme].text,
+          color: `hsla(${Math.random() * 360}, 100%, 70%, 1)`,
+          fontWeight: '700',
         }}
       >
-        <FontAwesome name="group" color={Colors[colorScheme].text} size={16} />
-        {` `}
-        Group-
         {data.loadGroup.Group.name}
-      </Group>
-      <Group
+      </Text>
+
+      <Text style={{ color: Colors[colorScheme].text }}>{item.status}</Text>
+      <TouchableOpacity
         style={{
-          color: Colors[colorScheme].text,
+          backgroundColor: Colors[colorScheme].danger,
+          padding: 10,
+          borderRadius: 5,
         }}
-      ></Group>
-      <Receiver style={{ color: Colors[colorScheme].text }}>
-        {item.receiver}
-      </Receiver>
+      >
+        <FontAwesome5 name="trash" size={12} color={Colors[colorScheme].text} />
+      </TouchableOpacity>
     </InviteRow>
+  );
+};
+
+const User = ({
+  item,
+  colorScheme,
+}: {
+  item: InviteType;
+  colorScheme: 'light' | 'dark';
+}) => {
+  const {
+    error,
+    data: query,
+    loading,
+  } = useQuery(FIND_PROFILE_BY_EMAIL, {
+    variables: { input: { email: item.receiver } },
+  });
+
+  console.log('data boyz', query);
+
+  if (error) {
+    return <Text>{error.message}</Text>;
+  }
+  if (loading) {
+    return <Text>Loading...</Text>;
+  }
+  return (
+    <UserColumn>
+      {query.findProfileByEmail.success ? (
+        <Avatar
+          source={{
+            uri: query.findProfileByEmail.profile.avatar,
+          }}
+        />
+      ) : (
+        <Avatar source={{ uri: query.findProfileByEmail.defaultAvatar }} />
+      )}
+      <Text style={{ color: Colors[colorScheme].text }}>{item.receiver}</Text>
+    </UserColumn>
   );
 };
 

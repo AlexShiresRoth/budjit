@@ -192,7 +192,7 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
       })}
       {!loading ? (
         <PrimaryButton
-          colorArr={[`#8980F5`, `#53D8FB`]}
+          colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
           buttonText="Sign In"
           callBack={handleAuthentication}
           callBackArgs={undefined}

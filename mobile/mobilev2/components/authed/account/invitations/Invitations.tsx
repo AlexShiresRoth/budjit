@@ -117,7 +117,7 @@ const Invitations = ({ route, navigation }: Props) => {
         navigation={navigation}
         route={route}
       />
-      <Content>
+      <Content style={{ paddingBottom: 120 }}>
         <GroupInvites
           showModal={setModal}
           modal={modal}

@@ -94,6 +94,13 @@ type ProfileTypeDef {
   avatar: String!
 }
 
+type FindProfileByEmailResponse {
+  message: String!
+  success: Boolean!
+  profile: ProfileTypeDef
+  defaultAvatar: String!
+}
+
 type LoadOccasionResponse {
   Occasion: OccasionTypeDef!
 }
@@ -106,8 +113,13 @@ type Query {
   loadSentGroupInvites: LoadGroupInvitesResponse!
   loadReceivedGroupInvites: LoadGroupInvitesResponse!
   loadMyProfile: ProfileTypeDef!
+  findProfileByEmail(input: FindProfileByEmailInput!): FindProfileByEmailResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
+}
+
+input FindProfileByEmailInput {
+  email: String!
 }
 
 input LoadGroupInput {

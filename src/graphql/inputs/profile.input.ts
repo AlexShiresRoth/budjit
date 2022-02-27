@@ -17,3 +17,9 @@ export class UpdateProfileInput {
   @Field()
   profileId: string;
 }
+
+@InputType()
+export class FindProfileByEmailInput {
+  @Field()
+  email: string;
+}
