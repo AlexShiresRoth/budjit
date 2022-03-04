@@ -9,7 +9,6 @@ const ToggleHeading = styled.View`
   display: flex;
   flex-direction: row;
   width: 100%;
-  border-bottom-width: 1px;
 `;
 
 const ToggleHeadingColumn = styled.TouchableOpacity`
@@ -42,11 +41,7 @@ const ToggleInviteTypes = ({
     navigation.navigate(route);
   };
   return (
-    <ToggleHeading
-      style={{
-        borderBottomColor: Colors[colorScheme].tint + '90',
-      }}
-    >
+    <ToggleHeading>
       <ToggleHeadingColumn
         style={{
           backgroundColor: Colors[colorScheme].tint + '90',
@@ -54,11 +49,6 @@ const ToggleInviteTypes = ({
           paddingBottom: 20,
           borderRightWidth: 0.2,
           borderRightColor: Colors[colorScheme].tint + '90',
-          borderBottomWidth: 1,
-          borderBottomColor:
-            route.params && route.params.name === 'group'
-              ? Colors[colorScheme].success
-              : Colors[colorScheme].tint,
         }}
         onPress={() => handleNavigationToggle('InvitationsScreen')}
       >
@@ -86,11 +76,6 @@ const ToggleInviteTypes = ({
           paddingTop: 20,
           borderLeftWidth: 0.2,
           borderLeftColor: Colors[colorScheme].tint + '90',
-          borderBottomColor:
-            route.params && route.params.name === 'occasion'
-              ? Colors[colorScheme].success
-              : Colors[colorScheme].tint,
-          borderBottomWidth: 1,
         }}
         onPress={() => handleNavigationToggle('OccasionInvitationsScreen')}
       >

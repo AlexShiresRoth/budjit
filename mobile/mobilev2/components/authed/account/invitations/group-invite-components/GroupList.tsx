@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { FlatList, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import { useAppSelector } from '../../../../../hooks/reduxHooks';
@@ -10,7 +9,7 @@ import { View } from '../../../../Themed';
 import { useQuery } from '@apollo/client';
 import { LOAD_GROUP } from '../../../../../graphql/queries/group.query';
 import LoadingSpinner from '../../../../reusable/LoadingSpinner';
-import { FontAwesome, FontAwesome5 } from '@expo/vector-icons';
+import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { FIND_PROFILE_BY_EMAIL } from '../../../../../graphql/queries/profiles.query';
 
 const InviteRow = styled.View`
@@ -24,7 +23,15 @@ const InviteRow = styled.View`
 const Text = styled.Text`
   font-size: 16px;
 `;
-const UserColumn = styled.View``;
+const Column = styled.View`
+  flex: 1;
+  align-items: center;
+`;
+
+const UserColumn = styled.View`
+  flex: 1;
+  align-items: flex-start;
+`;
 const Avatar = styled.Image`
   height: 30px;
   width: 30px;
@@ -98,25 +105,48 @@ const RenderItem = ({
   return (
     <InviteRow>
       <User item={item} colorScheme={colorScheme} />
-      <Text
-        style={{
-          color: `hsla(${Math.random() * 360}, 100%, 70%, 1)`,
-          fontWeight: '700',
-        }}
-      >
-        {data.loadGroup.Group.name}
-      </Text>
+      <Column>
+        <Text
+          style={{
+            color: `hsla(${Math.random() * 360}, 100%, 70%, 1)`,
+            fontWeight: '700',
+          }}
+        >
+          {data.loadGroup.Group.name}
+        </Text>
+      </Column>
 
-      <Text style={{ color: Colors[colorScheme].text }}>{item.status}</Text>
-      <TouchableOpacity
-        style={{
-          backgroundColor: Colors[colorScheme].danger,
-          padding: 10,
-          borderRadius: 5,
-        }}
-      >
-        <FontAwesome5 name="trash" size={12} color={Colors[colorScheme].text} />
-      </TouchableOpacity>
+      <Column>
+        {item.status === 'pending' ? (
+          <MaterialIcons
+            name="pending"
+            color={Colors[colorScheme].text + '80'}
+            size={20}
+          />
+        ) : (
+          <AntDesign
+            name="checkcircle"
+            color={Colors[colorScheme].success}
+            size={20}
+          />
+        )}
+      </Column>
+      <Column>
+        <TouchableOpacity
+          style={{
+            borderColor: Colors[colorScheme].danger,
+            padding: 10,
+            borderRadius: 5,
+            borderWidth: 1,
+          }}
+        >
+          <FontAwesome5
+            name="trash"
+            size={12}
+            color={Colors[colorScheme].text}
+          />
+        </TouchableOpacity>
+      </Column>
     </InviteRow>
   );
 };
@@ -155,7 +185,15 @@ const User = ({
       ) : (
         <Avatar source={{ uri: query.findProfileByEmail.defaultAvatar }} />
       )}
-      <Text style={{ color: Colors[colorScheme].text }}>{item.receiver}</Text>
+      <Text
+        style={{
+          color: Colors[colorScheme].text,
+          fontSize: 10,
+          fontWeight: '700',
+        }}
+      >
+        {item.receiver}
+      </Text>
     </UserColumn>
   );
 };

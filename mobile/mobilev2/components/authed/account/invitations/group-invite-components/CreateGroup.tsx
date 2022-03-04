@@ -12,7 +12,7 @@ const Content = styled.View`
   margin-top: 40px;
   justify-content: center;
   width: 90%;
-  padding: 30px 0;
+  padding: 60px 0;
 `;
 const InputContainer = styled.View``;
 

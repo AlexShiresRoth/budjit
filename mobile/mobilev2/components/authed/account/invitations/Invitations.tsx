@@ -1,18 +1,14 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../../hooks/useColorScheme';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { RootStackParamList, RootTabParamList } from '../../../../types';
+import { RootTabParamList } from '../../../../types';
 import Colors from '../../../../constants/Colors';
-import { AntDesign, Feather } from '@expo/vector-icons';
-import { useQuery } from '@apollo/client';
-import LoadingSpinner from '../../../reusable/LoadingSpinner';
-import { LOAD_OCCASION_INVITES } from '../../../../graphql/queries/invites.query';
+import { AntDesign } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import GroupInvites from './group-invite-components/GroupInvites';
-import NoInviteComponent from './NoInviteComponent';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import ToggleInviteTypes from './ToggleInviteType';
+import DetailBar from './group-invite-components/DetailBar';
 
 const Container = styled.View`
   flex: 1;
@@ -117,7 +113,8 @@ const Invitations = ({ route, navigation }: Props) => {
         navigation={navigation}
         route={route}
       />
-      <Content style={{ paddingBottom: 120 }}>
+      <DetailBar />
+      <Content style={{ paddingBottom: 165 }}>
         <GroupInvites
           showModal={setModal}
           modal={modal}

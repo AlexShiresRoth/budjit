@@ -186,7 +186,7 @@ const Form = ({
       })}
       {!loading ? (
         <PrimaryButton
-          colorArr={[`#8980F5`, `#53D8FB`]}
+          colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
           buttonText="Submit"
           callBack={submitAccount}
           callBackArgs={{ variables: { createAccountInput: { ...inputs } } }}
