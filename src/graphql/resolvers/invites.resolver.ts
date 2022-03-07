@@ -5,11 +5,13 @@ import { AuthPayload } from 'src/interfaces/auth.interface';
 import { AccountsService } from 'src/services/account.service';
 import { InviteService } from 'src/services/invite.service';
 import {
+  DeleteSentInviteInput,
   SendInvitesToNewGroupInput,
   UpdateInviteStatusInput,
 } from '../inputs/invite.input';
 import {
   CreateInvitesResponse,
+  DeleteSentInviteResponse,
   LoadGroupInvitesResponse,
   LoadReceivedInvitesResponse,
   LoadSentInvitesResponse,
@@ -68,5 +70,19 @@ export class InviteResolver {
   ) {
     const data = { ...updateInviteStatusInput, userID: user.account.id };
     return this.inviteService.updateStatus({ ...data });
+  }
+
+  @Mutation(() => DeleteSentInviteResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async deleteSentInvite(
+    @Args('input')
+    input: DeleteSentInviteInput,
+    @CurrentAccount() user: AuthPayload,
+  ) {
+    const inputObj = {
+      ...input,
+      user,
+    };
+    return this.inviteService.deleteSentInvite(inputObj);
   }
 }

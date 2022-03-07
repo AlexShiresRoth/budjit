@@ -18,6 +18,7 @@ import {
   AddGroupToAccountResponse,
   AddInviteToAccountResponse,
   CreateAccountResponse,
+  DeleteInviteFromAccountResponse,
   LoginResponse,
 } from 'src/graphql/responses/account.response';
 import { AuthService } from './auth.service';
@@ -25,6 +26,7 @@ import * as mongoose from 'mongoose';
 import { AddOccasionDTO } from 'src/graphql/dto/accounts.dto';
 import { ProfileService } from './profile.service';
 import { MyProfile } from 'src/interfaces/profile.interface';
+import { Invite } from 'src/mongo-schemas/Invite.model';
 
 @Injectable()
 export class AccountsService {
@@ -258,6 +260,73 @@ export class AccountsService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+
+  async deleteInviteFromAccount(input: {
+    invite_id: string;
+    receiver_email: string | null;
+    id: string | null;
+  }): Promise<DeleteInviteFromAccountResponse> {
+    try {
+      const { receiver_email, invite_id, id } = input;
+
+      //find receiver
+      const foundAccount = receiver_email
+        ? await this.accountModel.findOne({
+            email: receiver_email,
+          })
+        : await this.accountModel.findById(id);
+
+      if (!foundAccount) {
+        return {
+          message: 'Could not locate an account',
+          success: false,
+          Account: null,
+        };
+      }
+
+      //if account is of the receiver
+      if (receiver_email) {
+        const filteredInvites = foundAccount.receivedInvites.filter(
+          (invite: Invite) => {
+            return invite_id !== invite._id.toString();
+          },
+        );
+
+        console.log('filtered invites', filteredInvites);
+        foundAccount.receivedInvites = filteredInvites;
+
+        await foundAccount.save();
+      }
+
+      //if account is from creator
+      if (id) {
+        const filteredInvites = foundAccount.sentInvites.filter(
+          (invite: Invite) => {
+            return invite_id !== invite._id.toString();
+          },
+        );
+
+        console.log('filtered invites', filteredInvites);
+
+        foundAccount.sentInvites = filteredInvites;
+
+        await foundAccount.save();
+      }
+
+      return {
+        message: 'Removed invite from account',
+        success: true,
+        Account: foundAccount,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: 'Could not remove invite from account',
+        success: false,
+        Account: null,
+      };
     }
   }
 }

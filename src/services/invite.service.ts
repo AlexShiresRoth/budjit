@@ -8,11 +8,13 @@ import { UpdateInvite } from 'src/graphql/dto/invite.dto';
 import { GroupService } from './group.service';
 import {
   CreateInviteInput,
+  DeleteSentInviteInput,
   SendInvitesToNewGroupInput,
 } from 'src/graphql/inputs/invite.input';
 import {
   CreateInviteResponse,
   CreateInvitesResponse,
+  DeleteSentInviteResponse,
   FindInviteResponse,
   LoadGroupInvitesResponse,
   LoadReceivedInvitesResponse,
@@ -270,6 +272,55 @@ export class InviteService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+
+  async deleteSentInvite(
+    input: DeleteSentInviteInput & { user: AuthPayload },
+  ): Promise<DeleteSentInviteResponse> {
+    try {
+      const { invite_id, receiver_email, user } = input;
+
+      const foundInvite = await this.inviteModel.findById(invite_id);
+
+      if (!foundInvite) throw new Error('Could not locate an invite');
+
+      //delete invite objecct
+      if (foundInvite) {
+        //can only delete invite if the creator requests it
+        if (user.account.id === foundInvite.sender._id.toString()) {
+          await foundInvite.remove();
+        }
+      }
+
+      //delete the invite in the receivers invite array
+      await this.accountService.deleteInviteFromAccount({
+        invite_id,
+        receiver_email,
+        id: null,
+      });
+
+      //delete from sent account
+      await this.accountService.deleteInviteFromAccount({
+        invite_id,
+        receiver_email: null,
+        id: user.account.id,
+      });
+
+      const myAccount = await this.accountService.findOneById(user.account.id);
+
+      return {
+        message: 'Invite removed',
+        success: true,
+        invites: myAccount.sentInvites.map((invite: Invite) => invite._id),
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error,
+        success: false,
+        invites: [],
+      };
     }
   }
 }

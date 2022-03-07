@@ -82,6 +82,12 @@ type LoadGroupInvitesResponse {
   groupInvites: [InvitesTypeDef!]!
 }
 
+type DeleteSentInviteResponse {
+  message: String!
+  success: Boolean!
+  invites: [String!]!
+}
+
 type LoadGroupResponse {
   message: String!
   success: Boolean!
@@ -131,6 +137,7 @@ type Mutation {
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
   sendInvitesToNewGroup(sendInvitesInput: SendInvitesToNewGroupInput!): CreateInvitesResponse!
   updateInviteStatus(updateInviteStatusInput: UpdateInviteStatusInput!): InvitesTypeDef!
+  deleteSentInvite(input: DeleteSentInviteInput!): DeleteSentInviteResponse!
   create(createProfileInput: ProfileInput!): ProfileTypeDef!
   update(updateProfileInput: UpdateProfileInput!): ProfileTypeDef!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
@@ -157,6 +164,11 @@ input SendInvitesToNewGroupInput {
 input UpdateInviteStatusInput {
   status: String!
   id: String!
+}
+
+input DeleteSentInviteInput {
+  invite_id: String!
+  receiver_email: String!
 }
 
 input ProfileInput {

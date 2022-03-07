@@ -97,8 +97,8 @@ const Spending = ({ colorScheme }: ColorScheme) => {
         <DateToggler
           style={{
             backgroundColor: Colors[colorScheme].tint + '80',
-            borderWidth: 2,
-            borderColor: Colors[colorScheme].danger + '20',
+            borderWidth: 3,
+            borderColor: Colors[colorScheme].tint + '50',
           }}
           onPress={() => setModalVisibility(true)}
         >

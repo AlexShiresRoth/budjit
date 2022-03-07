@@ -50,3 +50,11 @@ export class UpdateInviteStatusInput {
   @Field(() => String)
   id: string;
 }
+
+@InputType()
+export class DeleteSentInviteInput {
+  @Field()
+  invite_id: string;
+  @Field()
+  receiver_email: string;
+}

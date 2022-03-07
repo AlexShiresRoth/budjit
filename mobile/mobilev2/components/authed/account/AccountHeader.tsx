@@ -52,7 +52,9 @@ const Avatar = styled.Image`
   border-radius: 900px;
 `;
 
-const Button = styled.TouchableOpacity``;
+const Button = styled.TouchableOpacity`
+  padding: 5px 8px;
+`;
 
 type Props = NativeStackScreenProps<RootStackParamList, 'Account'>;
 
@@ -64,7 +66,7 @@ const AccountHeader = ({
 }: AccountTypes & ColorScheme & Props) => {
   const { myAccount } = accounts;
 
-  const { error, data, loading } = useQuery(LOAD_MY_PROFILE);
+  const { error, data } = useQuery(LOAD_MY_PROFILE);
 
   const [avatar, setAvatar] = useState<string>('');
 
@@ -100,7 +102,14 @@ const AccountHeader = ({
             <UserName>Hello, {myAccount?.name || 'Unknown'}</UserName>
           </HeaderColumn>
           <HeaderColumn>
-            <Button onPress={handleNavToInvitations}>
+            <Button
+              onPress={handleNavToInvitations}
+              style={{
+                backgroundColor: Colors[colorScheme].background + '20',
+
+                borderRadius: 5,
+              }}
+            >
               <Feather
                 name="mail"
                 size={20}

@@ -13,3 +13,13 @@ export const SEND_INVITES_TO_NEW_GROUP = gql`
     }
   }
 `;
+
+export const DELETE_SENT_INVITE = gql`
+  mutation deleteInvite($input: DeleteSentInviteInput!) {
+    deleteSentInvite(input: $input) {
+      message
+      success
+      invites
+    }
+  }
+`;

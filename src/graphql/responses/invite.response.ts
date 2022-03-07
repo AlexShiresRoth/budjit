@@ -60,3 +60,13 @@ export class FindInviteResponse {
   @Field(() => InvitesTypeDef)
   invite: Invite;
 }
+
+@ObjectType()
+export class DeleteSentInviteResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => [String])
+  invites: string[];
+}

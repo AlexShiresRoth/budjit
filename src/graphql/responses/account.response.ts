@@ -44,3 +44,13 @@ export class AddInviteToAccountResponse {
   @Field(() => Account)
   Account: Account;
 }
+
+@ObjectType()
+export class DeleteInviteFromAccountResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => Account)
+  Account: Account;
+}

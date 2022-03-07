@@ -123,7 +123,12 @@ const SentInvites = ({
     );
   }
 
-  return <GroupList invites={data.loadSentGroupInvites.groupInvites} />;
+  return (
+    <GroupList
+      invites={data.loadSentGroupInvites.groupInvites}
+      refetch={refetch}
+    />
+  );
 };
 
 export default GroupInvites;

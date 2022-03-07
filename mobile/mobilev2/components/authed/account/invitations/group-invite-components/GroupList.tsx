@@ -6,11 +6,12 @@ import { selectAccount } from '../../../../../redux/reducers/accounts.reducers';
 import useColorScheme from '../../../../../hooks/useColorScheme';
 import Colors from '../../../../../constants/Colors';
 import { View } from '../../../../Themed';
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { LOAD_GROUP } from '../../../../../graphql/queries/group.query';
 import LoadingSpinner from '../../../../reusable/LoadingSpinner';
 import { AntDesign, FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { FIND_PROFILE_BY_EMAIL } from '../../../../../graphql/queries/profiles.query';
+import { DELETE_SENT_INVITE } from '../../../../../graphql/mutations/invites.mutations';
 
 const InviteRow = styled.View`
   flex-direction: row;
@@ -47,13 +48,21 @@ export type InviteType = {
   _id: string;
 };
 
-const GroupList = ({ invites }: { invites: InviteType[] }) => {
+const GroupList = ({
+  invites,
+  refetch,
+}: {
+  invites: InviteType[];
+  refetch: any;
+}) => {
   const colorScheme = useColorScheme();
 
   const accountState = useAppSelector(selectAccount);
 
   const renderItem = ({ item }: { item: InviteType }) => {
-    return <RenderItem item={item} colorScheme={colorScheme} />;
+    return (
+      <RenderItem item={item} colorScheme={colorScheme} refetch={refetch} />
+    );
   };
 
   const Separator = ({ highlighted }: any) => {
@@ -76,6 +85,7 @@ const GroupList = ({ invites }: { invites: InviteType[] }) => {
       ItemSeparatorComponent={({ highlighted }) => (
         <Separator highlighted={highlighted} />
       )}
+      extraData={refetch}
     />
   );
 };
@@ -83,15 +93,54 @@ const GroupList = ({ invites }: { invites: InviteType[] }) => {
 const RenderItem = ({
   item,
   colorScheme,
+  refetch,
 }: {
   item: InviteType;
   colorScheme: 'light' | 'dark';
+  refetch: any;
 }) => {
   const { error, data, loading } = useQuery(LOAD_GROUP, {
     variables: { input: { groupID: item.groupRef } },
   });
 
+  const [
+    deleteInvite,
+    { error: deleteError, loading: deleteLoading, data: deleteData },
+  ] = useMutation(DELETE_SENT_INVITE);
+
   console.log('item', item);
+
+  const handleDeleteInvite = async (): Promise<{
+    message: string | unknown;
+    success: boolean;
+  }> => {
+    try {
+      const deleteRequest = await deleteInvite({
+        variables: {
+          input: {
+            invite_id: item._id,
+            receiver_email: item.receiver,
+          },
+        },
+      });
+
+      console.log('delete request', deleteRequest);
+      //reload list
+      await refetch();
+
+      return {
+        message: 'Invite Deleted',
+        success: true,
+      };
+    } catch (error) {
+      console.error('delete request', error);
+      return {
+        message: error,
+        success: false,
+      };
+    }
+  };
+
   if (loading) {
     return (
       <InviteRow>
@@ -102,6 +151,18 @@ const RenderItem = ({
       </InviteRow>
     );
   }
+
+  if (deleteLoading) {
+    return (
+      <InviteRow>
+        <Text style={{ color: Colors[colorScheme].text }}>
+          Loading Invite...
+        </Text>
+        <LoadingSpinner />
+      </InviteRow>
+    );
+  }
+
   return (
     <InviteRow>
       <User item={item} colorScheme={colorScheme} />
@@ -139,6 +200,7 @@ const RenderItem = ({
             borderRadius: 5,
             borderWidth: 1,
           }}
+          onPress={() => handleDeleteInvite()}
         >
           <FontAwesome5
             name="trash"
