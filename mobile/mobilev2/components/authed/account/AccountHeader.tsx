@@ -15,7 +15,6 @@ const Header = styled.View`
   width: 100%;
   justify-content: center;
   align-items: center;
-  margin-bottom: 40px;
   padding-bottom: 10px;
   padding-top: 10px;
 `;
@@ -83,7 +82,6 @@ const AccountHeader = ({
   return (
     <Header
       style={{
-        borderBottomWidth: 1.5,
         backgroundColor: Colors[colorScheme].tint,
       }}
     >
@@ -93,7 +91,7 @@ const AccountHeader = ({
             <AvatarContainer
               style={{
                 borderWidth: 2,
-                borderColor: Colors[colorScheme].danger,
+                borderColor: Colors[colorScheme].text + '50',
               }}
               onPress={handleNavToProfile}
             >
@@ -106,7 +104,6 @@ const AccountHeader = ({
               onPress={handleNavToInvitations}
               style={{
                 backgroundColor: Colors[colorScheme].background + '20',
-
                 borderRadius: 5,
               }}
             >

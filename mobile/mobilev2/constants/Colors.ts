@@ -12,6 +12,8 @@ export interface ColorsInterface {
     tabIconSelected: string;
     danger: string;
     success: string;
+    cardBg: string;
+    accountBg: string;
   };
   dark: {
     text: string;
@@ -21,6 +23,8 @@ export interface ColorsInterface {
     tabIconSelected: string;
     danger: string;
     success: string;
+    cardBg: string;
+    accountBg: string;
   };
 }
 
@@ -34,6 +38,8 @@ export default {
     secondary: tintColorDark + '55',
     danger: '#A30015',
     success: '#35FF69',
+    accountBg: '#ddd',
+    cardBg: '#fefefe',
   },
   dark: {
     text: '#fefefe',
@@ -44,5 +50,7 @@ export default {
     secondary: tintColorDark + '55',
     danger: '#F0544F',
     success: '#1B9AAA',
+    accountBg: '#0a363c90',
+    cardBg: '#115e68',
   },
 };

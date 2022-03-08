@@ -6,6 +6,7 @@ import Colors from '../../../constants/Colors';
 import AuthRoute from '../../../navigation/authed/AuthRoute';
 import { RootStackParamList, RootStackScreenProps } from '../../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { ScrollView } from 'react-native';
 
 const Container = styled.View`
   width: 100%;
@@ -18,14 +19,15 @@ const AccountScreen = ({ route, navigation }: Props) => {
 
   return (
     <AuthRoute>
-      <Container
+      <ScrollView
         style={{
           flex: 1,
           backgroundColor: Colors[colorScheme].background,
+          padding: 0,
         }}
       >
         <AccountSpace route={route} navigation={navigation} />
-      </Container>
+      </ScrollView>
     </AuthRoute>
   );
 };

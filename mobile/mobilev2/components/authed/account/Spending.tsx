@@ -1,11 +1,14 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { Dispatch, SetStateAction, useState } from 'react';
 import { Modal, Pressable } from 'react-native';
-import { AnyAction } from 'redux';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/Colors';
+
 const Content = styled.View`
+  margin-top: -70px;
   width: 90%;
+  padding: 40px 20px;
+  border-radius: 10px;
 `;
 const Row = styled.View`
   display: flex;
@@ -13,6 +16,7 @@ const Row = styled.View`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  margin-top: -20px;
 `;
 const SubHeading = styled.Text`
   font-size: 16px;
@@ -47,24 +51,30 @@ const ModalContainer = styled.View`
 
 const ModalView = styled.View`
   align-items: center;
-  justify-content: center;
-  background: #fff;
-  elevation: 3;
+  justify-content: flex-end;
+  elevation: 10;
   border-radius: 10px;
   flex: 1;
 `;
-
+const ModalInner = styled.View`
+  elevation: 10;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  flex: 0.6;
+  width: 100%;
+`;
 const ModalRow = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  margin: 10px 0;
-  padding: 35px 0;
+  margin: 5px 0;
+  padding: 10px 0;
 `;
 const ModalText = styled.Text`
   font-weight: 700;
-  font-size: 20px;
+  font-size: 15px;
 `;
 
 type SpendingProps = Array<{ type: string; spending: number }>;
@@ -81,7 +91,15 @@ const Spending = ({ colorScheme }: ColorScheme) => {
   ];
 
   return (
-    <Content style={{ marginBottom: 30 }}>
+    <Content
+      style={{
+        marginBottom: 30,
+        borderWidth: 1.5,
+        borderColor: Colors[colorScheme].tint + '40',
+        backgroundColor: Colors[colorScheme].background,
+        elevation: 10,
+      }}
+    >
       <TimeModal
         setModalVisibility={setModalVisibility}
         setFilter={setFilter}
@@ -138,63 +156,69 @@ const TimeModal = ({
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisibility(false)}
+        style={{ height: '50%' }}
       >
-        <ModalView style={{ backgroundColor: Colors[colorScheme].background }}>
-          <MaterialIcons
-            name="date-range"
-            size={35}
-            color={Colors[colorScheme].text + 'cc'}
-          />
-          <ModalText
-            style={{
-              color: Colors[colorScheme].text,
-              fontWeight: '100',
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-          >
-            Set Filter By...
-          </ModalText>
-          {data.map((timeFrame: SpendingProps[0], key: number) => {
-            return (
-              <ModalRow
-                key={key}
-                style={{ backgroundColor: Colors[colorScheme].tint + '44' }}
-                onPress={() => setFilter(key)}
-              >
-                {spendingFilter === key ? (
-                  <ModalText
-                    style={{
-                      color: Colors[colorScheme].text + '60',
-                      fontWeight: '100',
-                      fontSize: 16,
-                    }}
-                  >
-                    Current
-                  </ModalText>
-                ) : null}
-                <ModalText style={{ color: Colors[colorScheme].text }}>
-                  {timeFrame.type}ly spending
-                </ModalText>
-              </ModalRow>
-            );
-          })}
-          <Pressable
-            onPress={() => setModalVisibility(false)}
-            style={{
-              backgroundColor: Colors[colorScheme].danger,
-              padding: 10,
-              borderRadius: 5,
-              elevation: 3,
-              marginTop: 20,
-              width: 100,
-              alignItems: 'center',
-            }}
-          >
-            <ModalText style={{ color: Colors[colorScheme].text }}>
-              Close
+        <ModalView>
+          <ModalInner style={{ backgroundColor: '#0a363c', elevation: 10 }}>
+            <MaterialIcons
+              name="date-range"
+              size={25}
+              color={Colors[colorScheme].text + 'cc'}
+            />
+            <ModalText
+              style={{
+                color: Colors[colorScheme].text,
+                fontWeight: '100',
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+            >
+              Set Filter By...
             </ModalText>
-          </Pressable>
+            {data.map((timeFrame: SpendingProps[0], key: number) => {
+              return (
+                <ModalRow
+                  key={key}
+                  style={{
+                    borderColor: Colors[colorScheme].tint + '44',
+                    borderBottomWidth: 1,
+                  }}
+                  onPress={() => setFilter(key)}
+                >
+                  {spendingFilter === key ? (
+                    <ModalText
+                      style={{
+                        color: Colors[colorScheme].text + '60',
+                        fontWeight: '100',
+                        fontSize: 16,
+                      }}
+                    >
+                      Current
+                    </ModalText>
+                  ) : null}
+                  <ModalText style={{ color: Colors[colorScheme].text }}>
+                    {timeFrame.type}ly spending
+                  </ModalText>
+                </ModalRow>
+              );
+            })}
+            <Pressable
+              onPress={() => setModalVisibility(false)}
+              style={{
+                backgroundColor: Colors[colorScheme].danger,
+                padding: 10,
+                borderRadius: 5,
+                elevation: 3,
+                marginTop: 20,
+                width: 100,
+                alignItems: 'center',
+              }}
+            >
+              <ModalText style={{ color: Colors[colorScheme].text }}>
+                Close
+              </ModalText>
+            </Pressable>
+          </ModalInner>
         </ModalView>
       </Modal>
     </ModalContainer>

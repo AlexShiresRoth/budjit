@@ -9,6 +9,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types';
 import Spending from './Spending';
 import AccountHeader from './AccountHeader';
+import BankingConnects from './BankingConnects';
 
 const Container = styled.View`
   align-items: center;
@@ -18,7 +19,8 @@ const Content = styled.View`
 `;
 const Box = styled.TouchableOpacity`
   padding: 20px;
-  border-radius: 10px;
+  border-radius: 5px;
+  margin-top: -60px;
 `;
 const SubHeading = styled.Text`
   font-size: 16px;
@@ -64,17 +66,33 @@ const AccountSpace = ({ route, navigation }: Props) => {
         navigation={navigation}
         route={route}
       />
+      <BankingConnects />
       <Spending colorScheme={colorScheme} />
-      <Content>
-        <Box style={{ backgroundColor: Colors[colorScheme].secondary }}>
-          <SubHeading style={{ color: Colors[colorScheme].tint }}>
-            Create Budgets For Certain Occasions
-          </SubHeading>
-          <Text>View My Occasions</Text>
-          <SubText>Occasions Created:</SubText>
-          <Total>{OCCASION_TOTAL}</Total>
-        </Box>
-      </Content>
+      <Container
+        style={{
+          width: '100%',
+          paddingTop: 30,
+          paddingBottom: 30,
+          height: '100%',
+        }}
+      >
+        <Content>
+          <Box>
+            <SubHeading style={{ color: Colors[colorScheme].text + '80' }}>
+              Create Budgets For Certain Occasions
+            </SubHeading>
+            <Text style={{ color: Colors[colorScheme].text }}>
+              View My Occasions
+            </Text>
+            <SubText style={{ color: Colors[colorScheme].tint }}>
+              Occasions Created:
+            </SubText>
+            <Total style={{ color: Colors[colorScheme].tint }}>
+              {OCCASION_TOTAL}
+            </Total>
+          </Box>
+        </Content>
+      </Container>
     </Container>
   );
 };
