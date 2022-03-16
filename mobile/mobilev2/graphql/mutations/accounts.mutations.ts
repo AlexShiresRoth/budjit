@@ -25,3 +25,31 @@ export const SIGN_UP = gql`
     }
   }
 `;
+
+export const RETRIEVE_PLAID_TOKEN = gql`
+  mutation retrievePlaidToken {
+    retrievePlaidAuthToken {
+      message
+      success
+      token
+    }
+  }
+`;
+
+export const EXCHANGE_PLAID_PUBLIC_TOKEN = gql`
+  mutation exchangePublicToken($input: ExchangePublicTokenInput!) {
+    publicTokenExchange(input: $input) {
+      message
+      success
+      account {
+        name
+        email
+        plaidAccounts {
+          _id
+          accessToken
+          accountName
+        }
+      }
+    }
+  }
+`;

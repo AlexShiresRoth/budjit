@@ -6,6 +6,16 @@ import { Group } from './group.model';
 import { Invite } from './Invite.model';
 
 @Schema()
+class PlaidAccount {
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  _id: string;
+  @Prop()
+  accessToken: string;
+  @Prop()
+  accountName: string;
+}
+
+@Schema()
 export class Account {
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
@@ -19,6 +29,8 @@ export class Account {
   password: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' })
   profile: string;
+  @Prop()
+  plaidAccounts: PlaidAccount[];
   @Prop(
     raw([{ group_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Group' } }]),
   )

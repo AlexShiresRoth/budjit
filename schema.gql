@@ -2,12 +2,19 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type PlaidAccountTypeDef {
+  _id: String!
+  accessToken: String!
+  accountName: String!
+}
+
 type AccountTypeDef {
   _id: String!
   name: String!
   email: String!
   password: String!
   profile: String
+  plaidAccounts: [PlaidAccountTypeDef!]!
 }
 
 type GroupTypeDef {
@@ -56,6 +63,60 @@ type CreateAccountResponse {
 type LoginResponse {
   Account: AccountTypeDef!
   token: String!
+}
+
+type LoadPlaidAccountsResponse {
+  accounts: [PlaidAccountTypeDef!]!
+  message: String!
+  success: Boolean!
+}
+
+type RetrievePlaidAuthTokenResponse {
+  message: String!
+  success: Boolean!
+  token: String!
+}
+
+type RetrievePlaidPublicTokenResponse {
+  message: String!
+  success: Boolean!
+  account: AccountTypeDef!
+}
+
+type PlaidItem {
+  institution_id: String!
+}
+
+type LoadPlaidAccountDataResponse {
+  message: String!
+  success: Boolean!
+  accounts: [PlaidAccountConnection!]!
+  item: PlaidItem!
+}
+
+type AccountBalance {
+  available: Float
+  current: Float
+  iso_currency_code: String
+  limit: Float
+  unofficial_currency_code: String
+}
+
+type PlaidAccountConnection {
+  account_id: String
+  balances: AccountBalance
+  mask: String
+  name: String
+  official_name: String
+  subtype: String
+  type: String
+  item: PlaidItem!
+}
+
+type GetPlaidInstitutionResponse {
+  message: String!
+  success: Boolean!
+  logo: String!
 }
 
 type CreateInvitesResponse {
@@ -114,6 +175,9 @@ type LoadOccasionResponse {
 type Query {
   account(id: String!): AccountTypeDef!
   findMyAccount: AccountTypeDef!
+  loadPlaidAccounts: LoadPlaidAccountsResponse!
+  loadPlaidData(input: LoadPlaidAccountDataInput!): LoadPlaidAccountDataResponse!
+  getPlaidInstitution(input: GetPlaidInstitutionInput!): GetPlaidInstitutionResponse!
   loadMyInvites: LoadReceivedInvitesResponse!
   loadSentInvites: LoadSentInvitesResponse!
   loadSentGroupInvites: LoadGroupInvitesResponse!
@@ -122,6 +186,15 @@ type Query {
   findProfileByEmail(input: FindProfileByEmailInput!): FindProfileByEmailResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
+}
+
+input LoadPlaidAccountDataInput {
+  accessToken: String!
+}
+
+input GetPlaidInstitutionInput {
+  institution_id: String!
+  country_code: String!
 }
 
 input FindProfileByEmailInput {
@@ -133,8 +206,10 @@ input LoadGroupInput {
 }
 
 type Mutation {
+  retrievePlaidAuthToken: RetrievePlaidAuthTokenResponse!
   authenticate(loginInput: LoginInput!): LoginResponse!
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
+  publicTokenExchange(input: ExchangePublicTokenInput!): RetrievePlaidPublicTokenResponse!
   sendInvitesToNewGroup(sendInvitesInput: SendInvitesToNewGroupInput!): CreateInvitesResponse!
   updateInviteStatus(updateInviteStatusInput: UpdateInviteStatusInput!): InvitesTypeDef!
   deleteSentInvite(input: DeleteSentInviteInput!): DeleteSentInviteResponse!
@@ -154,6 +229,12 @@ input CreateAccountInput {
   email: String!
   password: String!
   passwordConfirm: String!
+}
+
+input ExchangePublicTokenInput {
+  publicToken: String!
+  userId: String
+  institutionName: String!
 }
 
 input SendInvitesToNewGroupInput {

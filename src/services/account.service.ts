@@ -10,6 +10,9 @@ import {
   AddGroupRefToAccountInput,
   AddInviteToAccountInput,
   CreateAccountInput,
+  ExchangePublicTokenInput,
+  GetPlaidInstitutionInput,
+  LoadPlaidAccountDataInput,
   LoginInput,
 } from 'src/graphql/inputs/accounts.input';
 import * as bcrypt from 'bcryptjs';
@@ -19,7 +22,12 @@ import {
   AddInviteToAccountResponse,
   CreateAccountResponse,
   DeleteInviteFromAccountResponse,
+  GetPlaidInstitutionResponse,
+  LoadPlaidAccountDataResponse,
+  LoadPlaidAccountsResponse,
   LoginResponse,
+  RetrievePlaidAuthTokenResponse,
+  RetrievePlaidPublicTokenResponse,
 } from 'src/graphql/responses/account.response';
 import { AuthService } from './auth.service';
 import * as mongoose from 'mongoose';
@@ -27,6 +35,15 @@ import { AddOccasionDTO } from 'src/graphql/dto/accounts.dto';
 import { ProfileService } from './profile.service';
 import { MyProfile } from 'src/interfaces/profile.interface';
 import { Invite } from 'src/mongo-schemas/Invite.model';
+import {
+  CountryCode,
+  InstitutionsGetByIdRequest,
+  ItemPublicTokenExchangeRequest,
+  LinkTokenCreateRequest,
+  PlaidApi,
+  Products,
+} from 'plaid';
+import { response } from 'express';
 
 @Injectable()
 export class AccountsService {
@@ -36,6 +53,7 @@ export class AccountsService {
     private readonly authServices: AuthService,
     @Inject(forwardRef(() => ProfileService))
     private readonly profileService: ProfileService,
+    @Inject('PLAID') private readonly plaid: PlaidApi,
   ) {}
 
   async createAccount(
@@ -114,6 +132,23 @@ export class AccountsService {
     try {
       const foundAccount = await this.accountModel.findById(id);
       return foundAccount;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async loadPlaidAccounts(id: string): Promise<LoadPlaidAccountsResponse> {
+    try {
+      const myAccount = await this.accountModel.findById(id);
+
+      if (!myAccount) throw new Error('Could not locate an account');
+
+      return {
+        message: 'Found an account',
+        success: true,
+        accounts: myAccount.plaidAccounts,
+      };
     } catch (error) {
       console.error(error);
       return error;
@@ -327,6 +362,137 @@ export class AccountsService {
         success: false,
         Account: null,
       };
+    }
+  }
+
+  async retrievePlaidAuthToken(): Promise<RetrievePlaidAuthTokenResponse> {
+    try {
+      const request: LinkTokenCreateRequest = {
+        user: {
+          client_user_id: process.env.PLAID_CLIENT_ID,
+        },
+        client_name: 'Daydreamer Apps',
+        products: [Products.Auth, Products.Transactions],
+        country_codes: [Products['Us'] || 'US'],
+        language: 'en',
+      };
+
+      const getCredentials = await this.plaid.linkTokenCreate(request);
+
+      return {
+        message: 'Retrieved plaid auth token',
+        success: true,
+        token: getCredentials.data.link_token,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: 'Could not authorize plaid at this moment',
+        success: false,
+        token: '',
+      };
+    }
+  }
+
+  async exchangePublicToken(
+    input: ExchangePublicTokenInput,
+  ): Promise<RetrievePlaidPublicTokenResponse> {
+    const { publicToken, userId, institutionName } = input;
+
+    const request: ItemPublicTokenExchangeRequest = {
+      public_token: publicToken,
+    };
+    try {
+      const foundUser = await this.accountModel.findById(userId);
+
+      if (!foundUser) throw new Error('Could not locate an account');
+
+      const response = await this.plaid.itemPublicTokenExchange(request);
+      //store the accesstoken on a user model
+      const accessToken = response.data.access_token;
+
+      const newId = new mongoose.Types.ObjectId();
+
+      const newAccountConnect: {
+        accessToken: string;
+        accountName: string;
+        _id: string | any;
+      } = {
+        accessToken,
+        accountName: institutionName,
+        _id: newId,
+      };
+
+      foundUser.plaidAccounts.push(newAccountConnect);
+
+      await foundUser.save();
+
+      const itemId = response.data.item_id;
+
+      console.log('item id', itemId, accessToken);
+
+      return {
+        message: 'Retrieved an item from plaid',
+        success: true,
+        account: foundUser,
+      };
+    } catch (err) {
+      // handle error
+      return err;
+    }
+  }
+
+  async loadPlaidAccountData(
+    input: LoadPlaidAccountDataInput,
+  ): Promise<LoadPlaidAccountDataResponse> {
+    try {
+      const { accessToken } = input;
+      const request = await this.plaid.accountsBalanceGet({
+        access_token: accessToken,
+      });
+
+      const accounts = request.data.accounts;
+
+      console.log('data', request.data.item);
+      return {
+        message: 'Loaded plaid data',
+        success: true,
+        accounts,
+        item: {
+          institution_id: request.data.item.institution_id,
+        },
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async getPlaidInstitution(
+    input: GetPlaidInstitutionInput,
+  ): Promise<GetPlaidInstitutionResponse> {
+    try {
+      const { institution_id, country_code } = input;
+
+      const request: InstitutionsGetByIdRequest = {
+        institution_id,
+        country_codes: [country_code],
+        options: {
+          include_optional_metadata: true,
+        },
+      };
+      const institution = await this.plaid.institutionsGetById(request);
+
+      console.log('institution', institution.data);
+
+      return {
+        message: 'Found institution',
+        success: true,
+        logo: institution.data.institution.logo,
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
     }
   }
 }

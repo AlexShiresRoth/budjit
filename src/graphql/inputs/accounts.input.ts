@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { CountryCode } from 'plaid';
 import { Account } from 'src/mongo-schemas/account.model';
 import { Group } from 'src/mongo-schemas/group.model';
 import { Invite } from 'src/mongo-schemas/Invite.model';
@@ -41,4 +42,28 @@ export class AddInviteToAccountInput {
   receiver: string;
   @Field(() => AccountTypeDef)
   sender: Account;
+}
+
+@InputType()
+export class ExchangePublicTokenInput {
+  @Field()
+  publicToken: string;
+  @Field({ nullable: true })
+  userId: string;
+  @Field()
+  institutionName: string;
+}
+
+@InputType()
+export class LoadPlaidAccountDataInput {
+  @Field()
+  accessToken: string;
+}
+
+@InputType()
+export class GetPlaidInstitutionInput {
+  @Field()
+  institution_id: string;
+  @Field(() => String)
+  country_code: CountryCode;
 }

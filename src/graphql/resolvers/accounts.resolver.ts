@@ -3,10 +3,21 @@ import { Args, Resolver, Query, Mutation } from '@nestjs/graphql';
 import { CurrentAccount, GraphqlAuthGuard } from 'src/auth/auth.guard';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { AccountsService } from 'src/services/account.service';
-import { CreateAccountInput, LoginInput } from '../inputs/accounts.input';
+import {
+  CreateAccountInput,
+  ExchangePublicTokenInput,
+  GetPlaidInstitutionInput,
+  LoadPlaidAccountDataInput,
+  LoginInput,
+} from '../inputs/accounts.input';
 import {
   CreateAccountResponse,
+  GetPlaidInstitutionResponse,
+  LoadPlaidAccountDataResponse,
+  LoadPlaidAccountsResponse,
   LoginResponse,
+  RetrievePlaidAuthTokenResponse,
+  RetrievePlaidPublicTokenResponse,
 } from '../responses/account.response';
 import { AccountTypeDef } from '../schemas/account.schema';
 
@@ -26,6 +37,33 @@ export class AccountsResolver {
     return this.accountsService.findOneById(user.account.id);
   }
 
+  @Query(() => LoadPlaidAccountsResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async loadPlaidAccounts(@CurrentAccount() user: AuthPayload) {
+    return this.accountsService.loadPlaidAccounts(user.account.id);
+  }
+
+  @Query(() => LoadPlaidAccountDataResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async loadPlaidData(
+    @Args('input') input: LoadPlaidAccountDataInput,
+    @CurrentAccount() user: AuthPayload,
+  ) {
+    return this.accountsService.loadPlaidAccountData(input);
+  }
+
+  @Query(() => GetPlaidInstitutionResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async getPlaidInstitution(@Args('input') input: GetPlaidInstitutionInput) {
+    return this.accountsService.getPlaidInstitution(input);
+  }
+
+  @Mutation(() => RetrievePlaidAuthTokenResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async retrievePlaidAuthToken(@CurrentAccount() user: AuthPayload) {
+    return this.accountsService.retrievePlaidAuthToken();
+  }
+
   @Mutation(() => LoginResponse)
   async authenticate(@Args('loginInput') loginInput: LoginInput) {
     return this.accountsService.authenticate(loginInput);
@@ -36,5 +74,17 @@ export class AccountsResolver {
     @Args('createAccountInput') createAccountInput: CreateAccountInput,
   ) {
     return await this.accountsService.createAccount(createAccountInput);
+  }
+
+  @Mutation(() => RetrievePlaidPublicTokenResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async publicTokenExchange(
+    @Args('input') input: ExchangePublicTokenInput,
+    @CurrentAccount() user: AuthPayload,
+  ) {
+    return this.accountsService.exchangePublicToken({
+      ...input,
+      userId: user.account.id,
+    });
   }
 }
