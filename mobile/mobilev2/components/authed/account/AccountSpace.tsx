@@ -10,6 +10,7 @@ import { RootStackParamList } from '../../../types';
 import Spending from './Spending';
 import AccountHeader from './AccountHeader';
 import BankingConnects from './BankingConnects';
+import AccountsModal from './AccountsModal';
 
 const Container = styled.View`
   align-items: center;
@@ -68,6 +69,7 @@ const AccountSpace = ({ route, navigation }: Props) => {
       />
       <BankingConnects />
       <Spending colorScheme={colorScheme} />
+      <AccountsModal />
       <Container
         style={{
           width: '100%',
