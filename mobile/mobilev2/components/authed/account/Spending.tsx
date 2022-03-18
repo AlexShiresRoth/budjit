@@ -1,8 +1,23 @@
+import { useMutation } from '@apollo/client';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, {
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Modal, Pressable } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/Colors';
+import { GET_PLAID_TRANSACTIONS_BY_TIMEFRAME } from '../../../graphql/mutations/accounts.mutations';
+import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
+import {
+  selectAccount,
+  setSpendingAmount,
+  setSpendingFilter,
+} from '../../../redux/reducers/accounts.reducers';
+import LoadingSpinner from '../../reusable/LoadingSpinner';
 
 const Content = styled.View`
   margin-top: -70px;
@@ -77,7 +92,10 @@ const ModalText = styled.Text`
   font-size: 15px;
 `;
 
-type SpendingProps = Array<{ type: string; spending: number }>;
+type SpendingProps = Array<{
+  type: 'Year' | 'Month' | 'Week';
+  spending: number;
+}>;
 
 type ColorScheme = { colorScheme: 'light' | 'dark' };
 
@@ -90,6 +108,70 @@ const Spending = ({ colorScheme }: ColorScheme) => {
     { type: 'Week', spending: 0 },
   ];
 
+  const [totalToDisplay, setTotalDisplay] = useState<number>(0);
+
+  const [setSpending, { error, data, loading }] = useMutation(
+    GET_PLAID_TRANSACTIONS_BY_TIMEFRAME,
+  );
+
+  const spendingState = useAppSelector(selectAccount);
+  ////////////////////////////////////////////////////
+  const dispatch = useAppDispatch();
+  /////////////////////////////////////////////////
+
+  const handleSpendingMutationAsync = async (
+    token: string,
+    timeFrame: 'Year' | 'Month' | 'Week',
+  ) => {
+    try {
+      await setSpending({
+        variables: {
+          input: {
+            accessToken: token,
+            filter: timeFrame,
+          },
+        },
+      });
+
+      // console.log('request!', request);
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  };
+  //set timkeframe in reducer
+  const handleSetSpendingFilter = async (
+    timeFrame: 'Year' | 'Month' | 'Week',
+  ) => {
+    dispatch(
+      setSpendingFilter({
+        spending: { filter: timeFrame },
+      }),
+    );
+    console.log(
+      'spending statelength',
+      spendingState.plaidAccounts.accessTokens.length,
+    );
+
+    if (spendingState.plaidAccounts.accessTokens.length > 0) {
+      spendingState.plaidAccounts.accessTokens.forEach((token: string) => {
+        handleSpendingMutationAsync(token, timeFrame);
+      });
+    }
+  };
+
+  const handleTotalSpendingSum = (
+    totals: Array<{ id: string; amount: number }>,
+  ) => {
+    //////////////////////////////////////////////////////
+    const addedTransactions = totals.reduce(
+      (prev, next) => prev + next.amount,
+      0,
+    );
+    //////////////////////////////////////////////////////
+    setTotalDisplay(addedTransactions);
+  };
+  //FSAD TODO NOTHING  FUCKOING WORKS UPDATINGSPENDINGN CORRECTLY
   return (
     <Content
       style={{
@@ -107,11 +189,10 @@ const Spending = ({ colorScheme }: ColorScheme) => {
         modalVisible={modalVisible}
         colorScheme={colorScheme}
         spendingFilter={spendingFilter}
+        dispatchAction={handleSetSpendingFilter}
       />
       <Row>
-        <SubHeading>
-          Spending This {spendingData[spendingFilter].type}
-        </SubHeading>
+        <SubHeading>Spending This {spendingState.spending.filter}</SubHeading>
         <DateToggler
           style={{
             backgroundColor: Colors[colorScheme].tint + '80',
@@ -130,7 +211,11 @@ const Spending = ({ colorScheme }: ColorScheme) => {
           </DateText>
         </DateToggler>
       </Row>
-      <Total>${spendingData[spendingFilter].spending}</Total>
+      {loading ? (
+        <LoadingSpinner />
+      ) : (
+        <Total>${totalToDisplay.toFixed(2)}</Total>
+      )}
     </Content>
   );
 };
@@ -142,12 +227,14 @@ const TimeModal = ({
   data,
   setFilter,
   spendingFilter,
+  dispatchAction,
 }: {
   modalVisible: boolean;
   setModalVisibility: SetStateAction<any>;
   setFilter: SetStateAction<any>;
   data: SpendingProps;
   spendingFilter: number;
+  dispatchAction: (val: 'Year' | 'Month' | 'Week') => void;
 } & ColorScheme) => {
   return (
     <ModalContainer>
@@ -183,7 +270,11 @@ const TimeModal = ({
                     borderColor: Colors[colorScheme].tint + '44',
                     borderBottomWidth: 1,
                   }}
-                  onPress={() => setFilter(key)}
+                  onPress={() => {
+                    setFilter(key);
+                    //need to set filter in reducer
+                    dispatchAction(timeFrame.type);
+                  }}
                 >
                   {spendingFilter === key ? (
                     <ModalText

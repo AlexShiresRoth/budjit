@@ -17,6 +17,7 @@ import { ProfileModule } from './modules/profile.module';
       autoSchemaFile: 'schema.gql',
       debug: true,
       playground: true,
+
       cors: {
         origin: ['http://localhost:3000', 'https://faec-108-29-6-138.ngrok.io'],
         credentials: true,

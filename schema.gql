@@ -119,6 +119,13 @@ type GetPlaidInstitutionResponse {
   logo: String!
 }
 
+type GetPlaidTransactionsResponse {
+  message: String!
+  success: Boolean!
+  spending: Float!
+  id: String!
+}
+
 type CreateInvitesResponse {
   message: String!
   success: Boolean!
@@ -206,6 +213,7 @@ input LoadGroupInput {
 }
 
 type Mutation {
+  getPlaidTransactions(input: GetPlaidTransactionsInput!): GetPlaidTransactionsResponse!
   retrievePlaidAuthToken: RetrievePlaidAuthTokenResponse!
   authenticate(loginInput: LoginInput!): LoginResponse!
   createAccount(createAccountInput: CreateAccountInput!): CreateAccountResponse!
@@ -217,6 +225,11 @@ type Mutation {
   update(updateProfileInput: UpdateProfileInput!): ProfileTypeDef!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
+}
+
+input GetPlaidTransactionsInput {
+  accessToken: String!
+  filter: String!
 }
 
 input LoginInput {

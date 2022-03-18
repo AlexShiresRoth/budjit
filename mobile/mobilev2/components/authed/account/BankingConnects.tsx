@@ -56,6 +56,7 @@ const BankingConnects = () => {
   const [retrievePlaidToken, { error, data, loading }] =
     useMutation(RETRIEVE_PLAID_TOKEN);
 
+  //grab plaid accounts from API
   const {
     error: loadAccountsError,
     data: plaidAccounts,
@@ -64,8 +65,6 @@ const BankingConnects = () => {
   } = useQuery(LOAD_PLAID_ACCOUNTS);
 
   let webviewRef: any = useRef();
-
-  console.log('plaid accounts', plaidAccounts);
 
   //plaid webview events////////////////////////////
   const onExit = (event: any) => {

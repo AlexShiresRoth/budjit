@@ -1,17 +1,22 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Button, Modal, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/Colors';
+import { GET_PLAID_TRANSACTIONS_BY_TIMEFRAME } from '../../../graphql/mutations/accounts.mutations';
 import {
   GET_PLAID_INSTITUTION,
   LOAD_PLAID_ACCOUNT_DATA,
 } from '../../../graphql/queries/accounts.query';
-import { useAppDispatch } from '../../../hooks/reduxHooks';
+import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import useColorScheme from '../../../hooks/useColorScheme';
-import { togglePlaidAccountsModal } from '../../../redux/reducers/accounts.reducers';
+import {
+  addPlaidAccessTokens,
+  selectAccount,
+  togglePlaidAccountsModal,
+} from '../../../redux/reducers/accounts.reducers';
 import LoadingSpinner from '../../reusable/LoadingSpinner';
 import AccountsModal from './AccountsModal';
 
@@ -124,6 +129,13 @@ const Connection = ({
   useEffect(() => {
     chooseColorPair();
   }, []);
+
+  //add access token to reducer in order to make API call in spending component, per token array length
+  useEffect(() => {
+    if (!loading && !error) {
+      dispatch(addPlaidAccessTokens({ accessToken: connection.accessToken }));
+    }
+  }, [error, loading]);
 
   //TODO need to get transactions based on time period
   if (loading) {

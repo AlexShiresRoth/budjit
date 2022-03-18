@@ -67,3 +67,11 @@ export class GetPlaidInstitutionInput {
   @Field(() => String)
   country_code: CountryCode;
 }
+
+@InputType()
+export class GetPlaidTransactionsInput {
+  @Field()
+  accessToken: string;
+  @Field()
+  filter: 'Year' | 'Month' | 'Week';
+}

@@ -12,6 +12,7 @@ import {
   CreateAccountInput,
   ExchangePublicTokenInput,
   GetPlaidInstitutionInput,
+  GetPlaidTransactionsInput,
   LoadPlaidAccountDataInput,
   LoginInput,
 } from 'src/graphql/inputs/accounts.input';
@@ -23,6 +24,7 @@ import {
   CreateAccountResponse,
   DeleteInviteFromAccountResponse,
   GetPlaidInstitutionResponse,
+  GetPlaidTransactionsResponse,
   LoadPlaidAccountDataResponse,
   LoadPlaidAccountsResponse,
   LoginResponse,
@@ -42,6 +44,7 @@ import {
   LinkTokenCreateRequest,
   PlaidApi,
   Products,
+  TransactionsGetRequest,
 } from 'plaid';
 import { response } from 'express';
 
@@ -489,6 +492,82 @@ export class AccountsService {
         message: 'Found institution',
         success: true,
         logo: institution.data.institution.logo,
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
+
+  async getPlaidTransactions(
+    input: GetPlaidTransactionsInput,
+  ): Promise<GetPlaidTransactionsResponse> {
+    try {
+      const { accessToken, filter } = input;
+
+      let startDate: string;
+      let endDate: string;
+      //set spending timeframe for the current week
+      const setWeekAsTimeFrame = () => {
+        const today = new Date();
+
+        const start =
+          today.getDate() - (today.getDay() + (today.getDay() === 0 ? -6 : 1));
+
+        const tempDate = new Date();
+
+        const newStart = new Date(tempDate.setDate(start + 1));
+
+        const startString = newStart.toISOString().split('T')[0];
+
+        const endString = today.toISOString().split('T')[0];
+
+        startDate = startString;
+        endDate = endString;
+      };
+
+      //handle timeframe by filter request
+      //TODO FIX HARDCODED DATES
+      switch (filter) {
+        case 'Month':
+          startDate = '2022-03-02';
+          endDate = '2022-03-10';
+          break;
+        case 'Week':
+          setWeekAsTimeFrame();
+          break;
+        case 'Year':
+          startDate = '2022-03-02';
+          endDate = '2022-03-10';
+          break;
+        default:
+          setWeekAsTimeFrame();
+      }
+
+      if (!startDate || !endDate) throw new Error('Filter not properly set');
+
+      const request: TransactionsGetRequest = {
+        access_token: accessToken,
+        start_date: startDate,
+        end_date: endDate,
+      };
+
+      const client = await this.plaid.transactionsGet(request);
+
+      const transactions = client.data.transactions;
+
+      const totalSpent = transactions.reduce(
+        (prev, next) => prev + next.amount,
+        0,
+      );
+
+      console.log('transaaactons', totalSpent, accessToken);
+
+      return {
+        message: 'Transactions received',
+        success: true,
+        spending: totalSpent,
+        id: accessToken,
       };
     } catch (error) {
       console.error(error);

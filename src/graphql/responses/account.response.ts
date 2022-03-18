@@ -147,3 +147,15 @@ export class GetPlaidInstitutionResponse {
   @Field()
   logo: string;
 }
+
+@ObjectType()
+export class GetPlaidTransactionsResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field()
+  spending: number;
+  @Field()
+  id: string;
+}

@@ -7,12 +7,14 @@ import {
   CreateAccountInput,
   ExchangePublicTokenInput,
   GetPlaidInstitutionInput,
+  GetPlaidTransactionsInput,
   LoadPlaidAccountDataInput,
   LoginInput,
 } from '../inputs/accounts.input';
 import {
   CreateAccountResponse,
   GetPlaidInstitutionResponse,
+  GetPlaidTransactionsResponse,
   LoadPlaidAccountDataResponse,
   LoadPlaidAccountsResponse,
   LoginResponse,
@@ -56,6 +58,12 @@ export class AccountsResolver {
   @UseGuards(GraphqlAuthGuard)
   async getPlaidInstitution(@Args('input') input: GetPlaidInstitutionInput) {
     return this.accountsService.getPlaidInstitution(input);
+  }
+
+  @Mutation(() => GetPlaidTransactionsResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async getPlaidTransactions(@Args('input') input: GetPlaidTransactionsInput) {
+    return this.accountsService.getPlaidTransactions(input);
   }
 
   @Mutation(() => RetrievePlaidAuthTokenResponse)

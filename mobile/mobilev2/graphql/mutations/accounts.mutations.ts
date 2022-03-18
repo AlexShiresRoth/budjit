@@ -53,3 +53,14 @@ export const EXCHANGE_PLAID_PUBLIC_TOKEN = gql`
     }
   }
 `;
+
+export const GET_PLAID_TRANSACTIONS_BY_TIMEFRAME = gql`
+  mutation getPlaidTransactions($input: GetPlaidTransactionsInput!) {
+    getPlaidTransactions(input: $input) {
+      message
+      success
+      spending
+      id
+    }
+  }
+`;

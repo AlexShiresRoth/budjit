@@ -2,19 +2,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
-interface InitialStateParams {
-  myAccount: {
-    email: string;
-    name: string;
-    profile: string;
-  };
-  plaidAccounts: {
-    connection: any;
-    modalVisible: boolean;
-  };
-  isAuthenticated: boolean;
-}
-
 export type AccountParams = {
   myAccount: {
     email: string;
@@ -29,6 +16,28 @@ export type PlaidAccountsModal = {
   connection: any;
 };
 
+export type SpendingParams = {
+  spending: { filter: 'Month' | 'Year' | 'Week'; amount: number };
+};
+
+interface InitialStateParams {
+  myAccount: {
+    email: string;
+    name: string;
+    profile: string;
+  };
+  plaidAccounts: {
+    connection: any;
+    modalVisible: boolean;
+    accessTokens: Array<string>;
+  };
+  spending: {
+    filter: 'Month' | 'Year' | 'Week';
+    totals: Array<{ id: string; amount: number }>;
+  };
+  isAuthenticated: boolean;
+}
+
 const initialState: InitialStateParams = {
   myAccount: {
     email: '',
@@ -38,6 +47,11 @@ const initialState: InitialStateParams = {
   plaidAccounts: {
     connection: null,
     modalVisible: false,
+    accessTokens: [],
+  },
+  spending: {
+    filter: 'Week',
+    totals: [],
   },
   isAuthenticated: false,
 };
@@ -64,6 +78,16 @@ export const accountSlice = createSlice({
       state.isAuthenticated = false;
       state.myAccount = { email: '', name: '', profile: '' };
     },
+    addPlaidAccessTokens: (
+      state,
+      action: PayloadAction<{ accessToken: string }>,
+    ) => {
+      if (
+        !state.plaidAccounts.accessTokens.includes(action.payload.accessToken)
+      ) {
+        state.plaidAccounts.accessTokens.push(action.payload.accessToken);
+      }
+    },
     togglePlaidAccountsModal: (
       state,
       action: PayloadAction<PlaidAccountsModal>,
@@ -73,6 +97,33 @@ export const accountSlice = createSlice({
       /////////////////////////////////////////
       state.plaidAccounts.modalVisible = action.payload.modalVisible;
     },
+    setSpendingFilter: (
+      state,
+      action: PayloadAction<{
+        spending: { filter: 'Year' | 'Month' | 'Week' };
+      }>,
+    ) => {
+      /////////////////////////
+      state.spending.filter = action.payload.spending.filter;
+      ////////////////////////
+    },
+    setSpendingAmount: (
+      state,
+      action: PayloadAction<{ amount: number; id: string }>,
+    ) => {
+      //transactions and access tokens must be same length
+      //TODO insert payload at index of id
+      if (state.spending.totals.length > 0) {
+        console.log('yes?');
+        const ids = state.spending.totals.map((total) => total.id);
+        const indexOfInsert = ids.indexOf(action.payload.id);
+        console.log('index', indexOfInsert, ids, action.payload.id);
+        if (indexOfInsert > 0) {
+          console.log('replacing', indexOfInsert);
+          state.spending.totals[indexOfInsert] = action.payload;
+        } else state.spending.totals.push(action.payload);
+      } else state.spending.totals.push(action.payload);
+    },
   },
 });
 
@@ -81,6 +132,9 @@ export const {
   createAccount,
   signOutOfAccount,
   togglePlaidAccountsModal,
+  setSpendingFilter,
+  addPlaidAccessTokens,
+  setSpendingAmount,
 } = accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;
