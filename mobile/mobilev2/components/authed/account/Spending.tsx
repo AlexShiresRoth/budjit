@@ -22,7 +22,7 @@ import LoadingSpinner from '../../reusable/LoadingSpinner';
 const Content = styled.View`
   margin-top: -70px;
   width: 90%;
-  padding: 40px 20px;
+  padding: 20px 20px;
   border-radius: 10px;
 `;
 const Row = styled.View`
@@ -30,8 +30,7 @@ const Row = styled.View`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
-  margin-top: -20px;
+  margin: 5px 0;
 `;
 const SubHeading = styled.Text`
   font-size: 16px;
@@ -43,7 +42,14 @@ const Total = styled.Text`
   font-weight: 700;
   font-size: 50px;
 `;
-
+const AccountText = styled.Text`
+  font-weight: 100;
+  font-size: 12px;
+`;
+const Divider = styled.View`
+  height: 1px;
+  width: 100%;
+`;
 const DateToggler = styled.TouchableOpacity`
   padding: 10px;
   border-radius: 10px;
@@ -56,6 +62,10 @@ const DateText = styled.Text`
   font-size: 10px;
   font-weight: 700;
   margin-left: 5px;
+`;
+
+const DateRange = styled.Text`
+  font-size: 12px;
 `;
 
 const ModalContainer = styled.View`
@@ -100,64 +110,38 @@ type SpendingProps = Array<{
 type ColorScheme = { colorScheme: 'light' | 'dark' };
 
 const Spending = ({ colorScheme }: ColorScheme) => {
+  ///////////////////////////////////////////////////////
   const [spendingFilter, setFilter] = useState<number>(2);
+  ///////////////////////////////////////////////////////
   const [modalVisible, setModalVisibility] = useState<boolean>(false);
+  ///////////////////////////////////////////////////////
   const spendingData: SpendingProps = [
     { type: 'Year', spending: 0 },
     { type: 'Month', spending: 0 },
     { type: 'Week', spending: 0 },
   ];
 
-  const [totalToDisplay, setTotalDisplay] = useState<number>(0);
+  const [dates, setDates] = useState<{ startDate: string; endDate: string }>({
+    startDate: '',
+    endDate: '',
+  });
 
-  const [setSpending, { error, data, loading }] = useMutation(
-    GET_PLAID_TRANSACTIONS_BY_TIMEFRAME,
-  );
+  const [totalToDisplay, setTotalDisplay] = useState<string>('0.00');
 
   const spendingState = useAppSelector(selectAccount);
   ////////////////////////////////////////////////////
   const dispatch = useAppDispatch();
   /////////////////////////////////////////////////
 
-  const handleSpendingMutationAsync = async (
-    token: string,
-    timeFrame: 'Year' | 'Month' | 'Week',
-  ) => {
-    try {
-      await setSpending({
-        variables: {
-          input: {
-            accessToken: token,
-            filter: timeFrame,
-          },
-        },
-      });
-
-      // console.log('request!', request);
-    } catch (error) {
-      console.error(error);
-      return error;
-    }
-  };
   //set timkeframe in reducer
   const handleSetSpendingFilter = async (
     timeFrame: 'Year' | 'Month' | 'Week',
   ) => {
     dispatch(
       setSpendingFilter({
-        spending: { filter: timeFrame },
+        spending: { filter: timeFrame, startDate: '', endDate: '' },
       }),
     );
-    console.log(
-      'spending statelength',
-      spendingState.plaidAccounts.accessTokens.length,
-    );
-
-    if (spendingState.plaidAccounts.accessTokens.length > 0) {
-      spendingState.plaidAccounts.accessTokens.forEach((token: string) => {
-        handleSpendingMutationAsync(token, timeFrame);
-      });
-    }
   };
 
   const handleTotalSpendingSum = (
@@ -168,16 +152,71 @@ const Spending = ({ colorScheme }: ColorScheme) => {
       (prev, next) => prev + next.amount,
       0,
     );
+
+    let formattedTotal: string = '0.00';
+
+    const totalSplitByDecimal = addedTransactions
+      .toFixed(2)
+      .toString()
+      .split('.');
+
+    const firstHalfOfTotal = totalSplitByDecimal[0].split('');
+
+    if (firstHalfOfTotal.length > 4) {
+      firstHalfOfTotal.reverse().forEach((s: string, index: number) => {
+        if (index % 4 === 0) firstHalfOfTotal.splice(index, 0, ',');
+      });
+      //remove comma at end of array
+      firstHalfOfTotal.reverse().pop();
+    }
+    //if total is just in the thousands, no need to loop through in order to insert comma
+    if (firstHalfOfTotal.length === 4) firstHalfOfTotal.splice(1, 0, ',');
+    //combine values before and after decimal point
+    formattedTotal = firstHalfOfTotal.join('') + '.' + totalSplitByDecimal[1];
     //////////////////////////////////////////////////////
-    setTotalDisplay(addedTransactions);
+    setTotalDisplay(formattedTotal);
   };
-  //FSAD TODO NOTHING  FUCKOING WORKS UPDATINGSPENDINGN CORRECTLY
+
+  const handleDateChanges = () => {
+    const {
+      spending: { endDate, startDate },
+    } = spendingState;
+    if (startDate && endDate) {
+      //start range
+      const startArr = startDate.split('-');
+      const year = startArr[0];
+      startArr.shift();
+      startArr.push(year);
+      const newStart = startArr.join('/');
+      //end range
+      const endArr = endDate.split('-');
+      const endYear = endArr[0];
+      endArr.shift();
+      endArr.push(endYear);
+      const newEnd = endArr.join('/');
+
+      setDates({ startDate: newStart, endDate: newEnd });
+    }
+  };
+
+  useEffect(() => {
+    if (spendingState.spending.totals.length > 0) {
+      handleTotalSpendingSum(spendingState.spending.totals);
+    }
+  }, [spendingState.spending.totals]);
+
+  useEffect(() => {
+    handleDateChanges();
+  }, [spendingState.spending]);
+
+  //TODO spending filter update works, need to clean and refactor
+  console.log(spendingState);
   return (
     <Content
       style={{
         marginBottom: 30,
         borderWidth: 1.5,
-        borderColor: Colors[colorScheme].tint + '40',
+        borderColor: Colors[colorScheme].tint + '90',
         backgroundColor: Colors[colorScheme].background,
         elevation: 10,
       }}
@@ -191,11 +230,24 @@ const Spending = ({ colorScheme }: ColorScheme) => {
         spendingFilter={spendingFilter}
         dispatchAction={handleSetSpendingFilter}
       />
+      <Row style={{ marginBottom: 0 }}>
+        <DateRange
+          style={{
+            color: Colors[colorScheme].text + '80',
+            margin: 0,
+            fontStyle: 'italic',
+          }}
+        >
+          {dates.startDate} - {dates.endDate}
+        </DateRange>
+      </Row>
       <Row>
-        <SubHeading>Spending This {spendingState.spending.filter}</SubHeading>
+        <SubHeading style={{ color: Colors[colorScheme].text }}>
+          Spending This {spendingState.spending.filter}
+        </SubHeading>
         <DateToggler
           style={{
-            backgroundColor: Colors[colorScheme].tint + '80',
+            backgroundColor: Colors[colorScheme].tint,
             borderWidth: 3,
             borderColor: Colors[colorScheme].tint + '50',
           }}
@@ -211,11 +263,22 @@ const Spending = ({ colorScheme }: ColorScheme) => {
           </DateText>
         </DateToggler>
       </Row>
-      {loading ? (
-        <LoadingSpinner />
-      ) : (
-        <Total>${totalToDisplay.toFixed(2)}</Total>
-      )}
+
+      <Row>
+        {spendingState.spending.isSpendingFilterLoading ? (
+          <LoadingSpinner />
+        ) : (
+          <Total style={{ color: Colors[colorScheme].text }}>
+            ${totalToDisplay}
+          </Total>
+        )}
+      </Row>
+      <Divider style={{ backgroundColor: Colors[colorScheme].tint + '90' }} />
+      <Row>
+        <AccountText style={{ color: Colors[colorScheme].tint + '70' }}>
+          Combined Accounts Total
+        </AccountText>
+      </Row>
     </Content>
   );
 };
@@ -274,6 +337,8 @@ const TimeModal = ({
                     setFilter(key);
                     //need to set filter in reducer
                     dispatchAction(timeFrame.type);
+                    //close modal
+                    setModalVisibility(false);
                   }}
                 >
                   {spendingFilter === key ? (

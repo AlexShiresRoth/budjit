@@ -119,11 +119,21 @@ type GetPlaidInstitutionResponse {
   logo: String!
 }
 
+type Transaction {
+  name: String!
+  date: String!
+  amount: Float!
+  transaction_id: String!
+}
+
 type GetPlaidTransactionsResponse {
   message: String!
   success: Boolean!
   spending: Float!
   id: String!
+  startDate: String!
+  endDate: String!
+  transactions: [Transaction!]!
 }
 
 type CreateInvitesResponse {

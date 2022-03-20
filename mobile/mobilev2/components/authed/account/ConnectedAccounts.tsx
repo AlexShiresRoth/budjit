@@ -1,7 +1,13 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { Button, Modal, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/Colors';
@@ -15,6 +21,10 @@ import useColorScheme from '../../../hooks/useColorScheme';
 import {
   addPlaidAccessTokens,
   selectAccount,
+  setSpendingAmount,
+  setSpendingFilter,
+  setSpendingFilterLoadingState,
+  setTransactionsWithinTimeFrame,
   togglePlaidAccountsModal,
 } from '../../../redux/reducers/accounts.reducers';
 import LoadingSpinner from '../../reusable/LoadingSpinner';
@@ -124,6 +134,61 @@ const Connection = ({
 
     setBgColors([bgColors[firstColor], bgColors[secondColor]]);
   };
+
+  const spendingState = useAppSelector(selectAccount);
+
+  const {
+    spending: { filter },
+  } = spendingState;
+
+  const [getTransactions, { error: tError, data: tData, loading: tLoading }] =
+    useMutation(GET_PLAID_TRANSACTIONS_BY_TIMEFRAME);
+
+  useEffect(() => {
+    if (filter) {
+      getTransactions({
+        variables: {
+          input: {
+            accessToken: connection.accessToken,
+            filter,
+          },
+        },
+      });
+    }
+  }, [filter]);
+
+  useEffect(() => {
+    if (tData) {
+      //pass transactions to reducer
+      dispatch(
+        setSpendingAmount({
+          amount: tData.getPlaidTransactions.spending,
+          id: tData.getPlaidTransactions.id,
+        }),
+      );
+      //set timeframe and filter in reducer
+      dispatch(
+        setSpendingFilter({
+          spending: {
+            filter: spendingState.spending.filter,
+            startDate: tData.getPlaidTransactions.startDate,
+            endDate: tData.getPlaidTransactions.endDate,
+          },
+        }),
+      );
+      //pass transactions to reducer
+      dispatch(
+        setTransactionsWithinTimeFrame({
+          transactions: tData.getPlaidTransactions.transactions,
+        }),
+      );
+    }
+  }, [tData]);
+
+  //need to show loading in other component
+  useEffect(() => {
+    dispatch(setSpendingFilterLoadingState(tLoading));
+  }, [tLoading]);
 
   //set bg colors on load
   useEffect(() => {

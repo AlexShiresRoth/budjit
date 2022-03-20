@@ -1,5 +1,5 @@
 const tintColorLight = '#2f95dc';
-const tintColorDark = '#1B9AAA';
+const tintColorDark = '#09BC8A';
 
 export type ColorScheme = { colorScheme: 'light' | 'dark' };
 
@@ -42,15 +42,15 @@ export default {
     cardBg: '#fefefe',
   },
   dark: {
-    text: '#fefefe',
-    background: '#111122',
+    text: '#F3EFE0',
+    background: '#000011',
     tint: tintColorDark,
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
     secondary: tintColorDark + '55',
-    danger: '#F0544F',
-    success: '#1B9AAA',
-    accountBg: '#0a363c90',
-    cardBg: '#115e68',
+    danger: '#E3170A',
+    success: '#035E7B',
+    accountBg: '#011936',
+    cardBg: '#053225',
   },
 };

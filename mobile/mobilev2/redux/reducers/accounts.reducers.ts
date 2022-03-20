@@ -16,10 +16,6 @@ export type PlaidAccountsModal = {
   connection: any;
 };
 
-export type SpendingParams = {
-  spending: { filter: 'Month' | 'Year' | 'Week'; amount: number };
-};
-
 interface InitialStateParams {
   myAccount: {
     email: string;
@@ -34,6 +30,15 @@ interface InitialStateParams {
   spending: {
     filter: 'Month' | 'Year' | 'Week';
     totals: Array<{ id: string; amount: number }>;
+    startDate: string;
+    endDate: string;
+    isSpendingFilterLoading: boolean;
+    transactions: Array<{
+      name: string;
+      date: string;
+      amount: number;
+      transaction_id: string;
+    }>;
   };
   isAuthenticated: boolean;
 }
@@ -52,6 +57,10 @@ const initialState: InitialStateParams = {
   spending: {
     filter: 'Week',
     totals: [],
+    startDate: '',
+    endDate: '',
+    isSpendingFilterLoading: true,
+    transactions: [],
   },
   isAuthenticated: false,
 };
@@ -100,29 +109,53 @@ export const accountSlice = createSlice({
     setSpendingFilter: (
       state,
       action: PayloadAction<{
-        spending: { filter: 'Year' | 'Month' | 'Week' };
+        spending: {
+          filter: 'Year' | 'Month' | 'Week';
+          startDate: string;
+          endDate: string;
+        };
       }>,
     ) => {
       /////////////////////////
       state.spending.filter = action.payload.spending.filter;
       ////////////////////////
+      state.spending.startDate = action.payload.spending.startDate;
+      ////////////////////////
+      state.spending.endDate = action.payload.spending.endDate;
     },
     setSpendingAmount: (
       state,
       action: PayloadAction<{ amount: number; id: string }>,
     ) => {
-      //transactions and access tokens must be same length
-      //TODO insert payload at index of id
-      if (state.spending.totals.length > 0) {
-        console.log('yes?');
-        const ids = state.spending.totals.map((total) => total.id);
-        const indexOfInsert = ids.indexOf(action.payload.id);
-        console.log('index', indexOfInsert, ids, action.payload.id);
-        if (indexOfInsert > 0) {
-          console.log('replacing', indexOfInsert);
-          state.spending.totals[indexOfInsert] = action.payload;
-        } else state.spending.totals.push(action.payload);
+      ////////////////////////////////////
+      const ids = state.spending.totals.map((total) => total.id);
+      //////////////////////////////////////
+      const indexToInsert = ids.indexOf(action.payload.id);
+      //////////////////////////////
+      if (indexToInsert !== -1) {
+        //////////////////////
+        state.spending.totals[indexToInsert] = action.payload;
+        ////////////////////////
       } else state.spending.totals.push(action.payload);
+    },
+    setSpendingFilterLoadingState: (state, action: PayloadAction<boolean>) => {
+      ///////////////////////////////
+      state.spending.isSpendingFilterLoading = action.payload;
+      ///////////////////////////////
+    },
+    setTransactionsWithinTimeFrame: (
+      state,
+      action: PayloadAction<{
+        transactions: Array<{
+          name: string;
+          date: string;
+          amount: number;
+          transaction_id: string;
+        }>;
+      }>,
+    ) => {
+      /////////////////////////////////////
+      state.spending.transactions = action.payload.transactions;
     },
   },
 });
@@ -135,6 +168,8 @@ export const {
   setSpendingFilter,
   addPlaidAccessTokens,
   setSpendingAmount,
+  setSpendingFilterLoadingState,
+  setTransactionsWithinTimeFrame,
 } = accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;

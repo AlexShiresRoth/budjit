@@ -217,8 +217,6 @@ export class AccountsService {
   ): Promise<AddInviteToAccountResponse> {
     const { invite, receiver, sender } = input;
 
-    console.log('receiver', receiver);
-
     const myAccount = await this.accountModel.findById(sender._id);
 
     if (!myAccount) {
@@ -287,7 +285,6 @@ export class AccountsService {
   }): Promise<Account> {
     try {
       const { profile_id, account_id } = input;
-      console.log('is this reaching', profile_id, account_id);
       const myAccount = await this.accountModel.findById(account_id);
 
       myAccount.profile = profile_id;
@@ -332,7 +329,6 @@ export class AccountsService {
           },
         );
 
-        console.log('filtered invites', filteredInvites);
         foundAccount.receivedInvites = filteredInvites;
 
         await foundAccount.save();
@@ -345,8 +341,6 @@ export class AccountsService {
             return invite_id !== invite._id.toString();
           },
         );
-
-        console.log('filtered invites', filteredInvites);
 
         foundAccount.sentInvites = filteredInvites;
 
@@ -432,8 +426,6 @@ export class AccountsService {
 
       const itemId = response.data.item_id;
 
-      console.log('item id', itemId, accessToken);
-
       return {
         message: 'Retrieved an item from plaid',
         success: true,
@@ -456,7 +448,6 @@ export class AccountsService {
 
       const accounts = request.data.accounts;
 
-      console.log('data', request.data.item);
       return {
         message: 'Loaded plaid data',
         success: true,
@@ -486,8 +477,6 @@ export class AccountsService {
       };
       const institution = await this.plaid.institutionsGetById(request);
 
-      console.log('institution', institution.data);
-
       return {
         message: 'Found institution',
         success: true,
@@ -509,36 +498,58 @@ export class AccountsService {
       let endDate: string;
       //set spending timeframe for the current week
       const setWeekAsTimeFrame = () => {
+        ///////////////////////////////
         const today = new Date();
-
+        ///////////////////////////////
         const start =
           today.getDate() - (today.getDay() + (today.getDay() === 0 ? -6 : 1));
-
+        ///////////////////////////////
         const tempDate = new Date();
-
+        ///////////////////////////////
         const newStart = new Date(tempDate.setDate(start + 1));
+        ///////////////////////////////
+        startDate = newStart.toISOString().split('T')[0];
+        ///////////////////////////////
+        endDate = today.toISOString().split('T')[0];
+      };
 
-        const startString = newStart.toISOString().split('T')[0];
+      const setMonthAsTimeFrame = () => {
+        ///////////////////////////////
+        const date = new Date();
+        ///////////////////////////////
+        const firstDayOfMonth = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          1,
+        );
+        ///////////////////////////////
+        startDate = firstDayOfMonth.toISOString().split('T')[0];
+        ///////////////////////////////
+        endDate = date.toISOString().split('T')[0];
+      };
 
-        const endString = today.toISOString().split('T')[0];
-
-        startDate = startString;
-        endDate = endString;
+      const setYearAsTimeFrame = () => {
+        ///////////////////////////////
+        const date = new Date();
+        ///////////////////////////////
+        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
+        ///////////////////////////////
+        startDate = firstDayOfYear.toISOString().split('T')[0];
+        ///////////////////////////////
+        endDate = date.toISOString().split('T')[0];
       };
 
       //handle timeframe by filter request
       //TODO FIX HARDCODED DATES
       switch (filter) {
         case 'Month':
-          startDate = '2022-03-02';
-          endDate = '2022-03-10';
+          setMonthAsTimeFrame();
           break;
         case 'Week':
           setWeekAsTimeFrame();
           break;
         case 'Year':
-          startDate = '2022-03-02';
-          endDate = '2022-03-10';
+          setYearAsTimeFrame();
           break;
         default:
           setWeekAsTimeFrame();
@@ -561,13 +572,15 @@ export class AccountsService {
         0,
       );
 
-      console.log('transaaactons', totalSpent, accessToken);
-
+      console.log(transactions);
       return {
         message: 'Transactions received',
         success: true,
         spending: totalSpent,
         id: accessToken,
+        startDate,
+        endDate,
+        transactions,
       };
     } catch (error) {
       console.error(error);

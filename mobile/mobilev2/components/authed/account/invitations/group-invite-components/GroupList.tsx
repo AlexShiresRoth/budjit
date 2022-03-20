@@ -108,14 +108,12 @@ const RenderItem = ({
     { error: deleteError, loading: deleteLoading, data: deleteData },
   ] = useMutation(DELETE_SENT_INVITE);
 
-  console.log('item', item);
-
   const handleDeleteInvite = async (): Promise<{
     message: string | unknown;
     success: boolean;
   }> => {
     try {
-      const deleteRequest = await deleteInvite({
+      await deleteInvite({
         variables: {
           input: {
             invite_id: item._id,
@@ -124,7 +122,6 @@ const RenderItem = ({
         },
       });
 
-      console.log('delete request', deleteRequest);
       //reload list
       await refetch();
 
@@ -227,8 +224,6 @@ const User = ({
   } = useQuery(FIND_PROFILE_BY_EMAIL, {
     variables: { input: { email: item.receiver } },
   });
-
-  console.log('data boyz', query);
 
   if (error) {
     return <Text>{error.message}</Text>;

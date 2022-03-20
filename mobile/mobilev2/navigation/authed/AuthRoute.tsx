@@ -34,8 +34,6 @@ const AuthHandler = ({
     }
   }, [isAuthenticated]);
 
-  console.log('navigation safsdff', navigation);
-
   return <>{children}</>;
 };
 

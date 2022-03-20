@@ -52,8 +52,6 @@ const OccasionInvites = ({ route, navigation }: Props) => {
     show: false,
   });
 
-  console.log('nav occasion', route.params);
-
   return (
     <Container>
       <Heading

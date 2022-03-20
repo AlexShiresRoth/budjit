@@ -50,8 +50,6 @@ export class ProfileService {
     try {
       const { email } = input;
 
-      console.log('email!', email);
-
       const foundAccount = await this.accountService.findOneByEmail(email);
 
       if (!foundAccount) {
@@ -67,8 +65,6 @@ export class ProfileService {
       const foundProfile = await this.profileModel.findById(
         foundAccount.profile,
       );
-
-      console.log('profile', foundProfile);
 
       if (!foundProfile) throw new Error('Could not locate a profile');
 
@@ -138,8 +134,6 @@ export class ProfileService {
       const newProfile = new this.profileModel(profileFields);
 
       await newProfile.save();
-
-      console.log('profile>', newProfile);
 
       return newProfile;
     } catch (error) {

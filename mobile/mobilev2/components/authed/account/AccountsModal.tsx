@@ -48,8 +48,6 @@ const AccountsModal = () => {
 
   const dispatch = useAppDispatch();
 
-  console.log('connextiond', connection, modalVisible);
-
   return modalVisible ? (
     <ModalView>
       <Modal

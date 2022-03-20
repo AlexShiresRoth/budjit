@@ -148,7 +148,7 @@ const BankingConnects = () => {
 
   return (
     <ScrollContainer
-      style={{ backgroundColor: Colors[colorScheme].cardBg + '90' }}
+      style={{ backgroundColor: Colors[colorScheme].cardBg + '80' }}
     >
       <NoConnectionsView horizontal={true}>
         {connections.length > 0 ? (

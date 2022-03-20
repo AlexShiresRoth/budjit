@@ -61,6 +61,14 @@ export const GET_PLAID_TRANSACTIONS_BY_TIMEFRAME = gql`
       success
       spending
       id
+      startDate
+      endDate
+      transactions {
+        name
+        date
+        amount
+        transaction_id
+      }
     }
   }
 `;

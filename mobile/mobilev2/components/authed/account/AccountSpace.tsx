@@ -11,6 +11,7 @@ import Spending from './Spending';
 import AccountHeader from './AccountHeader';
 import BankingConnects from './BankingConnects';
 import AccountsModal from './AccountsModal';
+import Transactions from './Transactions';
 
 const Container = styled.View`
   align-items: center;
@@ -21,7 +22,6 @@ const Content = styled.View`
 const Box = styled.TouchableOpacity`
   padding: 20px;
   border-radius: 5px;
-  margin-top: -60px;
 `;
 const SubHeading = styled.Text`
   font-size: 16px;
@@ -53,10 +53,6 @@ const AccountSpace = ({ route, navigation }: Props) => {
 
   const accountState = useAppSelector(selectAccount);
 
-  const profileState = useAppSelector(selectProfile);
-
-  console.log('profile state', profileState);
-
   const OCCASION_TOTAL = 0;
 
   return (
@@ -69,6 +65,7 @@ const AccountSpace = ({ route, navigation }: Props) => {
       />
       <BankingConnects />
       <Spending colorScheme={colorScheme} />
+      <Transactions />
       <AccountsModal />
       <Container
         style={{

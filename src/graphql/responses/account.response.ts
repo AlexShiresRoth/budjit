@@ -149,6 +149,18 @@ export class GetPlaidInstitutionResponse {
 }
 
 @ObjectType()
+export class Transaction {
+  @Field()
+  name: string;
+  @Field()
+  date: string;
+  @Field()
+  amount: number;
+  @Field()
+  transaction_id: string;
+}
+
+@ObjectType()
 export class GetPlaidTransactionsResponse {
   @Field()
   message: string;
@@ -158,4 +170,10 @@ export class GetPlaidTransactionsResponse {
   spending: number;
   @Field()
   id: string;
+  @Field()
+  startDate: string;
+  @Field()
+  endDate: string;
+  @Field(() => [Transaction])
+  transactions: Transaction[];
 }

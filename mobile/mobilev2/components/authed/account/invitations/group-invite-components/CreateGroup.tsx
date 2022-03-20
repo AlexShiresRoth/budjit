@@ -94,7 +94,6 @@ const CreateGroup = ({
       });
 
       if (request.data.sendInvitesToNewGroup.success) {
-        console.log('success', request);
         setModalVisibility({ type: 'group', show: false });
       }
     } catch (err) {
@@ -107,8 +106,6 @@ const CreateGroup = ({
     //clear added invitee
     setGroup({ ...group, invite: '', ...invites });
   }, [invites]);
-
-  console.log('data', data, 'error', error, 'loading', loading);
 
   if (error) {
     return (
