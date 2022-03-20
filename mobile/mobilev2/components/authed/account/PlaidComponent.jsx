@@ -5,9 +5,11 @@ import {
   LinkErrorType,
   LinkExitMetadataStatus,
 } from '../../../constants/webviewConfig';
+import { useWindowDimensions } from 'react-native';
 
 const PlaidComponent = ({ token, webviewRef, onEvent, onExit, onSuccess }) => {
 
+const {width} = useWindowDimensions();
 
   const handleWebViewNavigationStateChange = (event) => {
     if (event.url.startsWith('plaidlink://')) {
@@ -90,7 +92,8 @@ const PlaidComponent = ({ token, webviewRef, onEvent, onExit, onSuccess }) => {
       ref={(ref) => (webviewRef = ref)}
       originWhitelist={['https://*', 'plaidlink://*']}
       onShouldStartLoadWithRequest={handleWebViewNavigationStateChange}
-      style={{ flex: 1, height: 500, width: 400, backgroundColor: '#fff', marginBottom:100 }}
+      style={{ flex: 1, height: 600, width: width, maxWidth:'100%', backgroundColor: '#fff', marginBottom:100 }}
+     nestedScrollEnabled={true}
       
     />
   );

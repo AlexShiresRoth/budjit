@@ -65,7 +65,7 @@ const AccountHeader = ({
 }: AccountTypes & ColorScheme & Props) => {
   const { myAccount } = accounts;
 
-  const { error, data } = useQuery(LOAD_MY_PROFILE);
+  const { error, data, refetch } = useQuery(LOAD_MY_PROFILE);
 
   const [avatar, setAvatar] = useState<string>('');
 
@@ -78,6 +78,10 @@ const AccountHeader = ({
   const handleNavToProfile = () => navigation.navigate('Profile');
 
   const handleNavToInvitations = () => navigation.navigate('InvitationsScreen');
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <Header

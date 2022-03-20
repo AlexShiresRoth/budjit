@@ -68,7 +68,7 @@ const Signup = ({
 
   useEffect(() => {
     if (accountState.isAuthenticated) {
-      navigation.navigate('Account');
+      navigation.navigate('AccountSpace');
     }
   }, [accountState.isAuthenticated]);
 

@@ -1,9 +1,5 @@
-import { FontAwesome } from '@expo/vector-icons';
-import {
-  BottomTabBarProps,
-  BottomTabScreenProps,
-  createBottomTabNavigator,
-} from '@react-navigation/bottom-tabs';
+import { FontAwesome, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
   DefaultTheme,
@@ -64,39 +60,11 @@ function RootNavigator() {
         })}
       />
       <Stack.Screen
-        name="Account"
-        component={AccountScreen}
-        options={({ navigation }: RootStackScreenProps<'Account'>) => ({
-          headerLeft: () => null,
-          gestureEnabled: false,
-          headerBackVisible: false,
-          headerRight: () => (
-            <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
-              <TabBarIcon name="cog" color="#333" />
-            </TouchableOpacity>
-          ),
-        })}
-      />
-      <Stack.Screen component={SettingsScreen} name="Settings" />
-      <Stack.Screen
-        component={InviteTabNavigator}
-        name="InvitationsScreen"
-        options={({
-          navigation,
-        }: RootStackScreenProps<'InvitationsScreen'>) => ({
-          title: 'Group Invites',
+        component={BottomTabAccountNavigator}
+        name="AccountSpace"
+        options={{
           headerShown: false,
-        })}
-      />
-      <Stack.Screen
-        component={OccasionInviteTabNavigator}
-        name="OccasionInvitationsScreen"
-        options={({
-          navigation,
-        }: RootStackScreenProps<'OccasionInvitationsScreen'>) => ({
-          title: 'Occasion Invites',
-          headerShown: false,
-        })}
+        }}
       />
       <Stack.Screen
         name="NotFound"
@@ -108,6 +76,88 @@ function RootNavigator() {
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
     </Stack.Navigator>
+  );
+}
+
+const AccountTabs = createBottomTabNavigator<RootTabParamList>();
+
+function BottomTabAccountNavigator() {
+  const colorScheme = useColorScheme();
+  return (
+    <AccountTabs.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 10,
+        },
+      }}
+    >
+      <AccountTabs.Screen
+        name="Account"
+        component={AccountScreen}
+        options={({ navigation }: RootStackScreenProps<'Account'>) => ({
+          headerLeft: () => null,
+          gestureEnabled: false,
+          headerBackVisible: false,
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+
+          tabBarIcon: ({ color }) => (
+            <Ionicons
+              name="home-outline"
+              size={24}
+              style={{ marginBottom: -3 }}
+              color={color}
+            />
+          ),
+        })}
+      />
+      <AccountTabs.Screen
+        component={InviteTabNavigator}
+        name="InvitationsScreen"
+        options={({
+          navigation,
+        }: RootStackScreenProps<'InvitationsScreen'>) => ({
+          title: 'Invites',
+          headerShown: false,
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <SimpleLineIcons
+              name="envelope-letter"
+              color={color}
+              size={24}
+              style={{ marginBottom: -3 }}
+            />
+          ),
+        })}
+      />
+      <AccountTabs.Screen
+        component={OccasionInviteTabNavigator}
+        name="OccasionInvitationsScreen"
+        options={({
+          navigation,
+        }: RootStackScreenProps<'OccasionInvitationsScreen'>) => ({
+          headerShown: false,
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarShowLabel: false,
+          tabBarItemStyle: { display: 'none' },
+        })}
+      />
+      <AccountTabs.Screen
+        name="Settings"
+        component={SettingsScreen}
+        options={{
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <Ionicons
+              name="settings-outline"
+              color={color}
+              size={24}
+              style={{ marginBottom: -3 }}
+            />
+          ),
+        }}
+      />
+    </AccountTabs.Navigator>
   );
 }
 

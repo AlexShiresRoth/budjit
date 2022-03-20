@@ -24,12 +24,12 @@ export type RootStackParamList = {
   Landing: undefined;
   Signin: undefined;
   Signup: undefined;
-  Settings: undefined;
   Profile: undefined;
   InvitationsScreen: undefined | { name: string };
   OccasionInvitationsScreen: undefined | { name: string };
   OccasionInvites: undefined;
   GroupInvites: undefined;
+  AccountSpace: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -43,6 +43,7 @@ export type RootTabParamList = {
   navigation: any | undefined;
   Profile: undefined;
   Account: undefined;
+  AccountSpace: undefined;
   InvitationsScreen: undefined | { name: string };
   OccasionInvitationsScreen: undefined | { name: string };
   SentOccasionInvites: undefined | { name: string };
@@ -51,6 +52,7 @@ export type RootTabParamList = {
   SentGroupInvites: undefined | { name: string };
   ReceivedGroupInvites: undefined | { name: string };
   GroupInvites: undefined | { name: string };
+  Settings: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

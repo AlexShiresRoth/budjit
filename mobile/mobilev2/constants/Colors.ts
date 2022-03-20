@@ -48,7 +48,7 @@ export default {
     tabIconDefault: '#ccc',
     tabIconSelected: tintColorDark,
     secondary: tintColorDark + '55',
-    danger: '#E3170A',
+    danger: '#A5402D',
     success: '#035E7B',
     accountBg: '#011936',
     cardBg: '#053225',

@@ -41,8 +41,6 @@ const Transactions = () => {
     spending: { filter, transactions },
   } = spendingState;
 
-  console.log(transactions);
-
   const renderItem = ({ item }: TransactionItemProps) => {
     return <TransactionItem item={item} />;
   };

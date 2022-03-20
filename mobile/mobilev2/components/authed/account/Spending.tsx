@@ -1,20 +1,11 @@
-import { useMutation } from '@apollo/client';
 import { MaterialIcons } from '@expo/vector-icons';
-import React, {
-  SetStateAction,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
+import React, { SetStateAction, useEffect, useState } from 'react';
 import { Modal, Pressable } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/Colors';
-import { GET_PLAID_TRANSACTIONS_BY_TIMEFRAME } from '../../../graphql/mutations/accounts.mutations';
 import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import {
   selectAccount,
-  setSpendingAmount,
   setSpendingFilter,
 } from '../../../redux/reducers/accounts.reducers';
 import LoadingSpinner from '../../reusable/LoadingSpinner';
@@ -247,7 +238,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
         </SubHeading>
         <DateToggler
           style={{
-            backgroundColor: Colors[colorScheme].tint,
+            backgroundColor: Colors[colorScheme].tint + '90',
             borderWidth: 3,
             borderColor: Colors[colorScheme].tint + '50',
           }}
@@ -309,7 +300,12 @@ const TimeModal = ({
         style={{ height: '50%' }}
       >
         <ModalView>
-          <ModalInner style={{ backgroundColor: '#0a363c', elevation: 10 }}>
+          <ModalInner
+            style={{
+              backgroundColor: Colors[colorScheme].cardBg,
+              elevation: 10,
+            }}
+          >
             <MaterialIcons
               name="date-range"
               size={25}

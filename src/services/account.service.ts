@@ -502,7 +502,8 @@ export class AccountsService {
         const today = new Date();
         ///////////////////////////////
         const start =
-          today.getDate() - (today.getDay() + (today.getDay() === 0 ? -6 : 1));
+          today.getDate() - (today.getDay() + (today.getDay() === 0 ? 7 : 1));
+
         ///////////////////////////////
         const tempDate = new Date();
         ///////////////////////////////
@@ -511,6 +512,8 @@ export class AccountsService {
         startDate = newStart.toISOString().split('T')[0];
         ///////////////////////////////
         endDate = today.toISOString().split('T')[0];
+
+        console.log('start', start, newStart, 'end', endDate);
       };
 
       const setMonthAsTimeFrame = () => {
@@ -572,7 +575,6 @@ export class AccountsService {
         0,
       );
 
-      console.log(transactions);
       return {
         message: 'Transactions received',
         success: true,
