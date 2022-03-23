@@ -42,6 +42,11 @@ const linking: LinkingOptions<RootStackParamList> = {
           SettingsScreen: 'Settings',
         },
       },
+      Occasions: {
+        screens: {
+          OccasionsScreen: 'Occasions',
+        },
+      },
       Profile: {
         screens: {
           ProfileScreen: 'Profile',

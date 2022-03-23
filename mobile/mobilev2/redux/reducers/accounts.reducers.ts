@@ -33,11 +33,14 @@ interface InitialStateParams {
     startDate: string;
     endDate: string;
     isSpendingFilterLoading: boolean;
-    transactions: Array<{
-      name: string;
-      date: string;
-      amount: number;
-      transaction_id: string;
+    account_transactions: Array<{
+      account_id: string;
+      transactions: Array<{
+        name: string;
+        date: string;
+        amount: number;
+        transaction_id: string;
+      }>;
     }>;
   };
   isAuthenticated: boolean;
@@ -60,7 +63,7 @@ const initialState: InitialStateParams = {
     startDate: '',
     endDate: '',
     isSpendingFilterLoading: true,
-    transactions: [],
+    account_transactions: [],
   },
   isAuthenticated: false,
 };
@@ -146,16 +149,39 @@ export const accountSlice = createSlice({
     setTransactionsWithinTimeFrame: (
       state,
       action: PayloadAction<{
-        transactions: Array<{
-          name: string;
-          date: string;
-          amount: number;
-          transaction_id: string;
-        }>;
+        account_transactions: {
+          account_id: string;
+          transactions: Array<{
+            name: string;
+            date: string;
+            amount: number;
+            transaction_id: string;
+          }>;
+        };
       }>,
     ) => {
       /////////////////////////////////////
-      state.spending.transactions = action.payload.transactions;
+      if (action.payload.account_transactions) {
+        if (state.spending.account_transactions.length > 0) {
+          const ids = state.spending.account_transactions.map(
+            (tr) => tr.account_id,
+          );
+          const insertIndex = ids.indexOf(
+            action.payload.account_transactions.account_id,
+          );
+
+          if (insertIndex !== -1) {
+            state.spending.account_transactions[insertIndex].transactions =
+              action.payload.account_transactions.transactions;
+          } else
+            state.spending.account_transactions.push(
+              action.payload.account_transactions,
+            );
+        } else
+          state.spending.account_transactions.push(
+            action.payload.account_transactions,
+          );
+      }
     },
   },
 });

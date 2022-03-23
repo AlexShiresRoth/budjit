@@ -19,6 +19,8 @@ export class Occasion {
   creator: Account;
   @Prop()
   initialBudget: string;
+  @Prop()
+  category: string;
 }
 
 export type OccasionDocument = Occasion & Document;

@@ -513,7 +513,11 @@ export class AccountsService {
         ///////////////////////////////
         endDate = today.toISOString().split('T')[0];
 
-        console.log('start', start, newStart, 'end', endDate);
+        console.log(
+          'today',
+          today.getDate(),
+          today.getDate() - (today.getDay() + (today.getDay() === 0 ? 7 : 0)),
+        );
       };
 
       const setMonthAsTimeFrame = () => {
@@ -575,6 +579,13 @@ export class AccountsService {
         0,
       );
 
+      console.log('transactions,', {
+        account_transactions: {
+          account_id: accessToken,
+          transactions: transactions,
+        },
+      });
+
       return {
         message: 'Transactions received',
         success: true,
@@ -582,7 +593,10 @@ export class AccountsService {
         id: accessToken,
         startDate,
         endDate,
-        transactions,
+        account_transactions: {
+          account_id: accessToken,
+          transactions,
+        },
       };
     } catch (error) {
       console.error(error);

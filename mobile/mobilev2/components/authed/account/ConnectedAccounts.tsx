@@ -179,7 +179,7 @@ const Connection = ({
       //pass transactions to reducer
       dispatch(
         setTransactionsWithinTimeFrame({
-          transactions: tData.getPlaidTransactions.transactions,
+          account_transactions: tData.getPlaidTransactions.account_transactions,
         }),
       );
     }

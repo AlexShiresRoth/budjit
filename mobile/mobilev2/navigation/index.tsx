@@ -1,4 +1,9 @@
-import { FontAwesome, Ionicons, SimpleLineIcons } from '@expo/vector-icons';
+import {
+  FontAwesome,
+  Ionicons,
+  MaterialIcons,
+  SimpleLineIcons,
+} from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
@@ -13,6 +18,7 @@ import useColorScheme from '../hooks/useColorScheme';
 import AccountScreen from '../screens/auth/account/AccountScreen';
 import InvitationsScreen from '../screens/auth/account/InvitationsScreen';
 import OccasionInvitationsScreen from '../screens/auth/account/OccasionInvitationsScreen';
+import OccasionsScreen from '../screens/auth/account/OccasionsScreen';
 import ProfileScreen from '../screens/auth/account/ProfileScreen';
 import SettingsScreen from '../screens/auth/settings/SettingsScreen';
 import SigninScreen from '../screens/auth/SigninScreen';
@@ -123,6 +129,23 @@ function BottomTabAccountNavigator() {
           tabBarIcon: ({ color }) => (
             <SimpleLineIcons
               name="envelope-letter"
+              color={color}
+              size={24}
+              style={{ marginBottom: -3 }}
+            />
+          ),
+        })}
+      />
+      <AccountTabs.Screen
+        component={OccasionsScreen}
+        name="Occasions"
+        options={() => ({
+          title: 'Occasions',
+          headerShown: false,
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons
+              name="event"
               color={color}
               size={24}
               style={{ marginBottom: -3 }}

@@ -10,7 +10,7 @@ import AccountHeader from './AccountHeader';
 import BankingConnects from './BankingConnects';
 import AccountsModal from './AccountsModal';
 import Transactions from './Transactions';
-import Occasions from './occasions/Occasions';
+import OccasionsCard from './OccasionsCard';
 
 const Container = styled.View`
   align-items: center;
@@ -35,7 +35,7 @@ const AccountSpace = ({ route, navigation }: Props) => {
       <Spending colorScheme={colorScheme} />
       <Transactions />
       <AccountsModal />
-      <Occasions />
+      <OccasionsCard route={route} navigation={navigation} />
     </Container>
   );
 };

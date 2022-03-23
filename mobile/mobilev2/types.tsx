@@ -30,6 +30,8 @@ export type RootStackParamList = {
   OccasionInvites: undefined;
   GroupInvites: undefined;
   AccountSpace: undefined;
+  Settings: undefined;
+  Occasions: undefined;
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
@@ -53,6 +55,7 @@ export type RootTabParamList = {
   ReceivedGroupInvites: undefined | { name: string };
   GroupInvites: undefined | { name: string };
   Settings: undefined;
+  Occasions: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

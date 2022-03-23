@@ -126,6 +126,11 @@ type Transaction {
   transaction_id: String!
 }
 
+type Transactions {
+  account_id: String!
+  transactions: [Transaction!]!
+}
+
 type GetPlaidTransactionsResponse {
   message: String!
   success: Boolean!
@@ -133,7 +138,7 @@ type GetPlaidTransactionsResponse {
   id: String!
   startDate: String!
   endDate: String!
-  transactions: [Transaction!]!
+  account_transactions: Transactions!
 }
 
 type CreateInvitesResponse {

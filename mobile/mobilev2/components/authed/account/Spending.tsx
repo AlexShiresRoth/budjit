@@ -201,7 +201,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
   }, [spendingState.spending]);
 
   //TODO spending filter update works, need to clean and refactor
-  console.log(spendingState);
+  // console.log(spendingState)
   return (
     <Content
       style={{

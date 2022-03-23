@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../hooks/useColorScheme';
@@ -37,9 +37,54 @@ const Transactions = () => {
 
   const spendingState = useAppSelector(selectAccount);
 
+  const [transactions, concatTransactions] = useState<
+    Array<{
+      name: string;
+      date: string;
+      amount: number;
+      transaction_id: string;
+    }>
+  >([]);
+
   const {
-    spending: { filter, transactions },
+    spending: { filter, account_transactions },
   } = spendingState;
+
+  useEffect(() => {
+    if (account_transactions.length > 0) {
+      const temp: Array<{
+        name: string;
+        date: string;
+        amount: number;
+        transaction_id: string;
+      }> = [];
+      account_transactions.forEach(
+        (account: {
+          transactions: Array<{
+            name: string;
+            date: string;
+            amount: number;
+            transaction_id: string;
+          }>;
+        }) => {
+          account.transactions.forEach((transaction) => {
+            const ids = temp.map((t) => t.transaction_id);
+            if (!ids.includes(transaction.transaction_id)) {
+              temp.push(transaction);
+            }
+          });
+        },
+      );
+
+      concatTransactions(temp);
+    }
+  }, [spendingState]);
+
+  console.log('spending', spendingState);
+
+  if (transactions.length === 0) {
+    return null;
+  }
 
   const renderItem = ({ item }: TransactionItemProps) => {
     return <TransactionItem item={item} />;

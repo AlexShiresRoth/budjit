@@ -159,6 +159,13 @@ export class Transaction {
   @Field()
   transaction_id: string;
 }
+@ObjectType()
+export class Transactions {
+  @Field()
+  account_id: string;
+  @Field(() => [Transaction])
+  transactions: Transaction[];
+}
 
 @ObjectType()
 export class GetPlaidTransactionsResponse {
@@ -174,6 +181,6 @@ export class GetPlaidTransactionsResponse {
   startDate: string;
   @Field()
   endDate: string;
-  @Field(() => [Transaction])
-  transactions: Transaction[];
+  @Field(() => Transactions)
+  account_transactions: Transactions;
 }

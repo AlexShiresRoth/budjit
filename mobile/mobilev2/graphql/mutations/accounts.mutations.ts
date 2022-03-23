@@ -63,11 +63,14 @@ export const GET_PLAID_TRANSACTIONS_BY_TIMEFRAME = gql`
       id
       startDate
       endDate
-      transactions {
-        name
-        date
-        amount
-        transaction_id
+      account_transactions {
+        account_id
+        transactions {
+          name
+          date
+          amount
+          transaction_id
+        }
       }
     }
   }
