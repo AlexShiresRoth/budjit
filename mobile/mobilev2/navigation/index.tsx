@@ -141,7 +141,6 @@ function BottomTabAccountNavigator() {
         name="Occasions"
         options={() => ({
           title: 'Occasions',
-          headerShown: false,
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
           tabBarIcon: ({ color }) => (
             <MaterialIcons

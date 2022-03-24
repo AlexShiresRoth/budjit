@@ -5,6 +5,7 @@ import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
+import MyOccasions from './MyOccasions';
 import SearchOccasions from './SearchOccasions';
 
 const Container = styled.View`
@@ -24,6 +25,12 @@ const Row = styled.View`
   flex-direction: row;
   align-items: center;
   width: 90%;
+  justify-content: space-between;
+`;
+
+const Column = styled.View`
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Text = styled.Text``;
@@ -47,36 +54,55 @@ const Occasions = () => {
         }}
       >
         <Row>
-          <TouchableOpacity
-            style={{
-              backgroundColor: Colors[colorScheme].text + '40',
-              padding: 8,
-              borderRadius: 900,
-              borderWidth: 1,
-              borderColor: Colors[colorScheme].background + '20',
-            }}
-            onPress={() => toggleVisibility(!searchVisible)}
-          >
-            <AntDesign
-              name={searchVisible ? 'closecircleo' : 'search1'}
-              size={16}
-              color={Colors[colorScheme].background}
-            />
-          </TouchableOpacity>
-          {!searchVisible ? (
-            <Text
+          <Column>
+            <TouchableOpacity
               style={{
-                color: Colors[colorScheme].background,
+                backgroundColor: Colors[colorScheme].text + '40',
+                padding: 8,
+                borderRadius: 900,
+                borderWidth: 1,
+                borderColor: Colors[colorScheme].background + '20',
+              }}
+              onPress={() => toggleVisibility(!searchVisible)}
+            >
+              <AntDesign
+                name={searchVisible ? 'closecircleo' : 'search1'}
+                size={16}
+                color={Colors[colorScheme].background}
+              />
+            </TouchableOpacity>
+            {!searchVisible ? (
+              <Text
+                style={{
+                  color: Colors[colorScheme].background,
+                  marginLeft: 10,
+                  fontWeight: '700',
+                }}
+              >
+                Search Occasions
+              </Text>
+            ) : null}
+            <SearchOccasions isVisible={searchVisible} />
+          </Column>
+          <Column>
+            <TouchableOpacity
+              style={{
+                backgroundColor: Colors[colorScheme].background,
+                padding: 5,
+                borderRadius: 5,
                 marginLeft: 10,
-                fontWeight: '700',
               }}
             >
-              Search Occasions
-            </Text>
-          ) : null}
-          <SearchOccasions isVisible={searchVisible} />
+              <AntDesign
+                name="plus"
+                color={Colors[colorScheme].text}
+                size={16}
+              />
+            </TouchableOpacity>
+          </Column>
         </Row>
       </SearchHeader>
+      <MyOccasions />
     </Container>
   );
 };
