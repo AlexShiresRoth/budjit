@@ -1,10 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Text, View } from 'react-native';
 import EmptyState from '../../../reusable/EmptyState';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import Colors from '../../../../constants/Colors';
+import CreateOccasions from './CreateOccasions';
+import { useQuery } from '@apollo/client';
+import { LOAD_MY_OCCASIONS } from '../../../../graphql/queries/occasions.query';
+import LoadingSpinner from '../../../reusable/LoadingSpinner';
 
 const Container = styled.View`
   width: 100%;
@@ -17,7 +21,43 @@ const EmptyContainer = styled.View`
 
 const MyOccasions = () => {
   const [occasions, setOccasions] = useState<Array<any>>([]);
+
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   const colorScheme = useColorScheme();
+
+  const { error, data, loading } = useQuery(LOAD_MY_OCCASIONS);
+
+  useEffect(() => {
+    if (data) {
+      setOccasions(data.loadMyOccasions.Occasions);
+    }
+  }, [data]);
+
+  if (loading) {
+    return (
+      <Container>
+        <LoadingSpinner />
+      </Container>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontSize: 30,
+            fontWeight: '700',
+            textAlign: 'center',
+          }}
+        >
+          {error.message}
+        </Text>
+      </Container>
+    );
+  }
 
   if (occasions.length === 0) {
     return (
@@ -39,13 +79,24 @@ const MyOccasions = () => {
           <Button
             title="Create New Occasion"
             color={Colors[colorScheme].tint}
-            onPress={() => console.log('clickity')}
+            onPress={() => setModalVisible(true)}
           />
         </EmptyContainer>
+        <CreateOccasions
+          isVisible={modalVisible}
+          handleModalVisibility={setModalVisible}
+        />
       </Container>
     );
   }
-  return <View></View>;
+  return (
+    <View>
+      <CreateOccasions
+        isVisible={modalVisible}
+        handleModalVisibility={setModalVisible}
+      />
+    </View>
+  );
 };
 
 export default MyOccasions;
