@@ -10,7 +10,10 @@ import {
   ContributeToBudgetInput,
   CreateOccasionInput,
 } from '../inputs/ocassion.input';
-import { LoadOccasionResponse } from '../responses/occasion.response';
+import {
+  LoadMyOccasionsResponse,
+  LoadOccasionResponse,
+} from '../responses/occasion.response';
 import { OccasionTypeDef } from '../schemas/occasion.schema';
 
 @Resolver(() => OccasionTypeDef)
@@ -21,6 +24,12 @@ export class OccasionResolver {
   @UseGuards(GraphqlAuthGuard)
   async loadOccasion(@Args('id') id: string) {
     return await this.occasionService.findOneById(id);
+  }
+
+  @Query(() => LoadMyOccasionsResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async loadMyOccasions(@CurrentAccount() user: AuthPayload) {
+    return this.occasionService.findAll(user.account.id);
   }
 
   @Mutation(() => OccasionTypeDef)

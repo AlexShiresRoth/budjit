@@ -40,6 +40,8 @@ const Occasions = () => {
 
   const [searchVisible, toggleVisibility] = useState<boolean>(false);
 
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+
   return (
     <Container
       style={{
@@ -92,6 +94,7 @@ const Occasions = () => {
                 borderRadius: 5,
                 marginLeft: 10,
               }}
+              onPress={() => setModalVisible(true)}
             >
               <AntDesign
                 name="plus"
@@ -102,7 +105,10 @@ const Occasions = () => {
           </Column>
         </Row>
       </SearchHeader>
-      <MyOccasions />
+      <MyOccasions
+        isVisible={modalVisible}
+        handleModalVisibility={setModalVisible}
+      />
     </Container>
   );
 };

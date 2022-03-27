@@ -9,11 +9,15 @@ import { Account } from './account.model';
 export class Occasion {
   @Prop({ required: true })
   title: string;
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Group' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: false })
   group: Group;
   @Prop()
   budget: string;
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'History' }] })
+  @Prop({
+    type: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'History', required: false },
+    ],
+  })
   history: History[];
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
   creator: Account;
@@ -21,6 +25,10 @@ export class Occasion {
   initialBudget: string;
   @Prop()
   category: string;
+  @Prop()
+  creationDate: string;
+  @Prop()
+  occasionStartDate: string;
 }
 
 export type OccasionDocument = Occasion & Document;

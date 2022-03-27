@@ -6,6 +6,7 @@ import {
   ContributeToBudgetInput,
   CreateOccasionInput,
 } from 'src/graphql/inputs/ocassion.input';
+import { LoadMyOccasionsResponse } from 'src/graphql/responses/occasion.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { OccasionInterface } from 'src/interfaces/occasion.interface';
 import { Occasion, OccasionDocument } from 'src/mongo-schemas/occasion.model';
@@ -32,6 +33,24 @@ export class OccasionService {
     if (!foundOccasion) throw new Error('Could not locate occasion');
 
     return foundOccasion;
+  }
+
+  async findAll(userId: string): Promise<LoadMyOccasionsResponse> {
+    try {
+      const myAccount = await this.accountService.findOneById(userId);
+
+      if (!myAccount)
+        throw new Error('Hmmm something went wrong locating your account');
+
+      return {
+        message: 'Found your occasions',
+        success: true,
+        Occasions: myAccount.occasions,
+      };
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
   }
 
   async create(

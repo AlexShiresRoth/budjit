@@ -17,6 +17,7 @@ interface PrimaryButtonParams {
   colorArr: Array<string>;
   callBack: undefined | ((args: any | undefined) => any);
   callBackArgs: null | undefined | any;
+  buttonTextColor: string | undefined | null;
 }
 
 const PrimaryButton = ({
@@ -24,11 +25,12 @@ const PrimaryButton = ({
   colorArr = [`#8980F5`, `#76E5FC`],
   callBack,
   callBackArgs,
+  buttonTextColor = '#fff',
 }: PrimaryButtonParams) => {
   return (
     <Button onPress={callBack ? () => callBack(callBackArgs) : () => {}}>
       <LinearGradient colors={colorArr} style={Styles.button}>
-        <Text>{buttonText}</Text>
+        <Text style={{ color: buttonTextColor || '#fff' }}>{buttonText}</Text>
       </LinearGradient>
     </Button>
   );

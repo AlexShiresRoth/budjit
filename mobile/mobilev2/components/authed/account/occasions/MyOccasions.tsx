@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, {
+  ComponentProps,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
 import PropTypes from 'prop-types';
 import { Button, Text, View } from 'react-native';
 import EmptyState from '../../../reusable/EmptyState';
@@ -19,10 +25,13 @@ const EmptyContainer = styled.View`
   width: 90%;
 `;
 
-const MyOccasions = () => {
-  const [occasions, setOccasions] = useState<Array<any>>([]);
+type Props = {
+  isVisible: boolean;
+  handleModalVisibility: Dispatch<SetStateAction<boolean>>;
+};
 
-  const [modalVisible, setModalVisible] = useState<boolean>(false);
+const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
+  const [occasions, setOccasions] = useState<Array<any>>([]);
 
   const colorScheme = useColorScheme();
 
@@ -79,12 +88,12 @@ const MyOccasions = () => {
           <Button
             title="Create New Occasion"
             color={Colors[colorScheme].tint}
-            onPress={() => setModalVisible(true)}
+            onPress={() => handleModalVisibility(true)}
           />
         </EmptyContainer>
         <CreateOccasions
-          isVisible={modalVisible}
-          handleModalVisibility={setModalVisible}
+          isVisible={isVisible}
+          handleModalVisibility={handleModalVisibility}
         />
       </Container>
     );
@@ -92,8 +101,8 @@ const MyOccasions = () => {
   return (
     <View>
       <CreateOccasions
-        isVisible={modalVisible}
-        handleModalVisibility={setModalVisible}
+        isVisible={isVisible}
+        handleModalVisibility={handleModalVisibility}
       />
     </View>
   );

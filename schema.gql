@@ -194,6 +194,12 @@ type LoadOccasionResponse {
   Occasion: OccasionTypeDef!
 }
 
+type LoadMyOccasionsResponse {
+  message: String!
+  success: Boolean!
+  Occasions: [OccasionTypeDef!]!
+}
+
 type Query {
   account(id: String!): AccountTypeDef!
   findMyAccount: AccountTypeDef!
@@ -208,6 +214,7 @@ type Query {
   findProfileByEmail(input: FindProfileByEmailInput!): FindProfileByEmailResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
+  loadMyOccasions: LoadMyOccasionsResponse!
 }
 
 input LoadPlaidAccountDataInput {
