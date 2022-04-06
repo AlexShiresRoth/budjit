@@ -60,7 +60,8 @@ type OccasionParams = {
 
 const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
   const colorScheme = useColorScheme();
-
+  //set starting date to today
+  const OccasionDate = new Date().toISOString();
   //handle step in process for creating an occasion
   const [stepIndex, setIndex] = useState<number>(0);
 
@@ -69,12 +70,10 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
     group: '',
     budget: '0.00',
     category: '',
-    occasionStartDate: '',
+    occasionStartDate: OccasionDate,
   });
 
   const { title, group, budget, category, occasionStartDate } = occasionData;
-
-  console.log('hahahah', occasionData);
 
   const handleChangeEvent = (text: string, name: string) =>
     setOccasionData({
@@ -89,7 +88,7 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
       group: '',
       budget: '0.00',
       category: '',
-      occasionStartDate: '',
+      occasionStartDate: OccasionDate,
     });
     //set step back to start
     setIndex(0);
@@ -188,6 +187,7 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
                       onPress={
                         index < stepIndex ? () => setIndex(index) : () => {}
                       }
+                      key={index}
                     >
                       <Text
                         key={index}

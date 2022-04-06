@@ -58,7 +58,7 @@ export class OccasionService {
     user: AuthPayload,
   ): Promise<Occasion> {
     try {
-      const { title, budget } = input;
+      const { title, budget, occasionStartDate } = input;
 
       if (!title) throw new Error('Please provide a title');
       if (!budget) throw new Error('Please set a budget');
@@ -78,7 +78,18 @@ export class OccasionService {
         return str + '.00';
       };
 
+      //force a decimal point if user removes it
       const assessedBudget = manipulateBudgetString(budget);
+
+      //validate a date string;
+
+      const validDate = (occasionStartDate: string) => {
+        const date = new Date(occasionStartDate);
+
+        return date ?? false;
+      };
+
+      if (!validDate) throw new Error('Date somehow formatted incorrectly');
 
       const newOccasion: OccasionInterface = {
         title,
@@ -87,6 +98,7 @@ export class OccasionService {
         group: group.Group,
         invites: [],
         initialBudget: assessedBudget,
+        occasionStartDate,
       };
 
       const obj = new this.occasionModel({ ...newOccasion });

@@ -3,8 +3,9 @@ import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
 import PrimaryButton from '../../../../reusable/PrimaryButton';
-import DatePicker from 'react-native-datepicker';
-import { Animated } from 'react-native';
+import DatePicker from '@react-native-community/datetimepicker';
+import { Animated, TouchableOpacity } from 'react-native';
+
 const Text = styled.Text``;
 
 const ModalComponent = styled.View``;
@@ -31,9 +32,24 @@ const DatePickComponent = ({
 }: ComponentProps) => {
   const colorScheme = useColorScheme();
 
-  const minDate = new Date().toISOString().split('T')[0];
+  const minDate = new Date();
+
+  const date = new Date(value);
 
   const [slideIn, setSlideIn] = useState(new Animated.Value(-400)); // Initial value for opacity: 0
+
+  const [showDatePicker, toggleDatePicker] = useState<boolean>(false);
+
+  const handleDateTimeSelection = (date: any, text: string) => {
+    //format to date string
+    const receivedDate = new Date(
+      date.nativeEvent.timestamp || value,
+    ).toISOString();
+    //pass the value back to the parent
+    setValue(receivedDate, text);
+    //close the modal
+    toggleDatePicker(false);
+  };
 
   useEffect(() => {
     Animated.timing(slideIn, {
@@ -86,33 +102,30 @@ const DatePickComponent = ({
           borderRadius: 5,
         }}
       >
-        <DatePicker
-          style={{ width: '100%' }}
-          date={value}
-          mode="date"
-          placeholder="select a starting date for this occasion"
-          format="YYYY-MM-DD"
-          minDate={minDate}
-          confirmBtnText="Confirm"
-          cancelBtnText="Cancel"
-          customStyles={{
-            dateIcon: {
-              position: 'absolute',
-              left: 0,
-              top: 4,
-              marginLeft: 0,
-            },
-            dateInput: {
-              marginLeft: 36,
-              borderRadius: 5,
-              borderColor: 'transparent',
-            },
-            dateText: {
-              color: Colors[colorScheme].text,
-            },
-          }}
-          onDateChange={(date) => setValue(date, 'occasionStartDate')}
-        />
+        <TouchableOpacity onPress={() => toggleDatePicker(!showDatePicker)}>
+          <Text style={{ color: Colors[colorScheme].text }}>
+            Choose Date: {value}
+          </Text>
+        </TouchableOpacity>
+        {showDatePicker ? (
+          <DatePicker
+            style={{ width: '100%', flex: 1 }}
+            value={date}
+            minimumDate={minDate}
+            onChange={(event: any) => {
+              console.log('change event', event);
+              if (event.type === 'dismissed') {
+                toggleDatePicker(false);
+              } else handleDateTimeSelection(event, 'occasionStartDate');
+            }}
+            onTouchCancel={(e) => {
+              e.preventDefault();
+              console.log(e);
+            }}
+            // onCancel={() => console.log('CANCELLL')}
+            display="calendar"
+          />
+        ) : null}
       </DateContainer>
 
       {value !== '' ? (

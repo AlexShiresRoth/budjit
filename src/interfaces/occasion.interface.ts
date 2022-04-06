@@ -8,4 +8,5 @@ export interface OccasionInterface {
   group: Group;
   invites: InviteInterface[] | Array<null>;
   initialBudget: string;
+  occasionStartDate: string;
 }

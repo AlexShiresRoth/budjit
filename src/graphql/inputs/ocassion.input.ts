@@ -17,6 +17,8 @@ export class CreateOccasionInput {
   title: string;
   @Field()
   budget: string;
+  @Field()
+  occasionStartDate: string;
 }
 
 @InputType()
