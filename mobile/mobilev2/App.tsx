@@ -18,7 +18,7 @@ import Navigation from './navigation';
 import useColorScheme from './hooks/useColorScheme';
 
 const appName = expo.name;
-const ngrok = 'https://199f-108-29-6-138.ngrok.io';
+const ngrok = 'https://d929-108-29-6-138.ngrok.io';
 const link = createHttpLink({
   uri: `${ngrok}/graphql`,
   credentials: 'same-origin',

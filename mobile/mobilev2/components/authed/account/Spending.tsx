@@ -1,8 +1,10 @@
+import { useMutation } from '@apollo/client';
 import { MaterialIcons } from '@expo/vector-icons';
 import React, { SetStateAction, useEffect, useState } from 'react';
 import { Modal, Pressable } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/Colors';
+import { SET_TIMEFRAME } from '../../../graphql/mutations/spending.mutation';
 import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import {
   selectAccount,
@@ -124,13 +126,19 @@ const Spending = ({ colorScheme }: ColorScheme) => {
   const dispatch = useAppDispatch();
   /////////////////////////////////////////////////
 
-  //set timkeframe in reducer
-  const handleSetSpendingFilter = async (
-    timeFrame: 'Year' | 'Month' | 'Week',
-  ) => {
+  //set timeframe in reducer
+  const handleSetSpendingFilter = async ({
+    filter,
+    startDate,
+    endDate,
+  }: {
+    filter: 'Year' | 'Month' | 'Week';
+    startDate: string;
+    endDate: string;
+  }) => {
     dispatch(
       setSpendingFilter({
-        spending: { filter: timeFrame, startDate: '', endDate: '' },
+        spending: { filter, startDate, endDate },
       }),
     );
   };
@@ -186,6 +194,8 @@ const Spending = ({ colorScheme }: ColorScheme) => {
       endArr.push(endYear);
       const newEnd = endArr.join('/');
 
+      console.log('date eeee', newStart, newEnd);
+
       setDates({ startDate: newStart, endDate: newEnd });
     }
   };
@@ -201,7 +211,8 @@ const Spending = ({ colorScheme }: ColorScheme) => {
   }, [spendingState.spending]);
 
   //TODO spending filter update works, need to clean and refactor
-  // console.log(spendingState)
+  // console.log('dates?', dates, spendingState);
+  //TODO need to tell spending filter to tostop loading
   return (
     <Content
       style={{
@@ -288,8 +299,37 @@ const TimeModal = ({
   setFilter: SetStateAction<any>;
   data: SpendingProps;
   spendingFilter: number;
-  dispatchAction: (val: 'Year' | 'Month' | 'Week') => void;
+  dispatchAction: ({
+    filter,
+    startDate,
+    endDate,
+  }: {
+    filter: 'Year' | 'Month' | 'Week';
+    startDate: string;
+    endDate: string;
+  }) => void;
 } & ColorScheme) => {
+  //set timeframe for whole spending state
+  const [setTimeFrame, { error, loading, data: timeData }] =
+    useMutation(SET_TIMEFRAME);
+
+  const handleTimeFrame = async (filter: 'Week' | 'Year' | 'Month') => {
+    try {
+      const request = await setTimeFrame({ variables: { input: { filter } } });
+
+      if (request?.data?.setTimeFrame?.success) {
+        const { startDate, endDate } = request.data.setTimeFrame;
+        //set filter time in redux store
+        //set start and end date in redux store
+        dispatchAction({ filter, startDate, endDate });
+      }
+    } catch (error) {
+      //most likely error would be a connection issue
+      console.error(error);
+      return error;
+    }
+  };
+
   return (
     <ModalContainer>
       <Modal
@@ -332,7 +372,7 @@ const TimeModal = ({
                   onPress={() => {
                     setFilter(key);
                     //need to set filter in reducer
-                    dispatchAction(timeFrame.type);
+                    handleTimeFrame(timeFrame.type);
                     //close modal
                     setModalVisibility(false);
                   }}

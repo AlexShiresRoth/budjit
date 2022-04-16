@@ -1,8 +1,11 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../hooks/useColorScheme';
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import { selectAccount } from '../../../redux/reducers/accounts.reducers';
+import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
+import {
+  selectAccount,
+  setSpendingFilterLoadingState,
+} from '../../../redux/reducers/accounts.reducers';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types';
 import Spending from './Spending';
@@ -22,6 +25,15 @@ const AccountSpace = ({ route, navigation }: Props) => {
   const colorScheme = useColorScheme();
 
   const accountState = useAppSelector(selectAccount);
+
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    //if no banking connects exist, dont load component
+    if (accountState?.plaidAccounts?.accessTokens?.length === 0) {
+      dispatch(setSpendingFilterLoadingState(false));
+    }
+  }, [accountState]);
 
   return (
     <Container>

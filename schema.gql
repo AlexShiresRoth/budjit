@@ -190,6 +190,13 @@ type FindProfileByEmailResponse {
   defaultAvatar: String!
 }
 
+type SetTimeFrameResponse {
+  message: String!
+  success: Boolean!
+  startDate: String!
+  endDate: String!
+}
+
 type LoadOccasionResponse {
   Occasion: OccasionTypeDef!
 }
@@ -245,13 +252,15 @@ type Mutation {
   deleteSentInvite(input: DeleteSentInviteInput!): DeleteSentInviteResponse!
   create(createProfileInput: ProfileInput!): ProfileTypeDef!
   update(updateProfileInput: UpdateProfileInput!): ProfileTypeDef!
+  setTimeFrame(input: SetTimeFrameInput!): SetTimeFrameResponse!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
 input GetPlaidTransactionsInput {
   accessToken: String!
-  filter: String!
+  startDate: String!
+  endDate: String!
 }
 
 input LoginInput {
@@ -298,9 +307,14 @@ input UpdateProfileInput {
   profileId: String!
 }
 
+input SetTimeFrameInput {
+  filter: String!
+}
+
 input CreateOccasionInput {
   title: String!
   budget: String!
+  occasionStartDate: String!
 }
 
 input ContributeToBudgetInput {

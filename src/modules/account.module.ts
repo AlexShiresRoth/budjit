@@ -7,6 +7,7 @@ import { AuthModule } from './auth.module';
 import { InviteModule } from './invite.module';
 import { PlaidModule } from './plaid.module';
 import { ProfileModule } from './profile.module';
+import { SpendingModule } from './spending.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ProfileModule } from './profile.module';
     forwardRef(() => ProfileModule),
     AuthModule,
     PlaidModule,
+    SpendingModule,
     MongooseModule.forFeature([{ name: Account.name, schema: AccountSchema }]),
   ],
   providers: [AccountsService, AccountsResolver, Account],

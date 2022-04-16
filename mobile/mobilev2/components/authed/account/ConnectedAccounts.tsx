@@ -1,14 +1,8 @@
 import { useMutation, useQuery } from '@apollo/client';
 import { AntDesign } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import React, {
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import { Button, Modal, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../constants/Colors';
 import { GET_PLAID_TRANSACTIONS_BY_TIMEFRAME } from '../../../graphql/mutations/accounts.mutations';
@@ -28,7 +22,6 @@ import {
   togglePlaidAccountsModal,
 } from '../../../redux/reducers/accounts.reducers';
 import LoadingSpinner from '../../reusable/LoadingSpinner';
-import AccountsModal from './AccountsModal';
 
 const Card = styled.View`
   width: 300px;
@@ -68,6 +61,10 @@ const ConnectedAccounts = ({
   connections: PlaidAccount[];
 }) => {
   const colorScheme = useColorScheme();
+
+  if (connections.length === 0) {
+    return null;
+  }
 
   return (
     <>
@@ -141,6 +138,7 @@ const Connection = ({
     spending: { filter },
   } = spendingState;
 
+  //transaction loading from plaid
   const [getTransactions, { error: tError, data: tData, loading: tLoading }] =
     useMutation(GET_PLAID_TRANSACTIONS_BY_TIMEFRAME);
 
@@ -167,12 +165,13 @@ const Connection = ({
         }),
       );
       //set timeframe and filter in reducer
+      //start and end dates should not be dependent on plaid component
       dispatch(
         setSpendingFilter({
           spending: {
             filter: spendingState.spending.filter,
-            startDate: tData.getPlaidTransactions.startDate,
-            endDate: tData.getPlaidTransactions.endDate,
+            startDate: spendingState.spending.startDate,
+            endDate: spendingState.spending.endDate,
           },
         }),
       );

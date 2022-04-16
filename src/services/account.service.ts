@@ -46,7 +46,7 @@ import {
   Products,
   TransactionsGetRequest,
 } from 'plaid';
-import { response } from 'express';
+import { SpendingService } from './spending.service';
 
 @Injectable()
 export class AccountsService {
@@ -54,6 +54,7 @@ export class AccountsService {
     @InjectModel(Account.name)
     private readonly accountModel: Model<AccountDocument>,
     private readonly authServices: AuthService,
+    private readonly spendingService: SpendingService,
     @Inject(forwardRef(() => ProfileService))
     private readonly profileService: ProfileService,
     @Inject('PLAID') private readonly plaid: PlaidApi,
@@ -492,75 +493,7 @@ export class AccountsService {
     input: GetPlaidTransactionsInput,
   ): Promise<GetPlaidTransactionsResponse> {
     try {
-      const { accessToken, filter } = input;
-
-      let startDate: string;
-      let endDate: string;
-      //set spending timeframe for the current week
-      const setWeekAsTimeFrame = () => {
-        ///////////////////////////////
-        const today = new Date();
-        ///////////////////////////////
-        const start =
-          today.getDate() - (today.getDay() + (today.getDay() === 0 ? 7 : 1));
-
-        ///////////////////////////////
-        const tempDate = new Date();
-        ///////////////////////////////
-        const newStart = new Date(tempDate.setDate(start + 1));
-        ///////////////////////////////
-        startDate = newStart.toISOString().split('T')[0];
-        ///////////////////////////////
-        endDate = today.toISOString().split('T')[0];
-
-        console.log(
-          'today',
-          today.getDate(),
-          today.getDate() - (today.getDay() + (today.getDay() === 0 ? 7 : 0)),
-        );
-      };
-
-      const setMonthAsTimeFrame = () => {
-        ///////////////////////////////
-        const date = new Date();
-        ///////////////////////////////
-        const firstDayOfMonth = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          1,
-        );
-        ///////////////////////////////
-        startDate = firstDayOfMonth.toISOString().split('T')[0];
-        ///////////////////////////////
-        endDate = date.toISOString().split('T')[0];
-      };
-
-      const setYearAsTimeFrame = () => {
-        ///////////////////////////////
-        const date = new Date();
-        ///////////////////////////////
-        const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
-        ///////////////////////////////
-        startDate = firstDayOfYear.toISOString().split('T')[0];
-        ///////////////////////////////
-        endDate = date.toISOString().split('T')[0];
-      };
-
-      //handle timeframe by filter request
-      //TODO FIX HARDCODED DATES
-      switch (filter) {
-        case 'Month':
-          setMonthAsTimeFrame();
-          break;
-        case 'Week':
-          setWeekAsTimeFrame();
-          break;
-        case 'Year':
-          setYearAsTimeFrame();
-          break;
-        default:
-          setWeekAsTimeFrame();
-      }
+      const { accessToken, startDate, endDate } = input;
 
       if (!startDate || !endDate) throw new Error('Filter not properly set');
 
@@ -578,13 +511,6 @@ export class AccountsService {
         (prev, next) => prev + next.amount,
         0,
       );
-
-      console.log('transactions,', {
-        account_transactions: {
-          account_id: accessToken,
-          transactions: transactions,
-        },
-      });
 
       return {
         message: 'Transactions received',

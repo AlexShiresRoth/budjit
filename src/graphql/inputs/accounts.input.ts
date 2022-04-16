@@ -73,5 +73,7 @@ export class GetPlaidTransactionsInput {
   @Field()
   accessToken: string;
   @Field()
-  filter: 'Year' | 'Month' | 'Week';
+  startDate: string;
+  @Field()
+  endDate: string;
 }

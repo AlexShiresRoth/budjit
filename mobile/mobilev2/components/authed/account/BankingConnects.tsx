@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../hooks/useColorScheme';
 import Colors from '../../../constants/Colors';
@@ -12,8 +12,6 @@ import {
 } from '../../../graphql/mutations/accounts.mutations';
 import PlaidComponent from './PlaidComponent';
 import ConnectedAccounts from './ConnectedAccounts';
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import { selectAccount } from '../../../redux/reducers/accounts.reducers';
 import { LOAD_PLAID_ACCOUNTS } from '../../../graphql/queries/accounts.query';
 
 const ScrollContainer = styled.View`
@@ -24,7 +22,7 @@ const ScrollContainer = styled.View`
   padding: 20px 0;
 `;
 
-const NoConnectionsView = styled.ScrollView`
+const ConnectionsView = styled.ScrollView`
   display: flex;
   flex-direction: row;
 `;
@@ -150,84 +148,111 @@ const BankingConnects = () => {
     <ScrollContainer
       style={{ backgroundColor: Colors[colorScheme].cardBg + '80' }}
     >
-      <NoConnectionsView horizontal={true}>
+      <ConnectionsView horizontal={true}>
         {connections.length > 0 ? (
           <ConnectedAccounts connections={connections} />
         ) : null}
-        <Card style={{ backgroundColor: Colors[colorScheme].cardBg }}>
-          <Text
-            style={{
-              color: Colors[colorScheme].text,
-              fontWeight: '700',
-              fontSize: 20,
-            }}
-          >
-            Connect a new account
-          </Text>
-
-          <TouchableOpacity
-            style={{
-              padding: 20,
-              backgroundColor: Colors[colorScheme].background + '30',
-              borderRadius: 5,
-              marginTop: 30,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              borderColor: Colors[colorScheme].tint,
-              borderWidth: 1.5,
-            }}
-            onPress={() => handlePlaidConnect()}
-          >
-            <AntDesign
-              name="pluscircle"
-              color={Colors[colorScheme].text}
-              size={40}
-            />
-
-            <Text
-              style={{
-                color: Colors[colorScheme].text,
-                fontWeight: '700',
-                fontSize: 20,
-              }}
-            >
-              Connect
-            </Text>
-          </TouchableOpacity>
-        </Card>
-        <Card style={{ backgroundColor: Colors[colorScheme].background }}>
-          <Text
-            style={{
-              color: Colors[colorScheme].text,
-              fontWeight: '700',
-              fontSize: 20,
-            }}
-          >
-            Manually Enter Transactions
-          </Text>
-          <TouchableOpacity
-            style={{
-              padding: 20,
-              backgroundColor: Colors[colorScheme].background + '30',
-              borderRadius: 5,
-              marginTop: 30,
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-            }}
-          >
-            <Text
-              style={{
-                color: Colors[colorScheme].text,
-                fontWeight: '700',
-                fontSize: 20,
-              }}
-            ></Text>
-          </TouchableOpacity>
-        </Card>
-      </NoConnectionsView>
+        {/* plaid connect card */}
+        <ConnectCard
+          handlePlaidConnect={handlePlaidConnect}
+          colorScheme={colorScheme}
+        />
+        {/* card to enter transactions manually */}
+        <ManualTransactionCard colorScheme={colorScheme} />
+      </ConnectionsView>
     </ScrollContainer>
+  );
+};
+
+const ConnectCard = ({
+  handlePlaidConnect,
+  colorScheme,
+}: {
+  colorScheme: 'light' | 'dark';
+  handlePlaidConnect: any;
+}) => {
+  return (
+    <Card style={{ backgroundColor: Colors[colorScheme].cardBg }}>
+      <Text
+        style={{
+          color: Colors[colorScheme].text,
+          fontWeight: '700',
+          fontSize: 20,
+        }}
+      >
+        Connect a new account
+      </Text>
+
+      <TouchableOpacity
+        style={{
+          padding: 20,
+          backgroundColor: Colors[colorScheme].background + '30',
+          borderRadius: 5,
+          marginTop: 30,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          borderColor: Colors[colorScheme].tint,
+          borderWidth: 1.5,
+        }}
+        onPress={() => handlePlaidConnect()}
+      >
+        <AntDesign
+          name="pluscircle"
+          color={Colors[colorScheme].text}
+          size={40}
+        />
+
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontWeight: '700',
+            fontSize: 20,
+          }}
+        >
+          Connect
+        </Text>
+      </TouchableOpacity>
+    </Card>
+  );
+};
+
+const ManualTransactionCard = ({
+  colorScheme,
+}: {
+  colorScheme: 'light' | 'dark';
+}) => {
+  return (
+    <Card style={{ backgroundColor: Colors[colorScheme].background }}>
+      <Text
+        style={{
+          color: Colors[colorScheme].text,
+          fontWeight: '700',
+          fontSize: 20,
+        }}
+      >
+        Manually Enter Transactions
+      </Text>
+      <TouchableOpacity
+        style={{
+          padding: 20,
+          backgroundColor: Colors[colorScheme].background + '30',
+          borderRadius: 5,
+          marginTop: 30,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}
+      >
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontWeight: '700',
+            fontSize: 20,
+          }}
+        ></Text>
+      </TouchableOpacity>
+    </Card>
   );
 };
 

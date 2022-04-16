@@ -17,7 +17,7 @@ const plaidProvider = {
     });
 
     const client = new PlaidApi(configuration);
-    console.log('client', client);
+
     return client;
   },
 };
