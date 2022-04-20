@@ -8,11 +8,11 @@ import {
 } from '../../../redux/reducers/accounts.reducers';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types';
-import Spending from './Spending';
+import Spending from './spending/Spending';
 import AccountHeader from './AccountHeader';
 import BankingConnects from './BankingConnects';
 import AccountsModal from './AccountsModal';
-import Transactions from './Transactions';
+import Transactions from './spending/Transactions';
 import OccasionsCard from './OccasionsCard';
 
 const Container = styled.View`

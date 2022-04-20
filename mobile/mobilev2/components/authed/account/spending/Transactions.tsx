@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
-import useColorScheme from '../../../hooks/useColorScheme';
-import Colors from '../../../constants/Colors';
-import { useAppSelector } from '../../../hooks/reduxHooks';
-import { selectAccount } from '../../../redux/reducers/accounts.reducers';
+import useColorScheme from '../../../../hooks/useColorScheme';
+import Colors from '../../../../constants/Colors';
+import { useAppSelector } from '../../../../hooks/reduxHooks';
+import { selectAccount } from '../../../../redux/reducers/accounts.reducers';
 import { FlatList, ScrollView } from 'react-native';
 
 const Container = styled.View`
@@ -79,8 +79,6 @@ const Transactions = () => {
       concatTransactions(temp);
     }
   }, [spendingState]);
-
-  console.log('spending', spendingState);
 
   if (transactions.length === 0) {
     return null;

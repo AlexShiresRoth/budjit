@@ -529,4 +529,18 @@ export class AccountsService {
       return error;
     }
   }
+
+  //TODO finish this
+  async addManualTransaction(
+    transactionRefId: mongoose.Schema.Types.ObjectId,
+    userId: string,
+  ): Promise<{ message: string; success: boolean }> {
+    try {
+      const myAccount = await this.accountModel.findById(userId);
+
+      if (!myAccount) throw new Error('Could not locate account');
+
+      myAccount.transactions.push(transactionRefId);
+    } catch (error) {}
+  }
 }

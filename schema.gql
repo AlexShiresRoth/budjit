@@ -197,6 +197,20 @@ type SetTimeFrameResponse {
   endDate: String!
 }
 
+type TransactionType {
+  title: String!
+  category: String!
+  total: Float!
+  date: Date!
+  accountType: String
+}
+
+type CreateTransactionResponse {
+  message: String!
+  success: Boolean!
+  Transaction: TransactionType!
+}
+
 type LoadOccasionResponse {
   Occasion: OccasionTypeDef!
 }
@@ -253,6 +267,7 @@ type Mutation {
   create(createProfileInput: ProfileInput!): ProfileTypeDef!
   update(updateProfileInput: UpdateProfileInput!): ProfileTypeDef!
   setTimeFrame(input: SetTimeFrameInput!): SetTimeFrameResponse!
+  createTransaction(input: CreateTransactionInput!): CreateTransactionResponse!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
@@ -309,6 +324,14 @@ input UpdateProfileInput {
 
 input SetTimeFrameInput {
   filter: String!
+}
+
+input CreateTransactionInput {
+  title: String!
+  category: String!
+  total: Float!
+  date: Date!
+  accountType: String
 }
 
 input CreateOccasionInput {

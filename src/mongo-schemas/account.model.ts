@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { Occasion } from './occasion.model';
 import { Group } from './group.model';
 import { Invite } from './Invite.model';
+import { Transaction } from './transaction.model';
 
 @Schema()
 class PlaidAccount {
@@ -55,6 +56,17 @@ export class Account {
     ]),
   )
   receivedInvites: Invite[];
+  @Prop(
+    raw([
+      {
+        transaction_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Transaction',
+        },
+      },
+    ]),
+  )
+  transactions: Transaction[];
 }
 
 export type AccountDocument = Account & Document;
