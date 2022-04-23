@@ -12,6 +12,8 @@ export class Transaction {
   date: string;
   @Prop()
   accountType: string;
+  @Prop()
+  location: string;
 }
 
 export type TransactionDocumentType = Document & Transaction;

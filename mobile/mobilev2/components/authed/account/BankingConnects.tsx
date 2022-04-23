@@ -28,9 +28,9 @@ const ConnectionsView = styled.ScrollView`
 `;
 
 const Card = styled.View`
-  width: 300px;
+  width: 350px;
   height: 200px;
-  margin: 0 20px
+  margin: 10px 20px
   border-radius: 5px;
   padding: 15px;
   elevation: 10;
@@ -158,7 +158,6 @@ const BankingConnects = () => {
           colorScheme={colorScheme}
         />
         {/* card to enter transactions manually */}
-        <ManualTransactionCard colorScheme={colorScheme} />
       </ConnectionsView>
     </ScrollContainer>
   );
@@ -212,45 +211,6 @@ const ConnectCard = ({
         >
           Connect
         </Text>
-      </TouchableOpacity>
-    </Card>
-  );
-};
-
-const ManualTransactionCard = ({
-  colorScheme,
-}: {
-  colorScheme: 'light' | 'dark';
-}) => {
-  return (
-    <Card style={{ backgroundColor: Colors[colorScheme].background }}>
-      <Text
-        style={{
-          color: Colors[colorScheme].text,
-          fontWeight: '700',
-          fontSize: 20,
-        }}
-      >
-        Manually Enter Transactions
-      </Text>
-      <TouchableOpacity
-        style={{
-          padding: 20,
-          backgroundColor: Colors[colorScheme].background + '30',
-          borderRadius: 5,
-          marginTop: 30,
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <Text
-          style={{
-            color: Colors[colorScheme].text,
-            fontWeight: '700',
-            fontSize: 20,
-          }}
-        ></Text>
       </TouchableOpacity>
     </Card>
   );

@@ -10,9 +10,11 @@ export class TransactionType {
   @Field()
   total: number;
   @Field()
-  date: Date;
+  date: string;
   @Field({ nullable: true })
   accountType: string;
+  @Field()
+  location: string;
 }
 
 @ObjectType()

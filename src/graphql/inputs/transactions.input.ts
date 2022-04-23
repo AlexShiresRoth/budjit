@@ -9,7 +9,9 @@ export class CreateTransactionInput {
   @Field()
   total: number;
   @Field()
-  date: Date;
+  date: string;
   @Field({ nullable: true })
   accountType: string;
+  @Field()
+  location: string;
 }

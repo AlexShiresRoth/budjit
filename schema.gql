@@ -201,8 +201,9 @@ type TransactionType {
   title: String!
   category: String!
   total: Float!
-  date: Date!
+  date: String!
   accountType: String
+  location: String!
 }
 
 type CreateTransactionResponse {
@@ -330,8 +331,9 @@ input CreateTransactionInput {
   title: String!
   category: String!
   total: Float!
-  date: Date!
+  date: String!
   accountType: String
+  location: String!
 }
 
 input CreateOccasionInput {

@@ -47,6 +47,7 @@ import {
   TransactionsGetRequest,
 } from 'plaid';
 import { SpendingService } from './spending.service';
+import { Transaction } from 'src/mongo-schemas/transaction.model';
 
 @Injectable()
 export class AccountsService {
@@ -529,10 +530,8 @@ export class AccountsService {
       return error;
     }
   }
-
-  //TODO finish this
   async addManualTransaction(
-    transactionRefId: mongoose.Schema.Types.ObjectId,
+    transaction: Transaction,
     userId: string,
   ): Promise<{ message: string; success: boolean }> {
     try {
@@ -540,7 +539,17 @@ export class AccountsService {
 
       if (!myAccount) throw new Error('Could not locate account');
 
-      myAccount.transactions.push(transactionRefId);
-    } catch (error) {}
+      myAccount.transactions.push(transaction);
+
+      await myAccount.save();
+
+      return {
+        message: 'Added transaction to account',
+        success: true,
+      };
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
   }
 }

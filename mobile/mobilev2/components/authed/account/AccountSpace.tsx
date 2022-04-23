@@ -14,6 +14,9 @@ import BankingConnects from './BankingConnects';
 import AccountsModal from './AccountsModal';
 import Transactions from './spending/Transactions';
 import OccasionsCard from './OccasionsCard';
+import ManualTransactionCard from './ManualTranasactionCard';
+import { ScrollView } from 'react-native';
+import Colors from '../../../constants/Colors';
 
 const Container = styled.View`
   align-items: center;
@@ -36,19 +39,30 @@ const AccountSpace = ({ route, navigation }: Props) => {
   }, [accountState]);
 
   return (
-    <Container>
-      <AccountHeader
-        accounts={accountState}
-        colorScheme={colorScheme}
-        navigation={navigation}
-        route={route}
-      />
-      <BankingConnects />
-      <Spending colorScheme={colorScheme} />
-      <Transactions />
-      <AccountsModal />
-      <OccasionsCard route={route} navigation={navigation} />
-    </Container>
+    <>
+      <ScrollView
+        style={{
+          flex: 1,
+          backgroundColor: Colors[colorScheme].background,
+          padding: 0,
+        }}
+      >
+        <Container>
+          <AccountHeader
+            accounts={accountState}
+            colorScheme={colorScheme}
+            navigation={navigation}
+            route={route}
+          />
+          <BankingConnects />
+          <Spending colorScheme={colorScheme} />
+          <Transactions />
+          <AccountsModal />
+          <OccasionsCard route={route} navigation={navigation} />
+        </Container>
+      </ScrollView>
+      <ManualTransactionCard colorScheme={colorScheme} />
+    </>
   );
 };
 
