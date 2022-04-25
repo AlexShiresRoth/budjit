@@ -14,7 +14,7 @@ import BankingConnects from './BankingConnects';
 import AccountsModal from './AccountsModal';
 import Transactions from './spending/Transactions';
 import OccasionsCard from './OccasionsCard';
-import ManualTransactionCard from './ManualTranasactionCard';
+import ManualTransactionCard from './spending/ManualTranasactionCard';
 import { ScrollView } from 'react-native';
 import Colors from '../../../constants/Colors';
 
