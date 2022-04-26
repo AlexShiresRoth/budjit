@@ -22,7 +22,6 @@ const Column = styled.View`
   justify-content: center;
 `;
 const Label = styled.Text`
-  color: #fefefe;
   font-size: 16px;
   opacity: 0.5;
 `;
@@ -46,6 +45,7 @@ type Props = {
   isSecure: boolean;
   icon: React.ReactElement;
   color: string;
+  labelStyle: any;
 };
 
 const Input = ({
@@ -56,20 +56,22 @@ const Input = ({
   isSecure,
   icon,
   color,
+  labelStyle,
 }: Props) => {
   return (
     <Container style={{ backgroundColor: color + '44' }}>
       <IconContainer>{icon}</IconContainer>
       <Column>
-        {/* <Label>{label}</Label> */}
+        {label && <Label style={labelStyle}>{label}</Label>}
         <TextInput
           value={value}
           onChangeText={callback}
           secureTextEntry={isSecure ? true : false}
           placeholder={label}
-          placeholderTextColor="#ffffff75"
+          placeholderTextColor="#ffffff40"
           multiline={isSecure ? false : true}
           textAlignVertical="auto"
+          style={style}
         />
       </Column>
     </Container>
