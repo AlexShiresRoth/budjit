@@ -186,6 +186,7 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
               value={item.value}
               icon={item.icon}
               color={Colors[colorScheme].tint}
+              labelStyle={null}
             />
           </Row>
         );
@@ -196,6 +197,7 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
           buttonText="Sign In"
           callBack={handleAuthentication}
           callBackArgs={undefined}
+          buttonTextColor={Colors[colorScheme].text}
         />
       ) : (
         <Text>Loading...</Text>

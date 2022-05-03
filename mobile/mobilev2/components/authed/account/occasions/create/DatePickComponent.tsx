@@ -8,8 +8,6 @@ import { Animated, TouchableOpacity } from 'react-native';
 
 const Text = styled.Text``;
 
-const ModalComponent = styled.View``;
-
 const Title = styled.Text`
   font-weight: 700;
 `;

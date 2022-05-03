@@ -45,7 +45,7 @@ type Props = {
   isSecure: boolean;
   icon: React.ReactElement;
   color: string;
-  labelStyle: any;
+  labelStyle: unknown;
 };
 
 const Input = ({
@@ -56,13 +56,11 @@ const Input = ({
   isSecure,
   icon,
   color,
-  labelStyle,
 }: Props) => {
   return (
     <Container style={{ backgroundColor: color + '44' }}>
       <IconContainer>{icon}</IconContainer>
       <Column>
-        {label && <Label style={labelStyle}>{label}</Label>}
         <TextInput
           value={value}
           onChangeText={callback}
