@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/Colors';
-import ManualTransactionModal from './ManualTransactionModal';
+import ManualTransactionModal from './transaction-modal/ManualTransactionModal';
 
 const Container = styled.View`
   width: 100%;
