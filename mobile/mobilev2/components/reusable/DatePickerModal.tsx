@@ -41,15 +41,25 @@ const DatePickerModal = ({
 
   const [showDatePicker, toggleDatePicker] = useState<boolean>(false);
 
-  const handleDateTimeSelection = (date: any) => {
-    //format to date string
-    const receivedDate = new Date(
-      date.nativeEvent.timestamp || value,
-    ).toISOString();
-    //pass the value back to the parent
-    onChange(receivedDate, param);
-    //close the modal
-    toggleDatePicker(false);
+  const handleDateTimeSelection = async (event: any) => {
+    try {
+      //format to date string
+      if (event.type === 'dismissed') {
+        return toggleDatePicker(false);
+      }
+      if (event.type === 'set') {
+        const receivedDate = new Date(
+          event.nativeEvent.timestamp ?? value,
+        ).toISOString();
+        const formatDate = receivedDate.split('T')[0];
+        //pass the value back to the parent
+        onChange(param, formatDate);
+        //close the modal
+        toggleDatePicker(false);
+      }
+    } catch (error) {
+      console.log('error', error);
+    }
   };
 
   useEffect(() => {
@@ -63,6 +73,7 @@ const DatePickerModal = ({
   return (
     <Animated.View
       style={{
+        width: '90%',
         transform: [
           {
             translateX: slideIn.interpolate({
@@ -73,29 +84,22 @@ const DatePickerModal = ({
         ],
       }}
     >
-      <Title
-        style={{
-          color: Colors[colorScheme].text + '90',
-          fontWeight: '400',
-          fontSize: 20,
-          marginTop: 5,
-          marginBottom: 15,
-        }}
-      >
-        {placeholder}
-      </Title>
-
       <DateContainer
         style={{
-          backgroundColor: Colors[colorScheme].tint + '40',
           padding: 10,
           borderRadius: 5,
+          marginLeft: 10,
+          width: '100%',
         }}
       >
-        <TouchableOpacity onPress={() => toggleDatePicker(!showDatePicker)}>
-          <Text style={{ color: Colors[colorScheme].text }}>
-            Choose Date: {value}
+        <TouchableOpacity
+          onPress={() => toggleDatePicker(!showDatePicker)}
+          style={{ width: '100%', display: 'flex' }}
+        >
+          <Text style={{ color: Colors[colorScheme].text, fontWeight: '700' }}>
+            Choose Date:
           </Text>
+          <Text style={{ color: Colors[colorScheme].text }}>{value}</Text>
         </TouchableOpacity>
         {showDatePicker ? (
           <DatePicker
@@ -104,10 +108,6 @@ const DatePickerModal = ({
             value={date}
             mode={'date'}
             onChange={(event: any) => handleDateTimeSelection(event)}
-            onTouchCancel={(e) => {
-              e.preventDefault();
-              console.log(e);
-            }}
             display="default"
           />
         ) : null}

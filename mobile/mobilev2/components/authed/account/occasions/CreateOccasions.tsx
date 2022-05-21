@@ -41,10 +41,6 @@ const Content = styled.View`
   flex: 0.8;
 `;
 
-const Title = styled.Text`
-  font-weight: 700;
-`;
-
 type Props = {
   isVisible: boolean;
   handleModalVisibility: Dispatch<SetStateAction<boolean>>;

@@ -4,11 +4,7 @@ import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
 import PrimaryButton from '../../../../reusable/PrimaryButton';
-import { TransactionInputArrData } from './ManualTransactionModal';
 import DatePickerModal from '../../../../reusable/DatePickerModal';
-import DatePicker from '@react-native-community/datetimepicker';
-import { View } from '../../../../Themed';
-import DatePickComponent from '../../occasions/create/DatePickComponent';
 
 const Row = styled.View`
   flex-direction: row;
@@ -30,6 +26,7 @@ type ItemParams = {
   icon: React.ReactElement;
   placeholder: string;
   inputType: 'text' | 'date';
+  maxStepAmt: number;
 };
 
 const StepScreen = ({
@@ -66,7 +63,7 @@ const StepScreen = ({
       <Text
         style={{
           color: Colors[colorScheme].text,
-          fontSize: 50,
+          fontSize: 40,
           backgroundColor: Colors[colorScheme].background,
         }}
       >
@@ -86,6 +83,7 @@ const StepScreen = ({
           marginTop: 20,
           marginBottom: 20,
           justifyContent: 'flex-start',
+          alignItems: 'center',
           borderWidth: 1,
           borderColor: Colors[colorScheme].tint,
           borderRadius: 5,
@@ -109,7 +107,7 @@ const StepScreen = ({
                 value={item.value.toString()}
                 param={item.name}
                 onChange={handleTextChange}
-                placeholder={'help'}
+                placeholder={'Transaction date'}
                 placeholderTextColor={Colors[colorScheme].text + '60'}
                 style={{ marginLeft: 10, color: Colors[colorScheme].text }}
               />
@@ -117,9 +115,17 @@ const StepScreen = ({
           }[item.inputType]
         }
       </Row>
-      {valueEntered ? (
+      {currentStep >= item.maxStepAmt ? (
         <PrimaryButton
-          buttonText="Next"
+          buttonText={'Submit transaction'}
+          buttonTextColor={Colors[colorScheme].text}
+          callBack={() => {}}
+          callBackArgs={currentStep + 1}
+          colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+        />
+      ) : valueEntered ? (
+        <PrimaryButton
+          buttonText={'Next'}
           buttonTextColor={Colors[colorScheme].text}
           callBack={setStep}
           callBackArgs={currentStep + 1}

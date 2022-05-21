@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Button, Modal } from 'react-native';
+import { Button, Modal, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
@@ -24,11 +24,24 @@ const ModalInterior = styled.View`
   padding: 30px 0;
 `;
 
-const Row = styled.View`
+const ModalHeader = styled.View`
   flex-direction: row;
-  width: 100%;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin: 10px 0;
+  padding: 15px 0;
+  border-bottom-width: 1px;
+`;
+
+const Column = styled.View`
+  flex-direction: row;
+`;
+
+const Content = styled.View`
+  width: 90%;
+  justify-content: center;
+  flex: 0.8;
 `;
 
 const Text = styled.Text``;
@@ -49,9 +62,10 @@ type FormData = {
 
 export type TransactionInputArrData = {
   component: React.ReactNode;
+  title: string;
 };
 
-//TODO finish input styling
+//TODO Handle submit event!!!
 const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const colorScheme = useColorScheme();
 
@@ -72,9 +86,18 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const handleTextChange = (name: string, text: string) =>
     setData({ ...data, [name]: text });
 
-  const handleCloseModal = (value: boolean) => {
+  const handleResetOnClose = (value: boolean) => {
     //reset
     setStep(0);
+    //revert data
+    setData({
+      title: '',
+      total: '',
+      date: new Date().toISOString(),
+      accountType: '',
+      category: '',
+      location: '',
+    });
     //and close
     toggleModal(false);
   };
@@ -83,10 +106,9 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     console.log('data', data);
   };
 
-  console.log('data', data);
-
   const DATA: Array<TransactionInputArrData> = [
     {
+      title: 'Transaction',
       component: (
         <StepScreen
           item={{
@@ -95,6 +117,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
             descriptor: 'What did you purchase?',
             placeholder: 'Transaction',
             inputType: 'text',
+            maxStepAmt: 5,
             icon: (
               <FontAwesome
                 name="shopping-bag"
@@ -110,6 +133,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       ),
     },
     {
+      title: 'Location',
       component: (
         <StepScreen
           item={{
@@ -118,6 +142,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
             descriptor: 'Where was this?',
             placeholder: 'Location',
             inputType: 'text',
+            maxStepAmt: 5,
             icon: (
               <Ionicons
                 name="location-sharp"
@@ -133,6 +158,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       ),
     },
     {
+      title: 'Total',
       component: (
         <StepScreen
           item={{
@@ -141,6 +167,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
             descriptor: 'What was the total?',
             placeholder: 'Transaction Amount',
             inputType: 'text',
+            maxStepAmt: 5,
             icon: (
               <MaterialIcons
                 name="attach-money"
@@ -156,6 +183,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       ),
     },
     {
+      title: 'Category',
       component: (
         <StepScreen
           item={{
@@ -164,6 +192,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
             descriptor: 'ex: food, entertainment, groceries...',
             placeholder: 'Category',
             inputType: 'text',
+            maxStepAmt: 5,
             icon: (
               <Ionicons
                 name="fast-food-sharp"
@@ -179,6 +208,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       ),
     },
     {
+      title: 'Account Type',
       component: (
         <StepScreen
           item={{
@@ -187,6 +217,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
             descriptor: 'Cash, credit, debit, etc...',
             placeholder: 'Account Type',
             inputType: 'text',
+            maxStepAmt: 5,
             icon: (
               <MaterialCommunityIcons
                 name="credit-card-multiple"
@@ -202,14 +233,16 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       ),
     },
     {
+      title: 'Date',
       component: (
         <StepScreen
           item={{
             name: 'date',
             value: date,
             descriptor: 'Date of transaction',
-            placeholder: 'Date',
+            placeholder: 'Transaction Date',
             inputType: 'date',
+            maxStepAmt: 5,
             icon: (
               <Ionicons
                 name="md-calendar-sharp"
@@ -234,7 +267,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       <Modal
         visible={isModalVisible}
         animationType="slide"
-        onRequestClose={() => handleCloseModal(false)}
+        onRequestClose={() => handleResetOnClose(false)}
       >
         <ModalView
           style={{
@@ -242,17 +275,82 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
           }}
         >
           <ModalInterior>
-            <Row style={{ marginBottom: 20 }}>
-              <Text style={{ color: Colors[colorScheme].text }}>
-                Manually enter a new transaction
+            <ModalHeader
+              style={{ borderBottomColor: Colors[colorScheme].cardBg }}
+            >
+              <Column style={{ maxWidth: '20%' }}>
+                <TouchableOpacity
+                  onPress={() => handleResetOnClose(false)}
+                  style={{
+                    backgroundColor: Colors[colorScheme].danger + '70',
+                    padding: 5,
+                    borderRadius: 5,
+                    borderWidth: 1,
+                    borderColor: Colors[colorScheme].danger,
+                  }}
+                >
+                  <Text
+                    style={{ color: Colors[colorScheme].text, fontSize: 12 }}
+                  >
+                    Close
+                  </Text>
+                </TouchableOpacity>
+              </Column>
+              <Column style={{ flexWrap: 'wrap', maxWidth: '80%' }}>
+                {DATA.map((obj, index: number) => {
+                  return (
+                    <TouchableOpacity
+                      style={{
+                        marginRight: 2,
+                        alignItems: 'center',
+                        flexDirection: 'row',
+                      }}
+                      onPress={
+                        index < currentStep ? () => setStep(index) : () => {}
+                      }
+                      key={index}
+                    >
+                      <Text
+                        key={index}
+                        style={{
+                          color:
+                            currentStep >= index
+                              ? Colors[colorScheme].tint
+                              : Colors[colorScheme].text + '40',
+                          fontSize: 12,
+                        }}
+                      >
+                        {obj.title}
+                      </Text>
+                      {index < DATA.length - 1 ? (
+                        <MaterialIcons
+                          name="navigate-next"
+                          color={
+                            currentStep >= index
+                              ? Colors[colorScheme].tint
+                              : Colors[colorScheme].text + '40'
+                          }
+                          size={12}
+                        />
+                      ) : null}
+                    </TouchableOpacity>
+                  );
+                })}
+              </Column>
+            </ModalHeader>
+            <Column style={{ width: '90%' }}>
+              <Text
+                style={{
+                  color: Colors[colorScheme].text,
+                  fontWeight: '100',
+                  fontSize: 20,
+                  marginTop: 5,
+                  marginBottom: 5,
+                }}
+              >
+                Manually enter new transaction
               </Text>
-              <Button
-                title="close"
-                onPress={() => handleCloseModal(false)}
-                color={Colors[colorScheme].danger}
-              ></Button>
-            </Row>
-
+            </Column>
             {DATA[currentStep]?.component ?? null}
           </ModalInterior>
         </ModalView>
