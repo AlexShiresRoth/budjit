@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Button, Modal, TouchableOpacity } from 'react-native';
+import { Modal, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
@@ -9,7 +9,13 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
-import StepScreen from './StepScreen';
+import Input from '../../../../reusable/Input';
+import TransactionInputList from './TransactionInputList';
+import DatePickerModal from '../../../../reusable/DatePickerModal';
+import PrimaryButton from '../../../../reusable/PrimaryButton';
+import { useMutation } from '@apollo/client';
+import { CREATE_TRANSACTION } from '../../../../../graphql/mutations/spending.mutation';
+import LoadingSpinner from '../../../../reusable/LoadingSpinner';
 
 const ModalContainer = styled.View`
   flex: 1;
@@ -34,9 +40,11 @@ const ModalHeader = styled.View`
   border-bottom-width: 1px;
 `;
 
-const Column = styled.View`
+const Row = styled.View`
   flex-direction: row;
 `;
+
+const Column = styled.View``;
 
 const Content = styled.View`
   width: 90%;
@@ -46,6 +54,25 @@ const Content = styled.View`
 
 const Text = styled.Text``;
 
+const IconContainer = styled.View`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  border-right-width: 1.4px;
+  margin-right: 10px;
+  width: 50px;
+`;
+
+const DateContainer = styled.View`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  border-width: 1.4px;
+  padding: 5px;
+  border-radius: 5px;
+`;
+
 type Props = {
   isModalVisible: boolean;
   toggleModal: Dispatch<SetStateAction<boolean>>;
@@ -54,7 +81,7 @@ type Props = {
 type FormData = {
   title: string;
   category: string;
-  total: number | string;
+  total: string;
   date: string;
   accountType: string;
   location: string;
@@ -65,9 +92,13 @@ export type TransactionInputArrData = {
   title: string;
 };
 
-//TODO Handle submit event!!!
+//TODO Submit works, need to show a success message and close modal
+//TODO show transactions on main feed
 const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const colorScheme = useColorScheme();
+
+  const [createTransaction, { error, data: transactionResponse, loading }] =
+    useMutation(CREATE_TRANSACTION);
 
   //change step for creating a transaction
   const [currentStep, setStep] = useState<number>(0);
@@ -102,159 +133,153 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     toggleModal(false);
   };
 
-  const submit = () => {
-    console.log('data', data);
+  const submit = async () => {
+    const { total } = data;
+    try {
+      const transactionRequest = await createTransaction({
+        variables: { input: { ...data, total: parseFloat(total) } },
+      });
+
+      console.log('transaction req', transactionRequest);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
+  //Refactor this to just be a JSON object and render inputs in the flatlist
   const DATA: Array<TransactionInputArrData> = [
     {
       title: 'Transaction',
       component: (
-        <StepScreen
-          item={{
-            name: 'title',
-            value: title,
-            descriptor: 'What did you purchase?',
-            placeholder: 'Transaction',
-            inputType: 'text',
-            maxStepAmt: 5,
-            icon: (
-              <FontAwesome
-                name="shopping-bag"
-                color={Colors[colorScheme].tint}
-                size={20}
-              />
-            ),
-          }}
-          handleTextChange={handleTextChange}
-          setStep={setStep}
-          currentStep={currentStep}
+        <Input
+          value={title}
+          callback={(e: string) => handleTextChange('title', e)}
+          style={null}
+          labelStyle={{ color: Colors[colorScheme].text }}
+          label={'What did you purchase?'}
+          isSecure={false}
+          descriptor="Transaction Name"
+          icon={
+            <FontAwesome
+              name="shopping-bag"
+              color={Colors[colorScheme].tint}
+              size={20}
+            />
+          }
+          color={Colors[colorScheme].tint}
         />
       ),
     },
     {
       title: 'Location',
       component: (
-        <StepScreen
-          item={{
-            name: 'location',
-            value: location,
-            descriptor: 'Where was this?',
-            placeholder: 'Location',
-            inputType: 'text',
-            maxStepAmt: 5,
-            icon: (
-              <Ionicons
-                name="location-sharp"
-                color={Colors[colorScheme].tint}
-                size={28}
-              />
-            ),
-          }}
-          handleTextChange={handleTextChange}
-          setStep={setStep}
-          currentStep={currentStep}
+        <Input
+          value={location}
+          callback={(e: string) => handleTextChange('location', e)}
+          style={null}
+          label="Location"
+          descriptor="Where was this?"
+          isSecure={false}
+          icon={
+            <Ionicons
+              name="location-sharp"
+              color={Colors[colorScheme].tint}
+              size={28}
+            />
+          }
+          color={Colors[colorScheme].tint}
+          labelStyle={{ color: Colors[colorScheme].text }}
         />
       ),
     },
     {
       title: 'Total',
       component: (
-        <StepScreen
-          item={{
-            name: 'total',
-            value: total,
-            descriptor: 'What was the total?',
-            placeholder: 'Transaction Amount',
-            inputType: 'text',
-            maxStepAmt: 5,
-            icon: (
-              <MaterialIcons
-                name="attach-money"
-                color={Colors[colorScheme].tint}
-                size={26}
-              />
-            ),
-          }}
-          handleTextChange={handleTextChange}
-          setStep={setStep}
-          currentStep={currentStep}
+        <Input
+          value={total}
+          callback={(e: string) => handleTextChange('total', e)}
+          style={null}
+          label={'Total'}
+          descriptor="What was the total?"
+          isSecure={false}
+          icon={
+            <MaterialIcons
+              name="attach-money"
+              color={Colors[colorScheme].tint}
+              size={26}
+            />
+          }
+          color={Colors[colorScheme].tint}
+          labelStyle={{ color: Colors[colorScheme].text }}
         />
       ),
     },
     {
       title: 'Category',
       component: (
-        <StepScreen
-          item={{
-            name: 'category',
-            value: category,
-            descriptor: 'ex: food, entertainment, groceries...',
-            placeholder: 'Category',
-            inputType: 'text',
-            maxStepAmt: 5,
-            icon: (
-              <Ionicons
-                name="fast-food-sharp"
-                color={Colors[colorScheme].tint}
-                size={26}
-              />
-            ),
-          }}
-          handleTextChange={handleTextChange}
-          setStep={setStep}
-          currentStep={currentStep}
+        <Input
+          value={category}
+          callback={(e: string) => handleTextChange('category', e)}
+          style={null}
+          label={'Category'}
+          descriptor="ex: food, entertainment, groceries..."
+          isSecure={false}
+          icon={
+            <Ionicons
+              name="fast-food-sharp"
+              color={Colors[colorScheme].tint}
+              size={26}
+            />
+          }
+          color={Colors[colorScheme].tint}
+          labelStyle={{ color: Colors[colorScheme].text }}
         />
       ),
     },
     {
       title: 'Account Type',
       component: (
-        <StepScreen
-          item={{
-            name: 'accountType',
-            value: accountType,
-            descriptor: 'Cash, credit, debit, etc...',
-            placeholder: 'Account Type',
-            inputType: 'text',
-            maxStepAmt: 5,
-            icon: (
-              <MaterialCommunityIcons
-                name="credit-card-multiple"
-                color={Colors[colorScheme].tint}
-                size={26}
-              />
-            ),
-          }}
-          handleTextChange={handleTextChange}
-          setStep={setStep}
-          currentStep={currentStep}
+        <Input
+          value={accountType}
+          callback={(e: string) => handleTextChange('accountType', e)}
+          style={null}
+          label="Account type"
+          descriptor="Cash, credit, debit, etc..."
+          isSecure={false}
+          icon={
+            <MaterialCommunityIcons
+              name="credit-card-multiple"
+              color={Colors[colorScheme].tint}
+              size={26}
+            />
+          }
+          color={Colors[colorScheme].tint}
+          labelStyle={{ color: Colors[colorScheme].text }}
         />
       ),
     },
     {
       title: 'Date',
       component: (
-        <StepScreen
-          item={{
-            name: 'date',
-            value: date,
-            descriptor: 'Date of transaction',
-            placeholder: 'Transaction Date',
-            inputType: 'date',
-            maxStepAmt: 5,
-            icon: (
-              <Ionicons
-                name="md-calendar-sharp"
-                color={Colors[colorScheme].tint}
-                size={26}
-              />
-            ),
-          }}
-          handleTextChange={handleTextChange}
-          setStep={setStep}
-          currentStep={currentStep}
-        />
+        <DateContainer>
+          <IconContainer>
+            <Ionicons
+              name="md-calendar-sharp"
+              color={Colors[colorScheme].tint}
+              size={26}
+            />
+          </IconContainer>
+          <Column>
+            <DatePickerModal
+              value={date}
+              param="date"
+              onChange={handleTextChange}
+              placeholder={'Transaction date'}
+              placeholderTextColor={Colors[colorScheme].text + '60'}
+              style={{ marginLeft: 10, color: Colors[colorScheme].text }}
+            />
+          </Column>
+        </DateContainer>
       ),
     },
   ];
@@ -278,7 +303,20 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
             <ModalHeader
               style={{ borderBottomColor: Colors[colorScheme].cardBg }}
             >
-              <Column style={{ maxWidth: '20%' }}>
+              <Row style={{ flexWrap: 'wrap', maxWidth: '80%' }}>
+                <Text
+                  style={{
+                    color: Colors[colorScheme].text,
+                    fontWeight: '100',
+                    fontSize: 16,
+                    marginTop: 5,
+                    marginBottom: 5,
+                  }}
+                >
+                  Manually enter new transaction
+                </Text>
+              </Row>
+              <Row style={{ maxWidth: '20%' }}>
                 <TouchableOpacity
                   onPress={() => handleResetOnClose(false)}
                   style={{
@@ -295,63 +333,21 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
                     Close
                   </Text>
                 </TouchableOpacity>
-              </Column>
-              <Column style={{ flexWrap: 'wrap', maxWidth: '80%' }}>
-                {DATA.map((obj, index: number) => {
-                  return (
-                    <TouchableOpacity
-                      style={{
-                        marginRight: 2,
-                        alignItems: 'center',
-                        flexDirection: 'row',
-                      }}
-                      onPress={
-                        index < currentStep ? () => setStep(index) : () => {}
-                      }
-                      key={index}
-                    >
-                      <Text
-                        key={index}
-                        style={{
-                          color:
-                            currentStep >= index
-                              ? Colors[colorScheme].tint
-                              : Colors[colorScheme].text + '40',
-                          fontSize: 12,
-                        }}
-                      >
-                        {obj.title}
-                      </Text>
-                      {index < DATA.length - 1 ? (
-                        <MaterialIcons
-                          name="navigate-next"
-                          color={
-                            currentStep >= index
-                              ? Colors[colorScheme].tint
-                              : Colors[colorScheme].text + '40'
-                          }
-                          size={12}
-                        />
-                      ) : null}
-                    </TouchableOpacity>
-                  );
-                })}
-              </Column>
+              </Row>
             </ModalHeader>
-            <Column style={{ width: '90%' }}>
-              <Text
-                style={{
-                  color: Colors[colorScheme].text,
-                  fontWeight: '100',
-                  fontSize: 20,
-                  marginTop: 5,
-                  marginBottom: 5,
-                }}
-              >
-                Manually enter new transaction
-              </Text>
-            </Column>
-            {DATA[currentStep]?.component ?? null}
+            <TransactionInputList inputList={DATA} />
+
+            {!loading ? (
+              <PrimaryButton
+                buttonText={'Submit transaction'}
+                buttonTextColor={Colors[colorScheme].text}
+                callBack={submit}
+                callBackArgs={currentStep + 1}
+                colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+              />
+            ) : (
+              <LoadingSpinner />
+            )}
           </ModalInterior>
         </ModalView>
       </Modal>

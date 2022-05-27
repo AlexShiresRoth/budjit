@@ -10,3 +10,20 @@ export const SET_TIMEFRAME = gql`
     }
   }
 `;
+
+export const CREATE_TRANSACTION = gql`
+  mutation createManualTransaction($input: CreateTransactionInput!) {
+    createTransaction(input: $input) {
+      message
+      success
+      Transaction {
+        total
+        date
+        accountType
+        category
+        title
+        location
+      }
+    }
+  }
+`;

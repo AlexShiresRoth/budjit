@@ -22,7 +22,7 @@ const Column = styled.View`
   justify-content: center;
 `;
 const Label = styled.Text`
-  font-size: 16px;
+  font-size: 12px;
   opacity: 0.5;
 `;
 const TextInput = styled.TextInput`
@@ -39,13 +39,14 @@ const TextInput = styled.TextInput`
 
 type Props = {
   value: string;
-  callback: ({ ...args }: any) => any;
+  callback: (...args: any) => any;
   style: any;
   label: string;
   isSecure: boolean;
   icon: React.ReactElement;
   color: string;
-  labelStyle: unknown;
+  labelStyle: any;
+  descriptor: string | undefined;
 };
 
 const Input = ({
@@ -56,11 +57,14 @@ const Input = ({
   isSecure,
   icon,
   color,
+  descriptor,
+  labelStyle,
 }: Props) => {
   return (
     <Container style={{ backgroundColor: color + '44' }}>
       <IconContainer>{icon}</IconContainer>
       <Column>
+        {descriptor ? <Label style={labelStyle}>{descriptor}</Label> : null}
         <TextInput
           value={value}
           onChangeText={callback}
