@@ -7,7 +7,7 @@ export class CreateTransactionInput {
   @Field()
   category: string;
   @Field()
-  total: number;
+  amount: number;
   @Field()
   date: string;
   @Field({ nullable: true })

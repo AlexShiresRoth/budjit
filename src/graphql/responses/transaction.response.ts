@@ -8,7 +8,7 @@ export class TransactionType {
   @Field()
   category: string;
   @Field()
-  total: number;
+  amount: number;
   @Field()
   date: string;
   @Field({ nullable: true })
@@ -25,4 +25,14 @@ export class CreateTransactionResponse {
   success: boolean;
   @Field(() => TransactionType)
   Transaction: Transaction;
+}
+
+@ObjectType()
+export class GetAllTransactionsResponse {
+  @Field(() => [TransactionType])
+  transactions: TransactionType[];
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
 }

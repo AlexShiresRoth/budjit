@@ -81,7 +81,7 @@ type Props = {
 type FormData = {
   title: string;
   category: string;
-  total: string;
+  amount: string;
   date: string;
   accountType: string;
   location: string;
@@ -105,14 +105,14 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
 
   const [data, setData] = useState<FormData>({
     title: '',
-    total: '',
+    amount: '',
     date: new Date().toISOString(),
     accountType: '',
     category: '',
     location: '',
   });
 
-  const { title, date, accountType, category, location, total } = data;
+  const { title, date, accountType, category, location, amount } = data;
 
   const handleTextChange = (name: string, text: string) =>
     setData({ ...data, [name]: text });
@@ -123,7 +123,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     //revert data
     setData({
       title: '',
-      total: '',
+      amount: '',
       date: new Date().toISOString(),
       accountType: '',
       category: '',
@@ -134,10 +134,10 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   };
 
   const submit = async () => {
-    const { total } = data;
+    const { amount } = data;
     try {
       const transactionRequest = await createTransaction({
-        variables: { input: { ...data, total: parseFloat(total) } },
+        variables: { input: { ...data, amount: parseFloat(amount) } },
       });
 
       console.log('transaction req', transactionRequest);
@@ -193,14 +193,14 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       ),
     },
     {
-      title: 'Total',
+      title: 'Amount',
       component: (
         <Input
-          value={total}
-          callback={(e: string) => handleTextChange('total', e)}
+          value={amount}
+          callback={(e: string) => handleTextChange('amount', e)}
           style={null}
-          label={'Total'}
-          descriptor="What was the total?"
+          label={'Amount'}
+          descriptor="What was the amount?"
           isSecure={false}
           icon={
             <MaterialIcons
@@ -261,7 +261,9 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     {
       title: 'Date',
       component: (
-        <DateContainer>
+        <DateContainer
+          style={{ backgroundColor: Colors[colorScheme].tint + '45' }}
+        >
           <IconContainer>
             <Ionicons
               name="md-calendar-sharp"

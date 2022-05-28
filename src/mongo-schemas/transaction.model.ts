@@ -1,13 +1,18 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import * as mongoose from 'mongoose';
 
 @Schema()
 export class Transaction {
+  // @Prop({ type: String })
+  // _id: string;
+  @Prop({ default: 'manual_transaction' })
+  account_id: string;
   @Prop()
   title: string;
   @Prop()
   category: string;
   @Prop()
-  total: number;
+  amount: number;
   @Prop()
   date: string;
   @Prop()

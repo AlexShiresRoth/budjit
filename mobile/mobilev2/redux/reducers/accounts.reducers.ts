@@ -11,6 +11,13 @@ export type AccountParams = {
   token: string;
 };
 
+export type TransactionType = {
+  name: string;
+  date: string;
+  amount: number;
+  transaction_id: string;
+};
+
 export type PlaidAccountsModal = {
   modalVisible: boolean;
   connection: any;
@@ -145,6 +152,19 @@ export const accountSlice = createSlice({
       ///////////////////////////////
       state.spending.isSpendingFilterLoading = action.payload;
       ///////////////////////////////
+    },
+    //setting transactions from manual input is different than from plaid
+    addManualTransaction: (
+      state,
+      action: PayloadAction<{
+        transactions: Array<TransactionType>;
+        account_id: string;
+      }>,
+    ) => {
+      state.spending.account_transactions = [
+        ...state.spending.account_transactions,
+        action.payload,
+      ];
     },
     setTransactionsWithinTimeFrame: (
       state,

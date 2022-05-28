@@ -17,7 +17,7 @@ export const CREATE_TRANSACTION = gql`
       message
       success
       Transaction {
-        total
+        amount
         date
         accountType
         category

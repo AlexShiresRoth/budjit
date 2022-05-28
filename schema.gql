@@ -200,7 +200,7 @@ type SetTimeFrameResponse {
 type TransactionType {
   title: String!
   category: String!
-  total: Float!
+  amount: Float!
   date: String!
   accountType: String
   location: String!
@@ -210,6 +210,12 @@ type CreateTransactionResponse {
   message: String!
   success: Boolean!
   Transaction: TransactionType!
+}
+
+type GetAllTransactionsResponse {
+  transactions: [TransactionType!]!
+  message: String!
+  success: Boolean!
 }
 
 type LoadOccasionResponse {
@@ -234,6 +240,7 @@ type Query {
   loadReceivedGroupInvites: LoadGroupInvitesResponse!
   loadMyProfile: ProfileTypeDef!
   findProfileByEmail(input: FindProfileByEmailInput!): FindProfileByEmailResponse!
+  getAllManualTransactions: GetAllTransactionsResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
   loadMyOccasions: LoadMyOccasionsResponse!
@@ -330,7 +337,7 @@ input SetTimeFrameInput {
 input CreateTransactionInput {
   title: String!
   category: String!
-  total: Float!
+  amount: Float!
   date: String!
   accountType: String
   location: String!
