@@ -4,7 +4,7 @@ import { Transaction } from 'src/mongo-schemas/transaction.model';
 @ObjectType()
 export class TransactionType {
   @Field()
-  title: string;
+  name: string;
   @Field()
   category: string;
   @Field()
@@ -15,6 +15,8 @@ export class TransactionType {
   accountType: string;
   @Field()
   location: string;
+  @Field()
+  _id: string;
 }
 
 @ObjectType()

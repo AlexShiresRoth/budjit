@@ -1,11 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
+import React, { useEffect, useMemo, useState } from 'react';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import Colors from '../../../../constants/Colors';
-import { useAppSelector } from '../../../../hooks/reduxHooks';
-import { selectAccount } from '../../../../redux/reducers/accounts.reducers';
-import { FlatList, ScrollView } from 'react-native';
+import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
+import {
+  selectAccount,
+  setManualTranactions,
+} from '../../../../redux/reducers/accounts.reducers';
+import { FlatList } from 'react-native';
+import { useQuery } from '@apollo/client';
+import { GET_ALL_TRANSACTIONS } from '../../../../graphql/queries/accounts.query';
+import { TransactionItemType } from '../../../../types/Transaction.types';
+import { RootStateOrAny } from 'react-redux';
+import TransactionItem from './transactions/TransactionItem';
 
 const Container = styled.View`
   width: 90%;
@@ -19,72 +26,79 @@ const Title = styled.Text`
   font-weight: 700;
 `;
 
-const Item = styled.View`
-  padding: 20px;
-  margin: 0 10px 0 0;
-  border-radius: 5px;
-  min-width: 200px;
-`;
-
-const Text = styled.Text``;
-
-type TransactionItemProps = {
-  item: { name: string; amount: number; date: string; transaction_id: string };
-};
-
 const Transactions = () => {
   const colorScheme = useColorScheme();
 
-  const spendingState = useAppSelector(selectAccount);
-
-  const [transactions, concatTransactions] = useState<
-    Array<{
-      name: string;
-      date: string;
-      amount: number;
-      transaction_id: string;
-    }>
-  >([]);
-
+  //redux store spending data
+  const spendingState: RootStateOrAny = useAppSelector(selectAccount);
   const {
     spending: { filter, account_transactions },
   } = spendingState;
+  //redux dispatch to state
+  const dispatch = useAppDispatch();
+
+  const [transactions, concatTransactions] = useState<
+    Array<TransactionItemType>
+  >([]);
+
+  //retrieve manual transactions from DB
+  const { error, data, loading, refetch } = useQuery(GET_ALL_TRANSACTIONS);
 
   useEffect(() => {
-    if (account_transactions.length > 0) {
-      const temp: Array<{
-        name: string;
-        date: string;
-        amount: number;
-        transaction_id: string;
-      }> = [];
-      account_transactions.forEach(
-        (account: {
-          transactions: Array<{
-            name: string;
-            date: string;
-            amount: number;
-            transaction_id: string;
-          }>;
-        }) => {
-          account.transactions.forEach((transaction) => {
-            const ids = temp.map((t) => t.transaction_id);
-            if (!ids.includes(transaction.transaction_id)) {
+    if (account_transactions?.length > 0 && account_transactions) {
+      const temp: Array<TransactionItemType> = [];
+      account_transactions?.forEach(
+        (account: { transactions: Array<TransactionItemType> }) =>
+          account?.transactions?.forEach((transaction) => {
+            //transactions will either have _id if manual transaction or
+            //transaction_id if from connected plaid account
+            const ids = temp.map((t) => t.transaction_id ?? t._id);
+            if (!ids.includes(transaction.transaction_id ?? transaction._id)) {
               temp.push(transaction);
             }
-          });
+          }),
+      );
+
+      const sorted = temp.sort(
+        (a: TransactionItemType, b: TransactionItemType) => {
+          let aDate = new Date(a.date),
+            bDate = new Date(b.date);
+          return aDate > bDate ? -1 : 1;
         },
       );
 
-      concatTransactions(temp);
+      console.log(
+        'sorted dates',
+        sorted.map((m) => m.date),
+      );
+
+      concatTransactions(sorted);
     }
   }, [spendingState]);
+
+  useEffect(() => {
+    if (!error && !loading) {
+      dispatch(
+        setManualTranactions([
+          {
+            account_id: 'manual_transaction',
+            transactions: data?.getAllManualTransactions?.transactions,
+          },
+        ]),
+      );
+    }
+  }, [data, loading, error]);
+
+  useEffect(() => {
+    //refetch on component load
+    refetch();
+  }, []);
 
   if (transactions.length === 0) {
     return null;
   }
 
-  const renderItem = ({ item }: TransactionItemProps) => {
+  const renderItem = ({ item }: { item: TransactionItemType }) => {
     return <TransactionItem item={item} />;
   };
 
@@ -102,59 +116,12 @@ const Transactions = () => {
         horizontal={true}
         data={transactions}
         renderItem={renderItem}
-        keyExtractor={(item) => item.transaction_id}
+        keyExtractor={(item) => item.transaction_id ?? item._id}
         style={{
           marginTop: 10,
         }}
       />
     </Container>
-  );
-};
-
-const TransactionItem = ({ item }: TransactionItemProps) => {
-  const colorScheme = useColorScheme();
-
-  const formatDate = (date: string) => {
-    const dateArr = date.split('-');
-    const firstEl = dateArr[0];
-    dateArr.shift();
-    dateArr.push(firstEl);
-    return dateArr.join('/');
-  };
-  return (
-    <Item style={{ backgroundColor: Colors[colorScheme].tint + '40' }}>
-      <Text
-        style={{
-          color: Colors[colorScheme].text + '90',
-          fontWeight: '700',
-          marginBottom: 5,
-          marginTop: 5,
-        }}
-      >
-        {item.name}
-      </Text>
-      <Text
-        style={{
-          color: item.amount < 0 ? 'green' : Colors[colorScheme].danger,
-          fontWeight: '700',
-          marginBottom: 5,
-          marginTop: 5,
-        }}
-      >
-        ${item.amount.toFixed(2)}
-      </Text>
-      <Text
-        style={{
-          color: Colors[colorScheme].tint,
-          fontWeight: '200',
-          marginBottom: 5,
-          marginTop: 5,
-          fontStyle: 'italic',
-        }}
-      >
-        {formatDate(item.date)}
-      </Text>
-    </Item>
   );
 };
 

@@ -1,59 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AccountParams, PlaidAccountsModal } from '../../types/Accounts.types';
+import {
+  AccountsInitialStateParams,
+  TransactionItemType,
+} from '../../types/Transaction.types';
 import { RootState } from '../store';
 
-export type AccountParams = {
-  myAccount: {
-    email: string;
-    name: string;
-    profile: string;
-  };
-  token: string;
-};
-
-export type TransactionType = {
-  name: string;
-  date: string;
-  amount: number;
-  transaction_id: string;
-};
-
-export type PlaidAccountsModal = {
-  modalVisible: boolean;
-  connection: any;
-};
-
-interface InitialStateParams {
-  myAccount: {
-    email: string;
-    name: string;
-    profile: string;
-  };
-  plaidAccounts: {
-    connection: any;
-    modalVisible: boolean;
-    accessTokens: Array<string>;
-  };
-  spending: {
-    filter: 'Month' | 'Year' | 'Week';
-    totals: Array<{ id: string; amount: number }>;
-    startDate: string;
-    endDate: string;
-    isSpendingFilterLoading: boolean;
-    account_transactions: Array<{
-      account_id: string;
-      transactions: Array<{
-        name: string;
-        date: string;
-        amount: number;
-        transaction_id: string;
-      }>;
-    }>;
-  };
-  isAuthenticated: boolean;
-}
-
-const initialState: InitialStateParams = {
+const initialState: AccountsInitialStateParams = {
   myAccount: {
     email: '',
     name: '',
@@ -75,7 +29,7 @@ const initialState: InitialStateParams = {
   isAuthenticated: false,
 };
 
-export const accountSlice = createSlice({
+export const accountSlice: any = createSlice({
   name: 'account',
   initialState,
   reducers: {
@@ -156,14 +110,29 @@ export const accountSlice = createSlice({
     //setting transactions from manual input is different than from plaid
     addManualTransaction: (
       state,
-      action: PayloadAction<{
-        transactions: Array<TransactionType>;
-        account_id: string;
-      }>,
+      action: PayloadAction<TransactionItemType>,
+    ) => {
+      //retrieve account ids for filtering
+      const accountIds = state.spending.account_transactions.map(
+        (account) => account.account_id,
+      );
+      //filter by manual account
+      const index = accountIds.indexOf('manual_transaction');
+
+      state.spending.account_transactions[index].transactions = [
+        ...state.spending.account_transactions[index].transactions,
+        action.payload,
+      ];
+    },
+    setManualTranactions: (
+      state,
+      action: PayloadAction<
+        Array<{ account_id: string; transactions: Array<TransactionItemType> }>
+      >,
     ) => {
       state.spending.account_transactions = [
         ...state.spending.account_transactions,
-        action.payload,
+        ...action.payload,
       ];
     },
     setTransactionsWithinTimeFrame: (
@@ -171,12 +140,7 @@ export const accountSlice = createSlice({
       action: PayloadAction<{
         account_transactions: {
           account_id: string;
-          transactions: Array<{
-            name: string;
-            date: string;
-            amount: number;
-            transaction_id: string;
-          }>;
+          transactions: Array<TransactionItemType>;
         };
       }>,
     ) => {
@@ -213,9 +177,11 @@ export const {
   togglePlaidAccountsModal,
   setSpendingFilter,
   addPlaidAccessTokens,
+  addManualTransaction,
   setSpendingAmount,
   setSpendingFilterLoadingState,
   setTransactionsWithinTimeFrame,
+  setManualTranactions,
 } = accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;

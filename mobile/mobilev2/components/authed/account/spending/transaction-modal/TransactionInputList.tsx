@@ -18,8 +18,6 @@ const TransactionInputList = ({ inputList }: Params) => {
     return <InputCol>{item.component}</InputCol>;
   };
 
-  console.log('dimensions', Dimensions);
-  //TODO need to get device dimensions
   return (
     <FlatList
       renderItem={renderItem}

@@ -25,14 +25,12 @@ export class TransactionService {
     input: CreateTransactionInput & AuthPayload,
   ): Promise<CreateTransactionResponse> {
     try {
-      const { account, accountType, title, category, date, amount, location } =
+      const { account, accountType, name, category, date, amount, location } =
         input;
-
-      console.log('input?', input);
 
       const newTransaction = new this.TransactionModel({
         accountType,
-        title,
+        name,
         category,
         date,
         amount,
@@ -69,7 +67,6 @@ export class TransactionService {
       const foundTransactions = await Promise.all(
         myAccount.transactions.map(async (transaction) => {
           try {
-            console.log('transaction', transaction);
             const foundTransaction = await this.TransactionModel.findById(
               transaction,
             );

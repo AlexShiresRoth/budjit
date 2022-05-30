@@ -198,12 +198,13 @@ type SetTimeFrameResponse {
 }
 
 type TransactionType {
-  title: String!
+  name: String!
   category: String!
   amount: Float!
   date: String!
   accountType: String
   location: String!
+  _id: String!
 }
 
 type CreateTransactionResponse {
@@ -335,7 +336,7 @@ input SetTimeFrameInput {
 }
 
 input CreateTransactionInput {
-  title: String!
+  name: String!
   category: String!
   amount: Float!
   date: String!

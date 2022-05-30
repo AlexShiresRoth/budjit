@@ -1,4 +1,4 @@
-import React, { MutableRefObject, useRef } from 'react';
+import React, { MutableRefObject, useEffect, useRef } from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
@@ -10,21 +10,25 @@ import {
   selectAlert,
   setAlert,
 } from '../../redux/reducers/alerts.reducers';
+import { AlertType } from '../../types/Alert.types';
 
 const Container = styled.TouchableOpacity`
   padding: 20px;
   display: flex;
+  align-items: center;
   justify-content: center;
   position: absolute;
   top: 2%;
   width: 100%;
-  elevation: 4;
+  elevation: 99;
+  z-index: 99;
 `;
 const Content = styled.View`
   width: 90%;
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 15px;
 `;
 const CloseBtn = styled.TouchableOpacity`
   margin-right: 10px;
@@ -36,60 +40,58 @@ const Message = styled.Text`
   font-size: 16px;
 `;
 
-type AlertParams = {
-  message: string;
-  status: string;
-  callback: (args: any) => any;
-};
-
-function Alert() {
+const Alert = () => {
   ////////////////////////////////////////
   const colorScheme = useColorScheme();
   /////////////////////////
-  const ref: MutableRefObject<null | View> = useRef(null);
   ///select alert state
   const alertState = useAppSelector(selectAlert);
 
-  const dispatch = useAppDispatch();
-
   const {
     alert: { type, message },
-    isVisible,
   } = alertState;
 
-  const handleAlertVisibility = () => {
-    console.log('click');
-    dispatch(resetAlert(null));
-  };
+  const dispatch = useAppDispatch();
 
-  console.log('alert state', alertState);
+  const handleAlertVisibility = () => dispatch(resetAlert(null));
 
-  return isVisible ? (
+  return (
     <Container
       style={{
-        backgroundColor:
-          type === 'danger'
-            ? Colors[colorScheme].danger + '84'
-            : Colors[colorScheme].success,
-        borderBottomWidth: 5,
-        borderBottomColor:
-          type === 'danger'
-            ? Colors[colorScheme].danger + '84'
-            : Colors[colorScheme].success + '77',
+        backgroundColor: 'transparent',
       }}
     >
-      <Content>
+      <Content
+        style={{
+          backgroundColor: Colors[colorScheme].alertBackground,
+          elevation: 2,
+          borderBottomWidth: 5,
+          borderRadius: 2,
+          borderColor:
+            type === 'danger'
+              ? Colors[colorScheme].danger
+              : Colors[colorScheme].success,
+        }}
+      >
         <CloseBtn onPress={() => handleAlertVisibility()}>
           <AntDesign
             color={Colors[colorScheme].text}
-            size={24}
+            size={20}
             name="closecircleo"
           />
         </CloseBtn>
-        <Message>{message}</Message>
+        <Message
+          style={{
+            fontSize: 14,
+            fontWeight: '700',
+            margin: 10,
+          }}
+        >
+          {message}
+        </Message>
       </Content>
     </Container>
-  ) : null;
-}
+  );
+};
 
 export default Alert;

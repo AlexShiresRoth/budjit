@@ -3,12 +3,10 @@ import * as mongoose from 'mongoose';
 
 @Schema()
 export class Transaction {
-  // @Prop({ type: String })
-  // _id: string;
   @Prop({ default: 'manual_transaction' })
   account_id: string;
   @Prop()
-  title: string;
+  name: string;
   @Prop()
   category: string;
   @Prop()

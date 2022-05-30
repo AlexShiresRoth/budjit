@@ -17,11 +17,12 @@ export const CREATE_TRANSACTION = gql`
       message
       success
       Transaction {
+        _id
         amount
         date
         accountType
         category
-        title
+        name
         location
       }
     }

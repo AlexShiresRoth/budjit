@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { Modal, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
@@ -16,6 +16,16 @@ import PrimaryButton from '../../../../reusable/PrimaryButton';
 import { useMutation } from '@apollo/client';
 import { CREATE_TRANSACTION } from '../../../../../graphql/mutations/spending.mutation';
 import LoadingSpinner from '../../../../reusable/LoadingSpinner';
+import Alert from '../../../../alerts/Alert';
+import {
+  useAppDispatch,
+  useAppSelector,
+} from '../../../../../hooks/reduxHooks';
+import {
+  selectAlert,
+  setAlert,
+} from '../../../../../redux/reducers/alerts.reducers';
+import { addManualTransaction } from '../../../../../redux/reducers/accounts.reducers';
 
 const ModalContainer = styled.View`
   flex: 1;
@@ -79,7 +89,7 @@ type Props = {
 };
 
 type FormData = {
-  title: string;
+  name: string;
   category: string;
   amount: string;
   date: string;
@@ -97,14 +107,21 @@ export type TransactionInputArrData = {
 const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const colorScheme = useColorScheme();
 
-  const [createTransaction, { error, data: transactionResponse, loading }] =
+  //grab alert state
+  const alertState = useAppSelector(selectAlert);
+
+  const { isVisible: isAlertVisible } = alertState;
+
+  const dispatch = useAppDispatch();
+
+  const [createTransaction, { error, loading }] =
     useMutation(CREATE_TRANSACTION);
 
   //change step for creating a transaction
   const [currentStep, setStep] = useState<number>(0);
 
   const [data, setData] = useState<FormData>({
-    title: '',
+    name: '',
     amount: '',
     date: new Date().toISOString(),
     accountType: '',
@@ -112,7 +129,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     location: '',
   });
 
-  const { title, date, accountType, category, location, amount } = data;
+  const { name, date, accountType, category, location, amount } = data;
 
   const handleTextChange = (name: string, text: string) =>
     setData({ ...data, [name]: text });
@@ -122,7 +139,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     setStep(0);
     //revert data
     setData({
-      title: '',
+      name: '',
       amount: '',
       date: new Date().toISOString(),
       accountType: '',
@@ -136,13 +153,27 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const submit = async () => {
     const { amount } = data;
     try {
-      const transactionRequest = await createTransaction({
+      const newTransaction = await createTransaction({
         variables: { input: { ...data, amount: parseFloat(amount) } },
       });
 
-      console.log('transaction req', transactionRequest);
+      //add new transaction to redux store
+      dispatch(
+        addManualTransaction(
+          newTransaction?.data?.createTransaction?.Transaction,
+        ),
+      );
+      //TODO show successfull alert
+      dispatch(
+        setAlert({
+          type: 'success',
+          message: newTransaction?.data?.createTransaction?.message,
+        }),
+      );
+      //@desc close modal on success!
+      toggleModal(false);
     } catch (error) {
-      console.error(error);
+      return error;
     }
   };
 
@@ -152,8 +183,8 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
       title: 'Transaction',
       component: (
         <Input
-          value={title}
-          callback={(e: string) => handleTextChange('title', e)}
+          value={name}
+          callback={(e: string) => handleTextChange('name', e)}
           style={null}
           labelStyle={{ color: Colors[colorScheme].text }}
           label={'What did you purchase?'}
@@ -286,6 +317,13 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     },
   ];
 
+  useEffect(() => {
+    if (error) {
+      // @desc set alert in state
+      dispatch(setAlert({ type: 'danger', message: error?.message }));
+    }
+  }, [error]);
+
   if (!isModalVisible) {
     return null;
   }
@@ -296,6 +334,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
         animationType="slide"
         onRequestClose={() => handleResetOnClose(false)}
       >
+        {isAlertVisible ? <Alert /> : null}
         <ModalView
           style={{
             backgroundColor: Colors[colorScheme].background,

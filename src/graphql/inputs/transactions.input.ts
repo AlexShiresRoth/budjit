@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql';
 @InputType()
 export class CreateTransactionInput {
   @Field()
-  title: string;
+  name: string;
   @Field()
   category: string;
   @Field()

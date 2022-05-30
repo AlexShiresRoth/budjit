@@ -33,7 +33,7 @@ const DatePickerModal = ({
 }: ComponentProps) => {
   const colorScheme = useColorScheme();
 
-  const minDate = new Date();
+  const minDate = new Date('2000-01-01');
 
   const date = new Date(value);
 

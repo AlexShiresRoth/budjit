@@ -2,15 +2,12 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../store';
 
 interface AlertParams {
-  type: string;
+  type: 'danger' | 'success' | '';
   message: string;
 }
 
 export type InitialStateParams = {
-  alert: {
-    type: string;
-    message: string;
-  };
+  alert: AlertParams;
   isVisible: boolean;
 };
 

@@ -47,3 +47,21 @@ export const GET_PLAID_INSTITUTION = gql`
     }
   }
 `;
+
+export const GET_ALL_TRANSACTIONS = gql`
+  query getAllManualTransactions {
+    getAllManualTransactions {
+      transactions {
+        _id
+        amount
+        accountType
+        date
+        category
+        location
+        name
+      }
+      message
+      success
+    }
+  }
+`;

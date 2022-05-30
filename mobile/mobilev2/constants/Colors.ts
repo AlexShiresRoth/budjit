@@ -14,6 +14,7 @@ export interface ColorsInterface {
     success: string;
     cardBg: string;
     accountBg: string;
+    alertBackground: string;
   };
   dark: {
     text: string;
@@ -25,6 +26,7 @@ export interface ColorsInterface {
     success: string;
     cardBg: string;
     accountBg: string;
+    alertBackground: string;
   };
 }
 
@@ -40,6 +42,7 @@ export default {
     success: '#35FF69',
     accountBg: '#ddd',
     cardBg: '#fefefe',
+    alertBackground: '#eeeeee',
   },
   dark: {
     text: '#F3EFE0',
@@ -52,5 +55,6 @@ export default {
     success: '#035E7B',
     accountBg: '#011936',
     cardBg: '#053225',
+    alertBackground: '#333333',
   },
 };
