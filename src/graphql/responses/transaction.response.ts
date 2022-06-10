@@ -17,6 +17,8 @@ export class TransactionType {
   location: string;
   @Field()
   _id: string;
+  @Field()
+  account_id: string;
 }
 
 @ObjectType()

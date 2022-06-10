@@ -59,6 +59,7 @@ export const GET_ALL_TRANSACTIONS = gql`
         category
         location
         name
+        account_id
       }
       message
       success

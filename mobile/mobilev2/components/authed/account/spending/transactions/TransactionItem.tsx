@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../../../hooks/useColorScheme';
 import Colors from '../../../../../constants/Colors';
 import { TransactionItemType } from '../../../../../types/Transaction.types';
+import { format } from 'date-fns';
 
 const Item = styled.View`
   padding: 20px;
@@ -18,16 +19,40 @@ const Row = styled.View`
 
 const Text = styled.Text``;
 
-const TransactionItem = ({ item }: { item: TransactionItemType }) => {
+const TransactionItem = ({
+  item,
+  filter,
+  startDate,
+  endDate,
+}: {
+  item: TransactionItemType;
+  filter: 'Week' | 'Month' | 'Year';
+  startDate: string;
+  endDate: string;
+}) => {
   const colorScheme = useColorScheme();
 
-  const formatDate = (date: string) => {
-    const dateArr = date.split('-');
-    const firstEl = dateArr[0];
-    dateArr.shift();
-    dateArr.push(firstEl);
-    return dateArr.join('/');
+  const [showItem, handleVisibility] = useState<boolean>(true);
+
+  const showTransactionsBetweenDateRange = () => {
+    const transactionDateNum = new Date(item?.date).getTime();
+    //@FIX
+    //set end to the next day, not sure this is a good idea at the moment
+    const extendedEnd = new Date(endDate);
+
+    return transactionDateNum > new Date(startDate).getTime() &&
+      transactionDateNum <
+        new Date(extendedEnd.setDate(extendedEnd.getDate() + 1)).getTime()
+      ? handleVisibility(true)
+      : handleVisibility(false);
   };
+
+  useEffect(() => {
+    showTransactionsBetweenDateRange();
+  }, [filter]);
+  //hide item if not in date range
+  if (!showItem) return null;
+
   return (
     <Item style={{ backgroundColor: Colors[colorScheme].tint + '40' }}>
       <Row
@@ -57,7 +82,7 @@ const TransactionItem = ({ item }: { item: TransactionItemType }) => {
             fontSize: 12,
           }}
         >
-          {formatDate(item.date)}
+          {format(new Date(item.date).getTime(), 'P')}
         </Text>
       </Row>
       <Text

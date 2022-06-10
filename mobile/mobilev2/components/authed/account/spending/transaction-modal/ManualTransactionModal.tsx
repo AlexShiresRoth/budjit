@@ -107,12 +107,11 @@ export type TransactionInputArrData = {
 const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const colorScheme = useColorScheme();
 
+  const dispatch = useAppDispatch();
   //grab alert state
   const alertState = useAppSelector(selectAlert);
 
   const { isVisible: isAlertVisible } = alertState;
-
-  const dispatch = useAppDispatch();
 
   const [createTransaction, { error, loading }] =
     useMutation(CREATE_TRANSACTION);
@@ -141,7 +140,7 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
     setData({
       name: '',
       amount: '',
-      date: new Date().toISOString(),
+      date: new Date().toDateString(),
       accountType: '',
       category: '',
       location: '',

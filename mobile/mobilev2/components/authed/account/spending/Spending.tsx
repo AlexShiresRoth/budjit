@@ -7,6 +7,7 @@ import {
   selectAccount,
   setSpendingFilter,
 } from '../../../../redux/reducers/accounts.reducers';
+import { SpendingStateParams } from '../../../../types/Transaction.types';
 import LoadingSpinner from '../../../reusable/LoadingSpinner';
 import TimeModal from './TimeModal';
 
@@ -85,7 +86,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
 
   const [totalToDisplay, setTotalDisplay] = useState<string>('0.00');
 
-  const spendingState = useAppSelector(selectAccount);
+  const { spending } = useAppSelector(selectAccount);
   ////////////////////////////////////////////////////
   const dispatch = useAppDispatch();
   /////////////////////////////////////////////////
@@ -118,32 +119,12 @@ const Spending = ({ colorScheme }: ColorScheme) => {
 
     let formattedTotal: string = '0.00';
 
-    const totalSplitByDecimal = addedTransactions
-      .toFixed(2)
-      .toString()
-      .split('.');
-
-    const firstHalfOfTotal = totalSplitByDecimal[0].split('');
-
-    if (firstHalfOfTotal.length > 4) {
-      firstHalfOfTotal.reverse().forEach((s: string, index: number) => {
-        if (index % 4 === 0) firstHalfOfTotal.splice(index, 0, ',');
-      });
-      //remove comma at end of array
-      firstHalfOfTotal.reverse().pop();
-    }
-    //if total is just in the thousands, no need to loop through in order to insert comma
-    if (firstHalfOfTotal.length === 4) firstHalfOfTotal.splice(1, 0, ',');
-    //combine values before and after decimal point
-    formattedTotal = firstHalfOfTotal.join('') + '.' + totalSplitByDecimal[1];
     //////////////////////////////////////////////////////
     setTotalDisplay(formattedTotal);
   };
 
   const handleDateChanges = () => {
-    const {
-      spending: { endDate, startDate },
-    } = spendingState;
+    const { endDate, startDate } = spending;
     if (startDate && endDate) {
       //start range
       const startArr = startDate.split('-');
@@ -158,25 +139,20 @@ const Spending = ({ colorScheme }: ColorScheme) => {
       endArr.push(endYear);
       const newEnd = endArr.join('/');
 
-      console.log('date eeee', newStart, newEnd);
-
       setDates({ startDate: newStart, endDate: newEnd });
     }
   };
 
   useEffect(() => {
-    if (spendingState.spending.totals.length > 0) {
-      handleTotalSpendingSum(spendingState.spending.totals);
+    if (spending.totals.length > 0) {
+      handleTotalSpendingSum(spending.totals);
     }
-  }, [spendingState.spending.totals]);
+  }, [spending.totals]);
 
   useEffect(() => {
     handleDateChanges();
-  }, [spendingState.spending]);
+  }, [spending]);
 
-  //TODO spending filter update works, need to clean and refactor
-  // console.log('dates?', dates, spendingState);
-  //TODO need to tell spending filter to tostop loading
   return (
     <Content
       style={{
@@ -209,7 +185,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
       </Row>
       <Row>
         <SubHeading style={{ color: Colors[colorScheme].text }}>
-          Spending This {spendingState.spending.filter}
+          Spending This {spending.filter}
         </SubHeading>
         <DateToggler
           style={{
@@ -231,7 +207,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
       </Row>
 
       <Row>
-        {spendingState.spending.isSpendingFilterLoading ? (
+        {spending.isSpendingFilterLoading ? (
           <LoadingSpinner />
         ) : (
           <Total style={{ color: Colors[colorScheme].text }}>

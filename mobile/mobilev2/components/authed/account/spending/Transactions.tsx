@@ -5,14 +5,19 @@ import Colors from '../../../../constants/Colors';
 import { useAppDispatch, useAppSelector } from '../../../../hooks/reduxHooks';
 import {
   selectAccount,
-  setManualTranactions,
+  setManualTransactions,
 } from '../../../../redux/reducers/accounts.reducers';
 import { FlatList } from 'react-native';
 import { useQuery } from '@apollo/client';
 import { GET_ALL_TRANSACTIONS } from '../../../../graphql/queries/accounts.query';
-import { TransactionItemType } from '../../../../types/Transaction.types';
+import {
+  SpendingStateParams,
+  TransactionItemType,
+} from '../../../../types/Transaction.types';
 import { RootStateOrAny } from 'react-redux';
 import TransactionItem from './transactions/TransactionItem';
+import { RootState } from '../../../../redux/store';
+import useTransactionsInRange from '../../../../hooks/useTransactionsInRange';
 
 const Container = styled.View`
   width: 90%;
@@ -30,21 +35,28 @@ const Transactions = () => {
   const colorScheme = useColorScheme();
 
   //redux store spending data
-  const spendingState: RootStateOrAny = useAppSelector(selectAccount);
-  const {
-    spending: { filter, account_transactions },
-  } = spendingState;
+  const spendingState: SpendingStateParams = useAppSelector(selectAccount);
+
   //redux dispatch to state
   const dispatch = useAppDispatch();
 
-  const [transactions, concatTransactions] = useState<
-    Array<TransactionItemType>
-  >([]);
+  const {
+    spending: { filter, account_transactions, startDate, endDate },
+  } = spendingState;
+
+  const [transactions, setTransactions] = useState<Array<TransactionItemType>>(
+    [],
+  );
 
   //retrieve manual transactions from DB
   const { error, data, loading, refetch } = useQuery(GET_ALL_TRANSACTIONS);
 
-  useEffect(() => {
+  //custom hook for setting transactions in range
+  const { transactionsInRange } = useTransactionsInRange();
+
+  //transactions can either be connected via plaid or entered manually.
+  //This function combines both into a concatenated array sorted by date
+  const combineArraysOfTransactions = () => {
     if (account_transactions?.length > 0 && account_transactions) {
       const temp: Array<TransactionItemType> = [];
       account_transactions?.forEach(
@@ -67,24 +79,22 @@ const Transactions = () => {
         },
       );
 
-      console.log(
-        'sorted dates',
-        sorted.map((m) => m.date),
-      );
-
-      concatTransactions(sorted);
+      setTransactions(sorted);
     }
+  };
+
+  useEffect(() => {
+    combineArraysOfTransactions();
   }, [spendingState]);
 
   useEffect(() => {
     if (!error && !loading) {
+      //send manual transactions to redux store received via api
       dispatch(
-        setManualTranactions([
-          {
-            account_id: 'manual_transaction',
-            transactions: data?.getAllManualTransactions?.transactions,
-          },
-        ]),
+        setManualTransactions({
+          account_id: 'manual_transaction',
+          transactions: data?.getAllManualTransactions?.transactions,
+        }),
       );
     }
   }, [data, loading, error]);
@@ -92,14 +102,21 @@ const Transactions = () => {
   useEffect(() => {
     //refetch on component load
     refetch();
-  }, []);
+  }, [filter]);
 
   if (transactions.length === 0) {
     return null;
   }
 
   const renderItem = ({ item }: { item: TransactionItemType }) => {
-    return <TransactionItem item={item} />;
+    return (
+      <TransactionItem
+        item={item}
+        filter={filter}
+        startDate={startDate}
+        endDate={endDate}
+      />
+    );
   };
 
   return (

@@ -25,11 +25,12 @@ const initialState: AccountsInitialStateParams = {
     endDate: '',
     isSpendingFilterLoading: true,
     account_transactions: [],
+    transactions_in_date_range: [],
   },
   isAuthenticated: false,
 };
 
-export const accountSlice: any = createSlice({
+export const accountSlice = createSlice({
   name: 'account',
   initialState,
   reducers: {
@@ -87,6 +88,12 @@ export const accountSlice: any = createSlice({
       ////////////////////////
       state.spending.endDate = action.payload.spending.endDate;
     },
+    setTransactionsInRange: (
+      state,
+      action: PayloadAction<Array<TransactionItemType>>,
+    ) => {
+      state.spending.transactions_in_date_range = action.payload;
+    },
     setSpendingAmount: (
       state,
       action: PayloadAction<{ amount: number; id: string }>,
@@ -124,15 +131,25 @@ export const accountSlice: any = createSlice({
         action.payload,
       ];
     },
-    setManualTranactions: (
+    setManualTransactions: (
       state,
-      action: PayloadAction<
-        Array<{ account_id: string; transactions: Array<TransactionItemType> }>
-      >,
+      action: PayloadAction<{
+        account_id: string;
+        transactions: Array<TransactionItemType>;
+      }>,
     ) => {
+      //set base transactions in state
+      //This doesnt work, need to set payload at index of id!
       state.spending.account_transactions = [
         ...state.spending.account_transactions,
-        ...action.payload,
+        action.payload,
+      ];
+      //add the totals to the state array
+      state.spending.totals = [
+        ...state.spending.totals,
+        ...action.payload.transactions.map((transaction) => {
+          return { id: transaction._id, amount: transaction.amount };
+        }),
       ];
     },
     setTransactionsWithinTimeFrame: (
@@ -181,7 +198,8 @@ export const {
   setSpendingAmount,
   setSpendingFilterLoadingState,
   setTransactionsWithinTimeFrame,
-  setManualTranactions,
+  setManualTransactions,
+  setTransactionsInRange,
 } = accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;

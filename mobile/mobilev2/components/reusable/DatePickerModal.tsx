@@ -3,6 +3,7 @@ import styled from 'styled-components/native';
 import DatePicker from '@react-native-community/datetimepicker';
 import { Animated, TouchableOpacity } from 'react-native';
 import Colors from '../../constants/Colors';
+import { format } from 'date-fns';
 import useColorScheme from '../../hooks/useColorScheme';
 
 const Text = styled.Text``;
@@ -48,12 +49,12 @@ const DatePickerModal = ({
         return toggleDatePicker(false);
       }
       if (event.type === 'set') {
-        const receivedDate = new Date(
-          event.nativeEvent.timestamp ?? value,
-        ).toISOString();
-        const formatDate = receivedDate.split('T')[0];
-        //pass the value back to the parent
-        onChange(param, formatDate);
+        const receivedDate = new Date(event.nativeEvent.timestamp ?? value);
+        // //pass the value back to the parent
+        onChange(
+          param,
+          new Date(new Date(receivedDate).getTime()).toLocaleDateString(),
+        );
         //close the modal
         toggleDatePicker(false);
       }
@@ -99,7 +100,9 @@ const DatePickerModal = ({
           <Text style={{ color: Colors[colorScheme].text, fontWeight: '700' }}>
             Choose Date:
           </Text>
-          <Text style={{ color: Colors[colorScheme].text }}>{value}</Text>
+          <Text style={{ color: Colors[colorScheme].text }}>
+            {format(new Date(value).getTime(), 'PPPP')}
+          </Text>
         </TouchableOpacity>
         {showDatePicker ? (
           <DatePicker

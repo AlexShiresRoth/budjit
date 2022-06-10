@@ -28,6 +28,21 @@ export interface AccountsInitialStateParams {
       account_id: string;
       transactions: Array<TransactionItemType>;
     }>;
+    transactions_in_date_range: Array<TransactionItemType>;
   };
   isAuthenticated: boolean;
 }
+
+export type SpendingStateParams = {
+  spending: {
+    filter: 'Month' | 'Year' | 'Week';
+    totals: Array<{ id: string; amount: number }>;
+    startDate: string;
+    endDate: string;
+    isSpendingFilterLoading: boolean;
+    account_transactions: Array<{
+      account_id: string;
+      transactions: Array<TransactionItemType>;
+    }>;
+  };
+};
