@@ -32,27 +32,6 @@ const TransactionItem = ({
 }) => {
   const colorScheme = useColorScheme();
 
-  const [showItem, handleVisibility] = useState<boolean>(true);
-
-  const showTransactionsBetweenDateRange = () => {
-    const transactionDateNum = new Date(item?.date).getTime();
-    //@FIX
-    //set end to the next day, not sure this is a good idea at the moment
-    const extendedEnd = new Date(endDate);
-
-    return transactionDateNum > new Date(startDate).getTime() &&
-      transactionDateNum <
-        new Date(extendedEnd.setDate(extendedEnd.getDate() + 1)).getTime()
-      ? handleVisibility(true)
-      : handleVisibility(false);
-  };
-
-  useEffect(() => {
-    showTransactionsBetweenDateRange();
-  }, [filter]);
-  //hide item if not in date range
-  if (!showItem) return null;
-
   return (
     <Item style={{ backgroundColor: Colors[colorScheme].tint + '40' }}>
       <Row

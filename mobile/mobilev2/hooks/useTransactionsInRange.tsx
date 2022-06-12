@@ -10,26 +10,36 @@ const useTransactionsInRange = () => {
   const {
     spending: { endDate, startDate, account_transactions, filter },
   } = useAppSelector(selectAccount);
+
   const handleRange = () => {
     if (account_transactions.length > 0) {
-      const transactions = account_transactions.map(
-        (account) => account.transactions,
+      const transactions = account_transactions
+        .map((account) => account.transactions)
+        .flat();
+
+      const filtered = transactions.filter((transaction) => {
+        const transactionDateNum = new Date(transaction?.date).getTime();
+        //@FIX
+        //set end to the next day, not sure this is a good idea at the moment
+        const extendedEnd = new Date(endDate);
+
+        return (
+          transactionDateNum > new Date(startDate).getTime() &&
+          transactionDateNum <
+            new Date(extendedEnd.setDate(extendedEnd.getDate() + 1)).getTime()
+        );
+      });
+
+      const sorted = filtered.sort(
+        (a: TransactionItemType, b: TransactionItemType) => {
+          let aDate = new Date(a.date),
+            bDate = new Date(b.date);
+
+          return aDate.getTime() > bDate.getTime() ? -1 : 1;
+        },
       );
-      console.log('hooks transactions', account_transactions);
-      // const filtered = transactions.filter((transaction) => {
-      //   const transactionDateNum = new Date(transaction?.date).getTime();
-      //   //@FIX
-      //   //set end to the next day, not sure this is a good idea at the moment
-      //   const extendedEnd = new Date(endDate);
 
-      //   return (
-      //     transactionDateNum > new Date(startDate).getTime() &&
-      //     transactionDateNum <
-      //       new Date(extendedEnd.setDate(extendedEnd.getDate() + 1)).getTime()
-      //   );
-      // });
-
-      // setRange(filtered);
+      setRange(sorted);
     }
   };
 

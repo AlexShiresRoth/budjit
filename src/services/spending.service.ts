@@ -23,9 +23,9 @@ export class SpendingService {
       ///////////////////////////////
       const newStart = new Date(tempDate.setDate(start + 1));
       ///////////////////////////////
-      startDate = newStart.toISOString().split('T')[0];
+      startDate = newStart.toISOString();
       ///////////////////////////////
-      endDate = today.toISOString().split('T')[0];
+      endDate = today.toISOString();
     };
 
     const setMonthAsTimeFrame = () => {
@@ -34,9 +34,9 @@ export class SpendingService {
       ///////////////////////////////
       const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
       ///////////////////////////////
-      startDate = firstDayOfMonth.toISOString().split('T')[0];
+      startDate = firstDayOfMonth.toISOString();
       ///////////////////////////////
-      endDate = date.toISOString().split('T')[0];
+      endDate = date.toISOString();
     };
 
     const setYearAsTimeFrame = () => {
@@ -45,9 +45,9 @@ export class SpendingService {
       ///////////////////////////////
       const firstDayOfYear = new Date(date.getFullYear(), 0, 1);
       ///////////////////////////////
-      startDate = firstDayOfYear.toISOString().split('T')[0];
+      startDate = firstDayOfYear.toISOString();
       ///////////////////////////////
-      endDate = date.toISOString().split('T')[0];
+      endDate = date.toISOString();
     };
 
     switch (filter) {

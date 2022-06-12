@@ -7,7 +7,7 @@ import {
   selectAccount,
   setSpendingFilter,
 } from '../../../../redux/reducers/accounts.reducers';
-import { SpendingStateParams } from '../../../../types/Transaction.types';
+import { format } from 'date-fns';
 import LoadingSpinner from '../../../reusable/LoadingSpinner';
 import TimeModal from './TimeModal';
 
@@ -117,41 +117,34 @@ const Spending = ({ colorScheme }: ColorScheme) => {
       0,
     );
 
+    console.log('formatted totalsss', addedTransactions);
+
     let formattedTotal: string = '0.00';
 
+    if (addedTransactions)
+      formattedTotal = addedTransactions.toFixed(2).toString();
     //////////////////////////////////////////////////////
     setTotalDisplay(formattedTotal);
   };
 
-  const handleDateChanges = () => {
-    const { endDate, startDate } = spending;
-    if (startDate && endDate) {
-      //start range
-      const startArr = startDate.split('-');
-      const year = startArr[0];
-      startArr.shift();
-      startArr.push(year);
-      const newStart = startArr.join('/');
-      //end range
-      const endArr = endDate.split('-');
-      const endYear = endArr[0];
-      endArr.shift();
-      endArr.push(endYear);
-      const newEnd = endArr.join('/');
-
-      setDates({ startDate: newStart, endDate: newEnd });
+  const handleDateFormats = () => {
+    if (spending.startDate && spending.endDate) {
+      setDates({
+        startDate: format(new Date(spending.startDate), 'P'),
+        endDate: format(new Date(spending.endDate), 'P'),
+      });
     }
   };
+
+  useEffect(() => {
+    handleDateFormats();
+  }, [spending?.startDate, spending?.endDate]);
 
   useEffect(() => {
     if (spending.totals.length > 0) {
       handleTotalSpendingSum(spending.totals);
     }
   }, [spending.totals]);
-
-  useEffect(() => {
-    handleDateChanges();
-  }, [spending]);
 
   return (
     <Content
@@ -180,7 +173,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
             fontStyle: 'italic',
           }}
         >
-          {dates.startDate} - {dates.endDate}
+          {dates?.startDate} - {dates?.endDate}
         </DateRange>
       </Row>
       <Row>

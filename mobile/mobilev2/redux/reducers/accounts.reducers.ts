@@ -139,18 +139,70 @@ export const accountSlice = createSlice({
       }>,
     ) => {
       //set base transactions in state
-      //This doesnt work, need to set payload at index of id!
-      state.spending.account_transactions = [
-        ...state.spending.account_transactions,
-        action.payload,
-      ];
-      //add the totals to the state array
-      state.spending.totals = [
-        ...state.spending.totals,
-        ...action.payload.transactions.map((transaction) => {
-          return { id: transaction._id, amount: transaction.amount };
-        }),
-      ];
+
+      const account_ids = state.spending.account_transactions.map(
+        (transactions) => transactions.account_id,
+      );
+
+      const indexOfManualTransactions =
+        account_ids.indexOf('manual_transaction');
+
+      if (indexOfManualTransactions >= 0) {
+        state.spending.account_transactions[
+          indexOfManualTransactions
+        ].transactions = action.payload.transactions;
+      }
+
+      if (indexOfManualTransactions < 0)
+        state.spending.account_transactions = [
+          ...state.spending.account_transactions,
+          action.payload,
+        ];
+    },
+    setTransactionsInDateRange: (
+      state,
+      action: PayloadAction<{
+        all_transactions: Array<{
+          account_id: string;
+          transactions: Array<TransactionItemType>;
+        }>;
+        startDate: string;
+        endDate: string;
+      }>,
+    ) => {
+      const transactions = action.payload.all_transactions
+        .map((account) => account.transactions)
+        .flat();
+
+      const filtered = transactions.filter((transaction) => {
+        const transactionDateNum = new Date(transaction?.date).getTime();
+        //@FIX
+        //set end to the next day, not sure this is a good idea at the moment
+        const extendedEnd = new Date(action.payload.endDate);
+
+        return (
+          transactionDateNum > new Date(action.payload.startDate).getTime() &&
+          transactionDateNum <
+            new Date(extendedEnd.setDate(extendedEnd.getDate() + 1)).getTime()
+        );
+      });
+
+      const sorted = filtered.sort(
+        (a: TransactionItemType, b: TransactionItemType) => {
+          let aDate = new Date(a.date),
+            bDate = new Date(b.date);
+
+          return aDate.getTime() > bDate.getTime() ? -1 : 1;
+        },
+      );
+
+      //need the totals to be in same range as filter
+      state.spending.totals = sorted.map((transaction) => ({
+        amount: transaction.amount,
+        id: transaction._id,
+      }));
+
+      state.spending.transactions_in_date_range = sorted;
     },
     setTransactionsWithinTimeFrame: (
       state,
@@ -200,6 +252,7 @@ export const {
   setTransactionsWithinTimeFrame,
   setManualTransactions,
   setTransactionsInRange,
+  setTransactionsInDateRange,
 } = accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;

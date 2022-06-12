@@ -44,5 +44,7 @@ export type SpendingStateParams = {
       account_id: string;
       transactions: Array<TransactionItemType>;
     }>;
+
+    transactions_in_date_range: Array<TransactionItemType>;
   };
 };
