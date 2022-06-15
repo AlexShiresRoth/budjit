@@ -64,6 +64,9 @@ const ManualTransactionCard = ({
       <ManualTransactionModal
         isModalVisible={modalVisible}
         toggleModal={toggleModal}
+        modalTitle="Manually enter new transaction"
+        itemToEdit={null}
+        isEditMode={false}
       />
     </>
   );

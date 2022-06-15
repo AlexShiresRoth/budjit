@@ -61,7 +61,6 @@ const AccountHeader = ({
   accounts,
   colorScheme,
   navigation,
-  route,
 }: AccountTypes & ColorScheme & Props) => {
   const { myAccount } = accounts;
 

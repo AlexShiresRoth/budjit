@@ -14,7 +14,10 @@ import TransactionInputList from './TransactionInputList';
 import DatePickerModal from '../../../../reusable/DatePickerModal';
 import PrimaryButton from '../../../../reusable/PrimaryButton';
 import { useMutation } from '@apollo/client';
-import { CREATE_TRANSACTION } from '../../../../../graphql/mutations/spending.mutation';
+import {
+  CREATE_TRANSACTION,
+  EDIT_TRANSACTION,
+} from '../../../../../graphql/mutations/spending.mutation';
 import LoadingSpinner from '../../../../reusable/LoadingSpinner';
 import Alert from '../../../../alerts/Alert';
 import {
@@ -26,7 +29,8 @@ import {
   setAlert,
 } from '../../../../../redux/reducers/alerts.reducers';
 import { addManualTransaction } from '../../../../../redux/reducers/accounts.reducers';
-
+import { TransactionItemType } from '../../../../../types/Transaction.types';
+import { AntDesign } from '@expo/vector-icons';
 const ModalContainer = styled.View`
   flex: 1;
 `;
@@ -52,6 +56,14 @@ const ModalHeader = styled.View`
 
 const Row = styled.View`
   flex-direction: row;
+`;
+
+const DeleteButton = styled.TouchableOpacity`
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 5px;
+  margin-bottom: 15px;
 `;
 
 const Column = styled.View``;
@@ -86,6 +98,9 @@ const DateContainer = styled.View`
 type Props = {
   isModalVisible: boolean;
   toggleModal: Dispatch<SetStateAction<boolean>>;
+  itemToEdit: TransactionItemType | null;
+  modalTitle: string;
+  isEditMode: boolean;
 };
 
 type FormData = {
@@ -102,30 +117,44 @@ export type TransactionInputArrData = {
   title: string;
 };
 
-//TODO Submit works, need to show a success message and close modal
-//TODO show transactions on main feed
-const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
+const ManualTransactionModal = ({
+  isModalVisible,
+  toggleModal,
+  itemToEdit,
+  modalTitle,
+  isEditMode,
+}: Props) => {
   const colorScheme = useColorScheme();
 
   const dispatch = useAppDispatch();
   //grab alert state
   const alertState = useAppSelector(selectAlert);
 
-  const { isVisible: isAlertVisible } = alertState;
+  const {
+    isVisible: isAlertVisible,
+    alert: { type: alertType },
+  } = alertState;
 
   const [createTransaction, { error, loading }] =
     useMutation(CREATE_TRANSACTION);
+
+  //TODO: add edit transaction mutation
+  const [editTransaction, { error: editError, loading: editLoading }] =
+    useMutation(EDIT_TRANSACTION);
+
+  //TODO: add delete transaction mutation
+  // const [deleteTransaction, { error: deleteError, loading: deleteLoading }] = useMutation()
 
   //change step for creating a transaction
   const [currentStep, setStep] = useState<number>(0);
 
   const [data, setData] = useState<FormData>({
-    name: '',
-    amount: '',
-    date: new Date().toISOString(),
-    accountType: '',
-    category: '',
-    location: '',
+    name: itemToEdit?.name || '',
+    amount: itemToEdit?.amount.toString() || '',
+    date: itemToEdit?.date || new Date().toISOString(),
+    accountType: itemToEdit?.accountType || '',
+    category: itemToEdit?.category || '',
+    location: itemToEdit?.location || '',
   });
 
   const { name, date, accountType, category, location, amount } = data;
@@ -133,18 +162,19 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const handleTextChange = (name: string, text: string) =>
     setData({ ...data, [name]: text });
 
-  const handleResetOnClose = (value: boolean) => {
+  const handleResetOnClose = () => {
     //reset
     setStep(0);
     //revert data
     setData({
-      name: '',
-      amount: '',
-      date: new Date().toDateString(),
-      accountType: '',
-      category: '',
-      location: '',
+      name: itemToEdit?.name || '',
+      amount: itemToEdit?.amount.toString() || '',
+      date: itemToEdit?.date || new Date().toISOString(),
+      accountType: itemToEdit?.accountType || '',
+      category: itemToEdit?.category || '',
+      location: itemToEdit?.location || '',
     });
+
     //and close
     toggleModal(false);
   };
@@ -152,25 +182,32 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   const submit = async () => {
     const { amount } = data;
     try {
-      const newTransaction = await createTransaction({
-        variables: { input: { ...data, amount: parseFloat(amount) } },
-      });
+      let transaction;
+      if (!isEditMode) {
+        transaction = await createTransaction({
+          variables: { input: { ...data, amount: parseFloat(amount) } },
+        });
+      }
+
+      if (isEditMode) {
+        transaction = await editTransaction({
+          variables: { input: { ...data, amount: parseFloat(amount) } },
+        });
+      }
 
       //add new transaction to redux store
       dispatch(
-        addManualTransaction(
-          newTransaction?.data?.createTransaction?.Transaction,
-        ),
+        addManualTransaction(transaction?.data?.createTransaction?.Transaction),
       );
       //TODO show successfull alert
       dispatch(
         setAlert({
           type: 'success',
-          message: newTransaction?.data?.createTransaction?.message,
+          message: transaction?.data?.createTransaction?.message,
         }),
       );
       //@desc close modal on success!
-      toggleModal(false);
+      handleResetOnClose();
     } catch (error) {
       return error;
     }
@@ -326,14 +363,15 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
   if (!isModalVisible) {
     return null;
   }
+
   return (
     <ModalContainer>
       <Modal
         visible={isModalVisible}
         animationType="slide"
-        onRequestClose={() => handleResetOnClose(false)}
+        onRequestClose={() => handleResetOnClose()}
       >
-        {isAlertVisible ? <Alert /> : null}
+        {isAlertVisible && alertType === 'danger' ? <Alert /> : null}
         <ModalView
           style={{
             backgroundColor: Colors[colorScheme].background,
@@ -353,12 +391,13 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
                     marginBottom: 5,
                   }}
                 >
-                  Manually enter new transaction
+                  {modalTitle}
                 </Text>
               </Row>
+
               <Row style={{ maxWidth: '20%' }}>
                 <TouchableOpacity
-                  onPress={() => handleResetOnClose(false)}
+                  onPress={() => handleResetOnClose()}
                   style={{
                     backgroundColor: Colors[colorScheme].danger + '70',
                     padding: 5,
@@ -375,7 +414,35 @@ const ManualTransactionModal = ({ isModalVisible, toggleModal }: Props) => {
                 </TouchableOpacity>
               </Row>
             </ModalHeader>
-            <TransactionInputList inputList={DATA} />
+            {isEditMode ? (
+              <Row>
+                <DeleteButton
+                  style={{
+                    padding: 5,
+                    borderWidth: 1,
+                    borderColor: Colors[colorScheme].danger,
+                    backgroundColor: Colors[colorScheme].danger + '70',
+                    borderRadius: 5,
+                  }}
+                >
+                  <AntDesign
+                    name="delete"
+                    size={14}
+                    color={Colors[colorScheme].text}
+                  />
+                  <Text
+                    style={{
+                      color: Colors[colorScheme].text,
+                      fontSize: 14,
+                      marginLeft: 5,
+                    }}
+                  >
+                    Delete Transaction
+                  </Text>
+                </DeleteButton>
+              </Row>
+            ) : null}
+            <TransactionInputList inputList={DATA} isEditMode={isEditMode} />
 
             {!loading ? (
               <PrimaryButton

@@ -4,8 +4,10 @@ import useColorScheme from '../../../../../hooks/useColorScheme';
 import Colors from '../../../../../constants/Colors';
 import { TransactionItemType } from '../../../../../types/Transaction.types';
 import { format } from 'date-fns';
+import { Feather } from '@expo/vector-icons';
+import ManualTransactionModal from '../transaction-modal/ManualTransactionModal';
 
-const Item = styled.View`
+const Item = styled.TouchableOpacity`
   padding: 20px;
   margin: 0 10px 0 0;
   border-radius: 5px;
@@ -21,71 +23,114 @@ const Text = styled.Text``;
 
 const TransactionItem = ({
   item,
-  filter,
-  startDate,
-  endDate,
 }: {
   item: TransactionItemType;
   filter: 'Week' | 'Month' | 'Year';
   startDate: string;
   endDate: string;
+  navigation: any;
 }) => {
+  const [isEditable, setIsEditable] = useState<boolean>(false);
+
+  const [isEditModalVisible, setIsEditModalVisible] = useState<boolean>(false);
+
   const colorScheme = useColorScheme();
 
+  const handleNavigationToEditableItem = (isEditable: boolean): void => {
+    if (!isEditable) return;
+    setIsEditModalVisible(true);
+  };
+
+  useEffect(() => {
+    if (item.account_id === 'manual_transaction') {
+      setIsEditable(true);
+    }
+  }, [item]);
+
   return (
-    <Item style={{ backgroundColor: Colors[colorScheme].tint + '40' }}>
-      <Row
-        style={{
-          borderBottomWidth: 1,
-          borderBottomColor: Colors[colorScheme].tint + '20',
-        }}
+    <>
+      <ManualTransactionModal
+        isModalVisible={isEditModalVisible}
+        toggleModal={setIsEditModalVisible}
+        itemToEdit={item}
+        modalTitle="Edit Manual Transaction"
+        isEditMode={true}
+      />
+
+      <Item
+        style={{ backgroundColor: Colors[colorScheme].tint + '40' }}
+        onPress={() => handleNavigationToEditableItem(isEditable)}
       >
-        <Text
+        <Row
           style={{
-            color: Colors[colorScheme].text + '60',
-            fontWeight: '400',
-            marginBottom: 2,
-            marginTop: 2,
-            fontSize: 15,
+            borderBottomWidth: 1,
+            borderBottomColor: Colors[colorScheme].tint + '20',
           }}
         >
-          {item.location}
-        </Text>
+          <Text
+            style={{
+              color: Colors[colorScheme].text + '60',
+              fontWeight: '400',
+              marginBottom: 2,
+              marginTop: 2,
+              fontSize: 15,
+            }}
+          >
+            {item.location}
+          </Text>
+          <Text
+            style={{
+              color: Colors[colorScheme].tint + '80',
+              fontWeight: '200',
+              marginBottom: 5,
+              marginTop: 5,
+              fontStyle: 'italic',
+              fontSize: 12,
+            }}
+          >
+            {format(new Date(item.date).getTime(), 'P')}
+          </Text>
+        </Row>
         <Text
           style={{
-            color: Colors[colorScheme].tint + '80',
-            fontWeight: '200',
+            color: Colors[colorScheme].text + '90',
+            fontWeight: '700',
             marginBottom: 5,
             marginTop: 5,
-            fontStyle: 'italic',
-            fontSize: 12,
           }}
         >
-          {format(new Date(item.date).getTime(), 'P')}
+          {item.name}
         </Text>
-      </Row>
-      <Text
-        style={{
-          color: Colors[colorScheme].text + '90',
-          fontWeight: '700',
-          marginBottom: 5,
-          marginTop: 5,
-        }}
-      >
-        {item.name}
-      </Text>
 
-      <Text
-        style={{
-          color: item.amount < 0 ? 'green' : Colors[colorScheme].danger,
-          fontWeight: '700',
-          marginBottom: 5,
-          marginTop: 5,
-        }}
-      >
-        ${item.amount.toFixed(2)}
-      </Text>
-    </Item>
+        <Text
+          style={{
+            color: item.amount < 0 ? 'green' : Colors[colorScheme].danger,
+            fontWeight: '700',
+            marginBottom: 5,
+            marginTop: 5,
+          }}
+        >
+          ${item.amount.toFixed(2)}
+        </Text>
+
+        {isEditable ? (
+          <Row>
+            <Row>
+              <Text
+                style={{
+                  color: Colors[colorScheme].tint,
+                  fontSize: 12,
+                  marginRight: 2,
+                }}
+              >
+                Edit
+              </Text>
+              <Feather name="edit" size={12} color={Colors[colorScheme].tint} />
+            </Row>
+          </Row>
+        ) : null}
+      </Item>
+    </>
   );
 };
 

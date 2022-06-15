@@ -7,13 +7,15 @@ type ItemParam = { title: string; component: React.ReactNode };
 
 type Params = {
   inputList: Array<ItemParam>;
+  isEditMode?: boolean;
 };
 
 const InputCol = styled.View`
-  margin-vertical: 8px;
+  margin-vertical: 5px;
 `;
 
-const TransactionInputList = ({ inputList }: Params) => {
+//should component adjust height for more menu items as per editing?
+const TransactionInputList = ({ inputList, isEditMode }: Params) => {
   const renderItem = ({ item }: { item: ItemParam }) => {
     return <InputCol>{item.component}</InputCol>;
   };
@@ -23,7 +25,11 @@ const TransactionInputList = ({ inputList }: Params) => {
       renderItem={renderItem}
       data={inputList}
       keyExtractor={(item: ItemParam) => item.title}
-      style={{ maxHeight: Dimensions.window.height - 250 }}
+      style={{
+        maxHeight: isEditMode
+          ? Dimensions.window.height - 300
+          : Dimensions.window.height - 250,
+      }}
     />
   );
 };

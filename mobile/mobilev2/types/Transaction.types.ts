@@ -3,8 +3,11 @@ export type TransactionItemType = {
   date: string;
   amount: number;
   transaction_id: string;
+  account_id: string | null;
   _id: string;
   location: string | null;
+  category: string;
+  accountType: string;
 };
 
 export interface AccountsInitialStateParams {
@@ -44,7 +47,6 @@ export type SpendingStateParams = {
       account_id: string;
       transactions: Array<TransactionItemType>;
     }>;
-
     transactions_in_date_range: Array<TransactionItemType>;
   };
 };

@@ -17,6 +17,8 @@ import OccasionsCard from './OccasionsCard';
 import ManualTransactionCard from './spending/ManualTranasactionCard';
 import { ScrollView } from 'react-native';
 import Colors from '../../../constants/Colors';
+import { selectAlert } from '../../../redux/reducers/alerts.reducers';
+import Alert from '../../alerts/Alert';
 
 const Container = styled.View`
   align-items: center;
@@ -29,6 +31,11 @@ const AccountSpace = ({ route, navigation }: Props) => {
 
   const accountState = useAppSelector(selectAccount);
 
+  const {
+    alert: { type, message },
+    isVisible,
+  } = useAppSelector(selectAlert);
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -40,6 +47,7 @@ const AccountSpace = ({ route, navigation }: Props) => {
 
   return (
     <>
+      {isVisible && <Alert />}
       <ScrollView
         style={{
           flex: 1,

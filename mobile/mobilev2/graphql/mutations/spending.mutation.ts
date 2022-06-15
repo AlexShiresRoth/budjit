@@ -28,3 +28,21 @@ export const CREATE_TRANSACTION = gql`
     }
   }
 `;
+
+export const EDIT_TRANSACTION = gql`
+  mutation createManualTransaction($input: EditTransactionInput!) {
+    editTransaction(input: $input) {
+      message
+      success
+      Transaction {
+        _id
+        amount
+        date
+        accountType
+        category
+        name
+        location
+      }
+    }
+  }
+`;
