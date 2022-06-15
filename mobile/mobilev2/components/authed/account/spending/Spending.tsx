@@ -141,9 +141,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
   }, [spending?.startDate, spending?.endDate]);
 
   useEffect(() => {
-    if (spending.totals.length > 0) {
-      handleTotalSpendingSum(spending.totals);
-    }
+    handleTotalSpendingSum(spending.totals);
   }, [spending.totals]);
 
   return (

@@ -195,14 +195,23 @@ export const accountSlice = createSlice({
           return aDate.getTime() > bDate.getTime() ? -1 : 1;
         },
       );
+      console.log('trrrr!', sorted);
 
-      //need the totals to be in same range as filter
-      state.spending.totals = sorted.map((transaction) => ({
-        amount: transaction.amount,
-        id: transaction._id,
-      }));
+      if (sorted.length === 0) {
+        state.spending.totals = [];
+        state.spending.transactions_in_date_range = [];
+        return;
+      }
 
-      state.spending.transactions_in_date_range = sorted;
+      if (sorted.length > 0) {
+        //need the totals to be in same range as filter
+        state.spending.totals = sorted.map((transaction) => ({
+          amount: transaction.amount,
+          id: transaction._id,
+        }));
+
+        state.spending.transactions_in_date_range = sorted;
+      }
     },
     setTransactionsWithinTimeFrame: (
       state,

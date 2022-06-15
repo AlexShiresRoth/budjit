@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components/native';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import Colors from '../../../../constants/Colors';
@@ -58,21 +58,16 @@ const Transactions = () => {
   }, [data, loading, error]);
 
   useEffect(() => {
-    if (spendingState?.spending?.account_transactions?.length > 0) {
+    if (spendingState.spending.account_transactions.length > 0) {
       dispatch(
         setTransactionsInDateRange({
-          all_transactions: spendingState?.spending?.account_transactions,
+          all_transactions: spendingState.spending.account_transactions,
           startDate,
           endDate,
         }),
       );
     }
-  }, [
-    filter,
-    spendingState?.spending?.account_transactions,
-    startDate,
-    endDate,
-  ]);
+  }, [filter, spendingState.spending.account_transactions]);
 
   useEffect(() => {
     //refetch on component load
