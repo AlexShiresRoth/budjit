@@ -40,3 +40,11 @@ export class GetAllTransactionsResponse {
   @Field()
   success: boolean;
 }
+
+@ObjectType()
+export class DeleteTransactionResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+}

@@ -220,6 +220,11 @@ type GetAllTransactionsResponse {
   success: Boolean!
 }
 
+type DeleteTransactionResponse {
+  message: String!
+  success: Boolean!
+}
+
 type LoadOccasionResponse {
   Occasion: OccasionTypeDef!
 }
@@ -278,6 +283,8 @@ type Mutation {
   update(updateProfileInput: UpdateProfileInput!): ProfileTypeDef!
   setTimeFrame(input: SetTimeFrameInput!): SetTimeFrameResponse!
   createTransaction(input: CreateTransactionInput!): CreateTransactionResponse!
+  editTransaction(input: EditTransactionInput!): CreateTransactionResponse!
+  deleteTransaction(input: DeleteTransactionInput!): DeleteTransactionResponse!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
@@ -343,6 +350,20 @@ input CreateTransactionInput {
   date: String!
   accountType: String
   location: String!
+}
+
+input EditTransactionInput {
+  name: String!
+  category: String!
+  amount: Float!
+  date: String!
+  accountType: String
+  location: String!
+  _id: String!
+}
+
+input DeleteTransactionInput {
+  _id: String!
 }
 
 input CreateOccasionInput {

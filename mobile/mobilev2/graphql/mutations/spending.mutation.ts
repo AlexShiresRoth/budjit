@@ -46,3 +46,12 @@ export const EDIT_TRANSACTION = gql`
     }
   }
 `;
+
+export const DELETE_TRANSACTION = gql`
+  mutation deleteTransaction($input: DeleteTransactionInput!) {
+    deleteTransaction(input: $input) {
+      message
+      success
+    }
+  }
+`;

@@ -28,7 +28,6 @@ const TransactionItem = ({
   filter: 'Week' | 'Month' | 'Year';
   startDate: string;
   endDate: string;
-  navigation: any;
 }) => {
   const [isEditable, setIsEditable] = useState<boolean>(false);
 
@@ -49,14 +48,16 @@ const TransactionItem = ({
 
   return (
     <>
-      <ManualTransactionModal
-        isModalVisible={isEditModalVisible}
-        toggleModal={setIsEditModalVisible}
-        itemToEdit={item}
-        modalTitle="Edit Manual Transaction"
-        isEditMode={true}
-      />
-
+      {/* modal renders stale data if conditionally handled in modal component */}
+      {isEditModalVisible ? (
+        <ManualTransactionModal
+          isModalVisible={isEditModalVisible}
+          toggleModal={setIsEditModalVisible}
+          itemToEdit={item}
+          modalTitle="Edit Manual Transaction"
+          isEditMode={true}
+        />
+      ) : null}
       <Item
         style={{ backgroundColor: Colors[colorScheme].tint + '40' }}
         onPress={() => handleNavigationToEditableItem(isEditable)}

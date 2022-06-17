@@ -530,6 +530,7 @@ export class AccountsService {
       return error;
     }
   }
+
   async addManualTransaction(
     transaction: Transaction,
     userId: string,
@@ -550,6 +551,37 @@ export class AccountsService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+
+  async removeTransactionFromAccount(
+    transaction_id: string,
+    userId,
+  ): Promise<{ message: string; success: boolean }> {
+    try {
+      const myAccount = await this.accountModel.findById(userId);
+
+      if (!myAccount) throw new Error('Could not locate account');
+
+      const filteredTransactions = myAccount.transactions.filter(
+        (transaction: Transaction & { _id: mongoose.Types.ObjectId }) =>
+          transaction._id.toString() !== transaction_id.toString(),
+      );
+
+      myAccount.transactions = filteredTransactions;
+
+      await myAccount.save();
+
+      return {
+        message: 'Removed transaction from account',
+        success: true,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: 'Could not remove transaction from account',
+        success: false,
+      };
     }
   }
 }

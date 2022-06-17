@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 
 @InputType()
 export class CreateTransactionInput {
@@ -12,6 +13,18 @@ export class CreateTransactionInput {
   date: string;
   @Field({ nullable: true })
   accountType: string;
-  @Field()
+  @Field(() => String)
   location: string;
+}
+
+@InputType()
+export class EditTransactionInput extends CreateTransactionInput {
+  @Field(() => String)
+  _id: Types.ObjectId;
+}
+
+@InputType()
+export class DeleteTransactionInput {
+  @Field()
+  _id: string;
 }

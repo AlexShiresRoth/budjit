@@ -39,7 +39,7 @@ const Transactions = () => {
   const dispatch = useAppDispatch();
 
   const {
-    spending: { filter, startDate, endDate },
+    spending: { filter, startDate, endDate, account_transactions },
   } = spendingState;
 
   //retrieve manual transactions from DB
@@ -107,6 +107,7 @@ const Transactions = () => {
         style={{
           marginTop: 10,
         }}
+        extraData={account_transactions}
       />
     </Container>
   );

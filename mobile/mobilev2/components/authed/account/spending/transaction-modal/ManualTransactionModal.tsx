@@ -16,6 +16,7 @@ import PrimaryButton from '../../../../reusable/PrimaryButton';
 import { useMutation } from '@apollo/client';
 import {
   CREATE_TRANSACTION,
+  DELETE_TRANSACTION,
   EDIT_TRANSACTION,
 } from '../../../../../graphql/mutations/spending.mutation';
 import LoadingSpinner from '../../../../reusable/LoadingSpinner';
@@ -28,7 +29,10 @@ import {
   selectAlert,
   setAlert,
 } from '../../../../../redux/reducers/alerts.reducers';
-import { addManualTransaction } from '../../../../../redux/reducers/accounts.reducers';
+import {
+  addManualTransaction,
+  insertEditedTransaction,
+} from '../../../../../redux/reducers/accounts.reducers';
 import { TransactionItemType } from '../../../../../types/Transaction.types';
 import { AntDesign } from '@expo/vector-icons';
 const ModalContainer = styled.View`
@@ -142,8 +146,10 @@ const ManualTransactionModal = ({
   const [editTransaction, { error: editError, loading: editLoading }] =
     useMutation(EDIT_TRANSACTION);
 
-  //TODO: add delete transaction mutation
-  // const [deleteTransaction, { error: deleteError, loading: deleteLoading }] = useMutation()
+  const [
+    deleteTransaction,
+    { error: deleteError, loading: deleteLoading, data: deleteData },
+  ] = useMutation(DELETE_TRANSACTION);
 
   //change step for creating a transaction
   const [currentStep, setStep] = useState<number>(0);
@@ -179,33 +185,87 @@ const ManualTransactionModal = ({
     toggleModal(false);
   };
 
+  //TODO: handle transaction removal in redux
+  const handleDeleteTransaction = async () => {
+    try {
+      const deleteRequest = await deleteTransaction({
+        variables: { input: { _id: itemToEdit?._id } },
+      });
+
+      if (deleteRequest?.data?.deleteTransaction?.success) {
+        // dispatch(deleteTransactionItem(itemToEdit?._id));
+        dispatch(
+          setAlert({
+            type: 'success',
+            message: 'Transaction deleted successfully',
+          }),
+        );
+
+        handleResetOnClose();
+      }
+    } catch (error) {
+      console.error('ERROR_DELETING_TRANSACTION', error);
+      dispatch(
+        setAlert({
+          type: 'danger',
+          message: 'Error deleting transaction',
+        }),
+      );
+    }
+  };
+
   const submit = async () => {
     const { amount } = data;
     try {
       let transaction;
+
       if (!isEditMode) {
         transaction = await createTransaction({
           variables: { input: { ...data, amount: parseFloat(amount) } },
         });
+
+        //add new transaction to redux store
+        dispatch(
+          addManualTransaction(
+            transaction?.data?.createTransaction?.Transaction,
+          ),
+        );
+
+        dispatch(
+          setAlert({
+            type: 'success',
+            message: transaction?.data?.createTransaction?.message,
+          }),
+        );
       }
 
       if (isEditMode) {
         transaction = await editTransaction({
-          variables: { input: { ...data, amount: parseFloat(amount) } },
+          variables: {
+            input: {
+              ...data,
+              amount: parseFloat(amount),
+              _id: itemToEdit?._id,
+            },
+          },
         });
+
+        dispatch(
+          insertEditedTransaction(
+            transaction?.data?.editTransaction?.Transaction,
+          ),
+        );
+
+        console.log('transaction', transaction?.data?.editransaction?.message);
+
+        dispatch(
+          setAlert({
+            type: 'success',
+            message: transaction?.data?.editTransaction?.message,
+          }),
+        );
       }
 
-      //add new transaction to redux store
-      dispatch(
-        addManualTransaction(transaction?.data?.createTransaction?.Transaction),
-      );
-      //TODO show successfull alert
-      dispatch(
-        setAlert({
-          type: 'success',
-          message: transaction?.data?.createTransaction?.message,
-        }),
-      );
       //@desc close modal on success!
       handleResetOnClose();
     } catch (error) {
@@ -354,9 +414,14 @@ const ManualTransactionModal = ({
   ];
 
   useEffect(() => {
-    if (error) {
+    if (error || editError) {
       // @desc set alert in state
-      dispatch(setAlert({ type: 'danger', message: error?.message }));
+      if (error) {
+        dispatch(setAlert({ type: 'danger', message: error?.message }));
+      }
+      if (editError) {
+        dispatch(setAlert({ type: 'danger', message: editError?.message }));
+      }
     }
   }, [error]);
 
@@ -424,6 +489,7 @@ const ManualTransactionModal = ({
                     backgroundColor: Colors[colorScheme].danger + '70',
                     borderRadius: 5,
                   }}
+                  onPress={() => handleDeleteTransaction()}
                 >
                   <AntDesign
                     name="delete"
@@ -444,7 +510,7 @@ const ManualTransactionModal = ({
             ) : null}
             <TransactionInputList inputList={DATA} isEditMode={isEditMode} />
 
-            {!loading ? (
+            {!loading || !editLoading ? (
               <PrimaryButton
                 buttonText={'Submit transaction'}
                 buttonTextColor={Colors[colorScheme].text}

@@ -139,7 +139,6 @@ export const accountSlice = createSlice({
       }>,
     ) => {
       //set base transactions in state
-
       const account_ids = state.spending.account_transactions.map(
         (transactions) => transactions.account_id,
       );
@@ -158,6 +157,27 @@ export const accountSlice = createSlice({
           ...state.spending.account_transactions,
           action.payload,
         ];
+    },
+    insertEditedTransaction: (
+      state,
+      action: PayloadAction<TransactionItemType>,
+    ) => {
+      //retrieve account ids for filtering
+      const accountIds = state.spending.account_transactions.map(
+        (account) => account.account_id,
+      );
+      //filter by manual account
+      const index = accountIds.indexOf('manual_transaction');
+
+      const indexOfTransaction = state.spending.account_transactions[
+        index
+      ].transactions
+        .map((transaction) => transaction._id)
+        .indexOf(action.payload._id);
+
+      state.spending.account_transactions[index].transactions[
+        indexOfTransaction
+      ] = action.payload;
     },
     setTransactionsInDateRange: (
       state,
@@ -195,7 +215,6 @@ export const accountSlice = createSlice({
           return aDate.getTime() > bDate.getTime() ? -1 : 1;
         },
       );
-      console.log('trrrr!', sorted);
 
       if (sorted.length === 0) {
         state.spending.totals = [];
@@ -262,6 +281,7 @@ export const {
   setManualTransactions,
   setTransactionsInRange,
   setTransactionsInDateRange,
+  insertEditedTransaction,
 } = accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;
