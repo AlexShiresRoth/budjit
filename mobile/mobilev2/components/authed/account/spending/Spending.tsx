@@ -12,7 +12,7 @@ import LoadingSpinner from '../../../reusable/LoadingSpinner';
 import TimeModal from './TimeModal';
 
 const Content = styled.View`
-  margin-top: -70px;
+  margin-top: 20px;
   width: 90%;
   padding: 20px 20px;
   border-radius: 10px;

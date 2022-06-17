@@ -2,11 +2,16 @@ import React from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
-import { FontAwesome5, Feather } from '@expo/vector-icons';
+import {
+  FontAwesome5,
+  Feather,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../../types';
 import { useAppDispatch } from '../../../../hooks/reduxHooks';
 import { signOutOfAccount } from '../../../../redux/reducers/accounts.reducers';
+
 const Container = styled.View`
   flex: 1;
   width: 100%;
@@ -39,7 +44,7 @@ const Settings = ({ route, navigation }: Props) => {
 
   return (
     <Container>
-      <Row style={{ backgroundColor: Colors[colorScheme].tint + '22' }}>
+      <Row>
         <Link onPress={() => handleStackNavigate('Profile')}>
           <FontAwesome5
             name="user"
@@ -51,9 +56,26 @@ const Settings = ({ route, navigation }: Props) => {
           </LinkText>
         </Link>
       </Row>
+
       <Row
         style={{
-          backgroundColor: Colors[colorScheme].tint + '22',
+          borderTopWidth: 1,
+          borderTopColor: Colors[colorScheme].tint + '80',
+        }}
+      >
+        <Link onPress={() => handleStackNavigate('BankConnections')}>
+          <MaterialCommunityIcons
+            name="bank-outline"
+            size={20}
+            style={{ color: Colors[colorScheme].text, marginRight: 10 }}
+          />
+          <LinkText style={{ color: Colors[colorScheme].text }}>
+            Connect Bank Accounts & Cards
+          </LinkText>
+        </Link>
+      </Row>
+      <Row
+        style={{
           borderTopWidth: 1,
           borderTopColor: Colors[colorScheme].tint + '80',
         }}
@@ -71,9 +93,9 @@ const Settings = ({ route, navigation }: Props) => {
       </Row>
       <Row
         style={{
-          backgroundColor: Colors[colorScheme].tint + '22',
           borderTopWidth: 1,
-          borderTopColor: Colors[colorScheme].tint + '80',
+          borderBottomWidth: 1,
+          borderColor: Colors[colorScheme].tint + '80',
         }}
       >
         <Link onPress={() => handleSignOut()}>

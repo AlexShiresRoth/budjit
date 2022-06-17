@@ -16,6 +16,7 @@ import { ColorSchemeName, TouchableOpacity } from 'react-native';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import AccountScreen from '../screens/auth/account/AccountScreen';
+import BankConnectionScreen from '../screens/auth/account/BankConnectionScreen';
 import InvitationsScreen from '../screens/auth/account/InvitationsScreen';
 import OccasionInvitationsScreen from '../screens/auth/account/OccasionInvitationsScreen';
 import OccasionsScreen from '../screens/auth/account/OccasionsScreen';
@@ -78,6 +79,10 @@ function RootNavigator() {
         options={{ title: 'Oops!' }}
       />
       <Stack.Screen component={ProfileScreen} name="Profile" />
+      <AccountTabs.Screen
+        name="BankConnections"
+        component={BankConnectionScreen}
+      />
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
@@ -164,6 +169,7 @@ function BottomTabAccountNavigator() {
           tabBarItemStyle: { display: 'none' },
         })}
       />
+
       <AccountTabs.Screen
         name="Settings"
         component={SettingsScreen}

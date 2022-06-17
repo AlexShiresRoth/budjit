@@ -32,6 +32,7 @@ import {
 import {
   addManualTransaction,
   insertEditedTransaction,
+  deleteTransaction as deleteTransactionAction,
 } from '../../../../../redux/reducers/accounts.reducers';
 import { TransactionItemType } from '../../../../../types/Transaction.types';
 import { AntDesign } from '@expo/vector-icons';
@@ -121,6 +122,7 @@ export type TransactionInputArrData = {
   title: string;
 };
 
+//TODO: REFACTOR THIS COMPONENT
 const ManualTransactionModal = ({
   isModalVisible,
   toggleModal,
@@ -168,6 +170,14 @@ const ManualTransactionModal = ({
   const handleTextChange = (name: string, text: string) =>
     setData({ ...data, [name]: text });
 
+  const handleAmountFiltering = (text: string) => {
+    const regex = new RegExp(/^\d*\.?\d*$/);
+    if (regex.test(text)) {
+      console.log('text', text);
+      handleTextChange('amount', text);
+    }
+  };
+
   const handleResetOnClose = () => {
     //reset
     setStep(0);
@@ -185,15 +195,16 @@ const ManualTransactionModal = ({
     toggleModal(false);
   };
 
-  //TODO: handle transaction removal in redux
-  const handleDeleteTransaction = async () => {
+  const handleDeleteTransaction = async (_id: string | undefined) => {
+    if (!_id) return;
     try {
       const deleteRequest = await deleteTransaction({
-        variables: { input: { _id: itemToEdit?._id } },
+        variables: { input: { _id } },
       });
 
       if (deleteRequest?.data?.deleteTransaction?.success) {
-        // dispatch(deleteTransactionItem(itemToEdit?._id));
+        if (itemToEdit) dispatch(deleteTransactionAction({ _id }));
+
         dispatch(
           setAlert({
             type: 'success',
@@ -324,7 +335,7 @@ const ManualTransactionModal = ({
       component: (
         <Input
           value={amount}
-          callback={(e: string) => handleTextChange('amount', e)}
+          callback={(e: string) => handleAmountFiltering(e)}
           style={null}
           label={'Amount'}
           descriptor="What was the amount?"
@@ -414,13 +425,16 @@ const ManualTransactionModal = ({
   ];
 
   useEffect(() => {
-    if (error || editError) {
+    if (error || editError || deleteError) {
       // @desc set alert in state
       if (error) {
         dispatch(setAlert({ type: 'danger', message: error?.message }));
       }
       if (editError) {
         dispatch(setAlert({ type: 'danger', message: editError?.message }));
+      }
+      if (deleteError) {
+        dispatch(setAlert({ type: 'danger', message: deleteError?.message }));
       }
     }
   }, [error]);
@@ -489,7 +503,7 @@ const ManualTransactionModal = ({
                     backgroundColor: Colors[colorScheme].danger + '70',
                     borderRadius: 5,
                   }}
-                  onPress={() => handleDeleteTransaction()}
+                  onPress={() => handleDeleteTransaction(itemToEdit?._id)}
                 >
                   <AntDesign
                     name="delete"
@@ -510,7 +524,7 @@ const ManualTransactionModal = ({
             ) : null}
             <TransactionInputList inputList={DATA} isEditMode={isEditMode} />
 
-            {!loading || !editLoading ? (
+            {!loading || !editLoading || !deleteLoading ? (
               <PrimaryButton
                 buttonText={'Submit transaction'}
                 buttonTextColor={Colors[colorScheme].text}

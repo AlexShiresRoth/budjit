@@ -19,6 +19,7 @@ import { ScrollView } from 'react-native';
 import Colors from '../../../constants/Colors';
 import { selectAlert } from '../../../redux/reducers/alerts.reducers';
 import Alert from '../../alerts/Alert';
+import SpendingChart from './SpendingChart';
 
 const Container = styled.View`
   align-items: center;
@@ -62,7 +63,7 @@ const AccountSpace = ({ route, navigation }: Props) => {
             navigation={navigation}
             route={route}
           />
-          <BankingConnects />
+          <SpendingChart />
           <Spending colorScheme={colorScheme} />
           <Transactions />
           <AccountsModal />

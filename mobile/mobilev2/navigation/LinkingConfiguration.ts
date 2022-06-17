@@ -52,6 +52,11 @@ const linking: LinkingOptions<RootStackParamList> = {
           ProfileScreen: 'Profile',
         },
       },
+      BankConnections: {
+        screens: {
+          BankConnectionsScreen: 'BankConnections',
+        },
+      },
       InvitationsScreen: 'InvitationsScreen',
       GroupInvites: 'GroupInvites',
       OccasionInvitationsScreen: 'OccasionInviationsScreen',

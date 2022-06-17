@@ -23,7 +23,7 @@ export interface AccountsInitialStateParams {
   };
   spending: {
     filter: 'Month' | 'Year' | 'Week';
-    totals: Array<{ id: string; amount: number }>;
+    totals: Array<{ id: string; amount: number; date: string }>;
     startDate: string;
     endDate: string;
     isSpendingFilterLoading: boolean;
@@ -39,7 +39,7 @@ export interface AccountsInitialStateParams {
 export type SpendingStateParams = {
   spending: {
     filter: 'Month' | 'Year' | 'Week';
-    totals: Array<{ id: string; amount: number }>;
+    totals: Array<{ id: string; amount: number; date: string }>;
     startDate: string;
     endDate: string;
     isSpendingFilterLoading: boolean;

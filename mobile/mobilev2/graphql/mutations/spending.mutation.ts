@@ -24,6 +24,7 @@ export const CREATE_TRANSACTION = gql`
         category
         name
         location
+        account_id
       }
     }
   }

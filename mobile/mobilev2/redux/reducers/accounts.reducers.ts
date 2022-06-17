@@ -96,7 +96,7 @@ export const accountSlice = createSlice({
     },
     setSpendingAmount: (
       state,
-      action: PayloadAction<{ amount: number; id: string }>,
+      action: PayloadAction<{ amount: number; id: string; date: string }>,
     ) => {
       ////////////////////////////////////
       const ids = state.spending.totals.map((total) => total.id);
@@ -179,6 +179,23 @@ export const accountSlice = createSlice({
         indexOfTransaction
       ] = action.payload;
     },
+    deleteTransaction: (state, action: PayloadAction<{ _id: string }>) => {
+      const accountIds = state.spending.account_transactions.map(
+        (account) => account.account_id,
+      );
+      //filter by manual account
+      const index = accountIds.indexOf('manual_transaction');
+
+      state.spending.account_transactions[index].transactions =
+        state.spending.account_transactions[index].transactions.filter(
+          (transaction) => transaction._id !== action.payload._id,
+        );
+
+      console.log(
+        'transactions after removal',
+        state.spending.account_transactions[index].transactions,
+      );
+    },
     setTransactionsInDateRange: (
       state,
       action: PayloadAction<{
@@ -227,8 +244,10 @@ export const accountSlice = createSlice({
         state.spending.totals = sorted.map((transaction) => ({
           amount: transaction.amount,
           id: transaction._id,
+          date: transaction.date,
         }));
 
+        console.log('totals?', state.spending.totals);
         state.spending.transactions_in_date_range = sorted;
       }
     },
@@ -282,6 +301,7 @@ export const {
   setTransactionsInRange,
   setTransactionsInDateRange,
   insertEditedTransaction,
+  deleteTransaction,
 } = accountSlice.actions;
 
 export const selectAccount = (state: RootState) => state.accounts;
