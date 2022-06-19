@@ -6,6 +6,7 @@ import useColorScheme from '../../../hooks/useColorScheme';
 import { useAppSelector } from '../../../hooks/reduxHooks';
 import { selectAccount } from '../../../redux/reducers/accounts.reducers';
 import { format } from 'date-fns';
+import Skeleton from '../../reusable/Skeleton';
 const SpendingChart = () => {
   const colorScheme = useColorScheme();
 
@@ -14,60 +15,70 @@ const SpendingChart = () => {
   } = useAppSelector(selectAccount);
 
   if (!filter || totals.length === 0) {
-    return null;
+    return <Skeleton verticalBars={4} />;
   }
+
   return (
-    <View style={{ flex: 1, maxWidth: '90%', marginTop: 20 }}>
-      <Text
-        style={{
-          color: Colors[colorScheme].text,
-          fontWeight: '700',
-          fontSize: 24,
-          marginBottom: 5,
-        }}
-      >
-        Spending This {filter}
-      </Text>
-      <LineChart
-        data={{
-          labels: [
-            ...totals.map((total) =>
-              format(new Date(total.date), 'MMM dd').toString(),
-            ),
-          ],
-          datasets: [
-            {
-              data: [...totals.map((total) => total.amount)],
+    <View
+      style={{
+        flex: 1,
+        width: '100%',
+        backgroundColor: Colors[colorScheme].secondary,
+        alignItems: 'center',
+      }}
+    >
+      <View style={{ marginTop: 20, marginBottom: 20, width: '90%' }}>
+        <Text
+          style={{
+            color: Colors[colorScheme].text,
+            fontWeight: '700',
+            fontSize: 24,
+            marginBottom: 5,
+          }}
+        >
+          Spending This {filter}
+        </Text>
+        <LineChart
+          data={{
+            labels: [
+              ...totals.map((total) =>
+                format(new Date(total.date), 'MMM dd').toString(),
+              ),
+            ].reverse(),
+            datasets: [
+              {
+                data: [...totals.map((total) => total.amount)].reverse(),
+              },
+            ],
+          }}
+          width={Dimensions.get('window').width - 37} // from react-native
+          height={220}
+          yAxisLabel="$"
+          yAxisSuffix=""
+          yAxisInterval={1} // optional, defaults to 1
+          chartConfig={{
+            backgroundColor: Colors[colorScheme].secondary,
+            backgroundGradientFrom: Colors[colorScheme].background,
+            backgroundGradientTo: Colors[colorScheme].secondary,
+            decimalPlaces: 2, // optional, defaults to 2dp
+            color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+            style: {
+              borderRadius: 5,
             },
-          ],
-        }}
-        width={Dimensions.get('window').width - 37} // from react-native
-        height={220}
-        yAxisLabel="$"
-        yAxisSuffix=""
-        yAxisInterval={1} // optional, defaults to 1
-        chartConfig={{
-          backgroundColor: '#e26a00',
-          backgroundGradientFrom: '#fb8c00',
-          backgroundGradientTo: '#ffa726',
-          decimalPlaces: 2, // optional, defaults to 2dp
-          color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-          style: {
+            propsForDots: {
+              r: '6',
+              strokeWidth: '2',
+              stroke: Colors[colorScheme].tint,
+            },
+          }}
+          bezier
+          style={{
+            marginVertical: 8,
             borderRadius: 10,
-          },
-          propsForDots: {
-            r: '6',
-            strokeWidth: '2',
-            stroke: '#ffa726',
-          },
-        }}
-        bezier
-        style={{
-          marginVertical: 8,
-          borderRadius: 16,
-        }}
-      />
+          }}
+        />
+      </View>
     </View>
   );
 };

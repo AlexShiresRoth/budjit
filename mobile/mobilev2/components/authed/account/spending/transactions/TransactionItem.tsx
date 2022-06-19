@@ -77,7 +77,11 @@ const TransactionItem = ({
               fontSize: 15,
             }}
           >
-            {item.location}
+            {typeof item?.location === 'string'
+              ? item?.location?.length > 8
+                ? item?.location?.substring(0, 8) + '...'
+                : item?.location
+              : 'N/A'}
           </Text>
           <Text
             style={{

@@ -7,6 +7,7 @@ import { AccountTypes } from '../../../types/RootState.types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../../types';
 import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Content = styled.View`
   width: 90%;
@@ -15,8 +16,6 @@ const Header = styled.View`
   width: 100%;
   justify-content: center;
   align-items: center;
-  padding-bottom: 10px;
-  padding-top: 10px;
 `;
 
 const HeaderRow = styled.View`
@@ -83,42 +82,49 @@ const AccountHeader = ({
   }, []);
 
   return (
-    <Header
-      style={{
-        backgroundColor: Colors[colorScheme].tint,
-      }}
-    >
-      <Content>
-        <HeaderRow>
-          <HeaderColumn>
-            <AvatarContainer
-              style={{
-                borderWidth: 2,
-                borderColor: Colors[colorScheme].text + '50',
-              }}
-              onPress={handleNavToProfile}
-            >
-              {avatar ? <Avatar source={{ uri: avatar }} /> : null}
-            </AvatarContainer>
-            <UserName>Hello, {myAccount?.name || 'Unknown'}</UserName>
-          </HeaderColumn>
-          <HeaderColumn>
-            <Button
-              onPress={handleNavToInvitations}
-              style={{
-                backgroundColor: Colors[colorScheme].background + '20',
-                borderRadius: 5,
-              }}
-            >
-              <Feather
-                name="mail"
-                size={20}
-                style={{ color: Colors[colorScheme].text }}
-              />
-            </Button>
-          </HeaderColumn>
-        </HeaderRow>
-      </Content>
+    <Header>
+      <LinearGradient
+        colors={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+        style={{
+          width: '100%',
+          padding: 10,
+          display: 'flex',
+          alignItems: 'center',
+        }}
+        start={{ x: 0.5, y: 0 }}
+      >
+        <Content>
+          <HeaderRow>
+            <HeaderColumn>
+              <AvatarContainer
+                style={{
+                  borderWidth: 2,
+                  borderColor: Colors[colorScheme].text + '50',
+                }}
+                onPress={handleNavToProfile}
+              >
+                {avatar ? <Avatar source={{ uri: avatar }} /> : null}
+              </AvatarContainer>
+              <UserName>Hello, {myAccount?.name || 'Unknown'}</UserName>
+            </HeaderColumn>
+            <HeaderColumn>
+              <Button
+                onPress={handleNavToInvitations}
+                style={{
+                  backgroundColor: Colors[colorScheme].background + '20',
+                  borderRadius: 5,
+                }}
+              >
+                <Feather
+                  name="mail"
+                  size={20}
+                  style={{ color: Colors[colorScheme].text }}
+                />
+              </Button>
+            </HeaderColumn>
+          </HeaderRow>
+        </Content>
+      </LinearGradient>
     </Header>
   );
 };
