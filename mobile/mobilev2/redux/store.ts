@@ -1,14 +1,15 @@
-import { createStore, applyMiddleware } from 'redux';
 import { configureStore } from '@reduxjs/toolkit';
 import accountsReducers from './reducers/accounts.reducers';
 import profilesReducers from './reducers/profiles.reducers';
 import alertsReducers from './reducers/alerts.reducers';
+import groupsReducers from './reducers/groups.reducers';
 
 export const store = configureStore({
   reducer: {
     accounts: accountsReducers,
     profiles: profilesReducers,
     alerts: alertsReducers,
+    groups: groupsReducers,
   },
 });
 

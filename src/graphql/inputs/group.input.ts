@@ -13,7 +13,7 @@ export class AddInviteToGroupInput {
 export class CreateGroupInput {
   @Field()
   groupName: string;
-  @Field()
+  @Field({ nullable: true })
   creator: string;
 }
 

@@ -6,9 +6,7 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { InviteInput } from 'src/graphql/inputs/invite.input';
 import { AddOccasionRef } from 'src/interfaces/group.interface';
-import { InviteInterface } from 'src/interfaces/invite.interface';
 import { Group, GroupDocument } from 'src/mongo-schemas/group.model';
 import { AccountsService } from './account.service';
 import { InviteService } from './invite.service';
@@ -20,8 +18,11 @@ import {
 } from 'src/graphql/inputs/group.input';
 import {
   CreateGroupResponse,
+  FetchGroupsResponse,
   LoadGroupResponse,
 } from 'src/graphql/responses/group.response';
+import { AuthPayload } from 'src/interfaces/auth.interface';
+import { GroupTypeDef } from 'src/graphql/schemas/group.schema';
 
 @Injectable()
 export class GroupService {
@@ -33,9 +34,37 @@ export class GroupService {
     private readonly inviteService: InviteService,
   ) {}
 
+  async fetchMyGroups(user: AuthPayload): Promise<FetchGroupsResponse> {
+    try {
+      const myAccount = await this.accountService.findOneById(user.account.id);
+
+      if (!myAccount) throw new Error('Could not locate account');
+
+      if (myAccount.groups.length === 0) throw new Error('No groups found');
+
+      const myGroups = await Promise.all(
+        myAccount.groups.map(async (group) => {
+          return await this.groupModel.findById(group);
+        }),
+      );
+
+      return {
+        message: 'Found groups',
+        success: true,
+        groups: myGroups ?? [],
+      };
+    } catch (error) {
+      return {
+        message: error,
+        success: false,
+        groups: [],
+      };
+    }
+  }
+
   async create(input: CreateGroupInput): Promise<CreateGroupResponse> {
     try {
-      const { creator, groupName } = input;
+      const { groupName, creator } = input;
 
       const foundAccount = await this.accountService.findOneById(creator);
 
@@ -49,6 +78,7 @@ export class GroupService {
         _id: id,
         name: groupName,
         creator: foundAccount,
+        creationDate: new Date(),
       };
 
       const group = new this.groupModel(newGroup);
@@ -96,13 +126,13 @@ export class GroupService {
     }
   }
 
-  async addOccasionRef(input: AddOccasionRef): Promise<Group> {
+  async addOccasionRef(input: AddOccasionRef): Promise<{}> {
     try {
       const { occasionRefId, groupID } = input;
 
       const foundGroup = await this.groupModel.findById(groupID);
 
-      foundGroup.occasionRef = occasionRefId;
+      // foundGroup.occasionRef = occasionRefId;
 
       await foundGroup.save();
 

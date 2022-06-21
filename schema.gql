@@ -17,14 +17,6 @@ type AccountTypeDef {
   plaidAccounts: [PlaidAccountTypeDef!]!
 }
 
-type GroupTypeDef {
-  members: [String!]!
-  invites: [String!]!
-  occasionRef: String!
-  name: String!
-  creator: String!
-}
-
 type HistoryTypeDef {
   date: Date!
   paymentAmount: String!
@@ -36,6 +28,7 @@ type HistoryTypeDef {
 scalar Date
 
 type OccasionTypeDef {
+  _id: String!
   title: String!
   budget: String!
   group: GroupTypeDef
@@ -44,13 +37,23 @@ type OccasionTypeDef {
   initialBudget: String!
 }
 
+type GroupTypeDef {
+  members: [AccountTypeDef!]!
+  invites: [InvitesTypeDef!]
+  occasions: [OccasionTypeDef!]
+  name: String!
+  creator: AccountTypeDef!
+  creationDate: String!
+  _id: String!
+}
+
 type InvitesTypeDef {
   _id: String!
-  sender: String!
-  receiver: String!
+  sender: AccountTypeDef!
+  receiver: AccountTypeDef!
   status: String!
   inviteDate: Date!
-  groupRef: String!
+  groupRef: GroupTypeDef!
   occasionRef: OccasionTypeDef!
   inviteType: String!
 }
@@ -171,10 +174,22 @@ type DeleteSentInviteResponse {
   invites: [String!]!
 }
 
+type CreateGroupResponse {
+  message: String!
+  success: Boolean!
+  Group: GroupTypeDef!
+}
+
 type LoadGroupResponse {
   message: String!
   success: Boolean!
   Group: GroupTypeDef!
+}
+
+type FetchGroupsResponse {
+  message: String!
+  success: Boolean!
+  groups: [GroupTypeDef!]!
 }
 
 type ProfileTypeDef {
@@ -249,6 +264,7 @@ type Query {
   findProfileByEmail(input: FindProfileByEmailInput!): FindProfileByEmailResponse!
   getAllManualTransactions: GetAllTransactionsResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
+  fetchGroups: FetchGroupsResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
   loadMyOccasions: LoadMyOccasionsResponse!
 }
@@ -285,6 +301,7 @@ type Mutation {
   createTransaction(input: CreateTransactionInput!): CreateTransactionResponse!
   editTransaction(input: EditTransactionInput!): CreateTransactionResponse!
   deleteTransaction(input: DeleteTransactionInput!): DeleteTransactionResponse!
+  createGroup(input: CreateGroupInput!): CreateGroupResponse!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
@@ -364,6 +381,11 @@ input EditTransactionInput {
 
 input DeleteTransactionInput {
   _id: String!
+}
+
+input CreateGroupInput {
+  groupName: String!
+  creator: String
 }
 
 input CreateOccasionInput {

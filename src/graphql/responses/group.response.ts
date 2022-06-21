@@ -8,7 +8,7 @@ export class CreateGroupResponse {
   message: string;
   @Field()
   success: boolean;
-  @Field(() => Group)
+  @Field(() => GroupTypeDef)
   Group: Group;
 }
 
@@ -20,4 +20,14 @@ export class LoadGroupResponse {
   success: boolean;
   @Field(() => GroupTypeDef)
   Group: Group;
+}
+
+@ObjectType()
+export class FetchGroupsResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => [GroupTypeDef])
+  groups: Group[];
 }

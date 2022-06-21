@@ -5,6 +5,8 @@ import { HistoryTypeDef } from './history.schema';
 @ObjectType()
 export class OccasionTypeDef {
   @Field()
+  _id: string;
+  @Field()
   title: string;
   @Field()
   budget: string;
