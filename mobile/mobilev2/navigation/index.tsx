@@ -1,4 +1,5 @@
 import {
+  Feather,
   FontAwesome,
   Ionicons,
   MaterialIcons,
@@ -12,7 +13,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, TouchableOpacity } from 'react-native';
+import { ColorSchemeName } from 'react-native';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import AccountScreen from '../screens/auth/account/AccountScreen';
@@ -33,6 +34,7 @@ import {
   RootTabParamList,
 } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
+import GroupsScreen from '../screens/auth/account/GroupsScreen';
 
 export default function Navigation({
   colorScheme,
@@ -142,6 +144,22 @@ function BottomTabAccountNavigator() {
         })}
       />
       <AccountTabs.Screen
+        name="Groups"
+        component={GroupsScreen}
+        options={() => ({
+          title: 'Groups',
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <Feather
+              name="users"
+              color={color}
+              size={24}
+              style={{ marginBottom: -3 }}
+            />
+          ),
+        })}
+      />
+      <AccountTabs.Screen
         component={OccasionsScreen}
         name="Occasions"
         options={() => ({
@@ -157,6 +175,7 @@ function BottomTabAccountNavigator() {
           ),
         })}
       />
+
       <AccountTabs.Screen
         component={OccasionInviteTabNavigator}
         name="OccasionInvitationsScreen"
@@ -203,12 +222,10 @@ function BottomTabNavigator() {
       initialRouteName="Landing"
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: Colors[colorScheme].tint,
-          height: 70,
+          height: 60,
           paddingBottom: 10,
         },
-        tabBarActiveTintColor: Colors[colorScheme].text,
-        tabBarInactiveTintColor: Colors[colorScheme].background + '77',
+        tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
       }}
     >
       <BottomTab.Screen
@@ -221,7 +238,9 @@ function BottomTabNavigator() {
         component={SigninScreen}
         options={{
           title: 'Sign In',
-          tabBarIcon: ({ color }) => <TabBarIcon name="user" color={color} />,
+          tabBarIcon: ({ color }) => (
+            <Feather name="user" color={color} size={24} />
+          ),
           headerShown: false,
         }}
       />
@@ -231,7 +250,7 @@ function BottomTabNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="user-plus" color={color} />
+            <Feather name="user-plus" color={color} size={24} />
           ),
         }}
       />

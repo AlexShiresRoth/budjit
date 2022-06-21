@@ -15,17 +15,16 @@ const ModalContainer = styled.View`
 const ModalView = styled.View`
   align-items: center;
   justify-content: flex-end;
-  elevation: 10;
   border-radius: 10px;
   flex: 1;
 `;
 const ModalInner = styled.View`
-  elevation: 10;
   border-radius: 10px;
   align-items: center;
   justify-content: center;
   flex: 0.6;
   width: 100%;
+  elevation: 10;
 `;
 const ModalRow = styled.TouchableOpacity`
   display: flex;
@@ -106,8 +105,7 @@ const TimeModal = ({
         <ModalView>
           <ModalInner
             style={{
-              backgroundColor: Colors[colorScheme].cardBg,
-              elevation: 10,
+              backgroundColor: Colors[colorScheme].background,
             }}
           >
             <MaterialIcons
@@ -161,16 +159,15 @@ const TimeModal = ({
             <Pressable
               onPress={() => setModalVisibility(false)}
               style={{
-                backgroundColor: Colors[colorScheme].danger,
+                backgroundColor: Colors[colorScheme].danger + '80',
                 padding: 10,
                 borderRadius: 5,
-                elevation: 3,
                 marginTop: 20,
                 width: 100,
                 alignItems: 'center',
               }}
             >
-              <ModalText style={{ color: Colors[colorScheme].text }}>
+              <ModalText style={{ color: Colors[colorScheme].background }}>
                 Close
               </ModalText>
             </Pressable>

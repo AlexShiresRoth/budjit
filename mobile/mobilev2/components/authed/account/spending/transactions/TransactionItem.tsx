@@ -59,7 +59,10 @@ const TransactionItem = ({
         />
       ) : null}
       <Item
-        style={{ backgroundColor: Colors[colorScheme].tint + '40' }}
+        style={{
+          backgroundColor: Colors[colorScheme].success + '20',
+          // elevation: 3,
+        }}
         onPress={() => handleNavigationToEditableItem(isEditable)}
       >
         <Row

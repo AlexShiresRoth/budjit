@@ -27,8 +27,8 @@ const TransactionInputList = ({ inputList, isEditMode }: Params) => {
       keyExtractor={(item: ItemParam) => item.title}
       style={{
         maxHeight: isEditMode
-          ? Dimensions.window.height - 300
-          : Dimensions.window.height - 250,
+          ? Dimensions.window.height - Dimensions.window.height / 2.8
+          : Dimensions.window.height - Dimensions.window.height / 4,
       }}
     />
   );

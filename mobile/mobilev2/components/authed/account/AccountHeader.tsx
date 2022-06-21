@@ -99,7 +99,7 @@ const AccountHeader = ({
               <AvatarContainer
                 style={{
                   borderWidth: 2,
-                  borderColor: Colors[colorScheme].text + '50',
+                  borderColor: Colors[colorScheme].cardBg,
                 }}
                 onPress={handleNavToProfile}
               >
@@ -118,7 +118,7 @@ const AccountHeader = ({
                 <Feather
                   name="mail"
                   size={20}
-                  style={{ color: Colors[colorScheme].text }}
+                  style={{ color: Colors[colorScheme].background }}
                 />
               </Button>
             </HeaderColumn>

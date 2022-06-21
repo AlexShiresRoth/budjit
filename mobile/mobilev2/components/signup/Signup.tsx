@@ -19,20 +19,11 @@ import {
   selectAccount,
 } from '../../redux/reducers/accounts.reducers';
 import { AnyAction } from 'redux';
+import Heading from '../text/Heading';
+import SubHeading from '../text/SubHeading';
 
 const Container = styled.View``;
 
-const Heading = styled.Text`
-  font-size: 40px;
-  font-weight: 700;
-  color: #fff;
-`;
-const Subheading = styled.Text`
-  font-size: 20px;
-  font-weight: 500;
-  color: #fefefe;
-  opacity: 0.8;
-`;
 const FormContainer = styled.View`
   margin-top: 20px;
 `;
@@ -74,8 +65,8 @@ const Signup = ({
 
   return (
     <Container>
-      <Heading>Get Started</Heading>
-      <Subheading>Create an account to access features</Subheading>
+      <Heading headingText="Get Started" />
+      <SubHeading subheadingText="Create an account to access features" />
       <Form colorScheme={colorScheme} dispatch={dispatch} />
     </Container>
   );
@@ -180,6 +171,11 @@ const Form = ({
               isSecure={item.isSecure ? true : false}
               icon={item.icon}
               color={Colors[colorScheme].tint}
+              descriptor={item.label}
+              labelStyle={{
+                color: Colors[colorScheme].text,
+                fontWeight: '700',
+              }}
             />
           </InputColumn>
         );
@@ -190,6 +186,7 @@ const Form = ({
           buttonText="Submit"
           callBack={submitAccount}
           callBackArgs={{ variables: { createAccountInput: { ...inputs } } }}
+          buttonTextColor={Colors[colorScheme].background}
         />
       ) : (
         <Text>Loading...</Text>

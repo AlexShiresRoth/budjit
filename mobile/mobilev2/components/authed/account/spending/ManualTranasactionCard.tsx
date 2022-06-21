@@ -51,7 +51,7 @@ const ManualTransactionCard = ({
           >
             <Text
               style={{
-                color: Colors[colorScheme].text,
+                color: Colors[colorScheme].background,
                 fontWeight: '700',
                 fontSize: 14,
               }}

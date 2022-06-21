@@ -1,4 +1,4 @@
-const tintColorLight = '#2f95dc';
+const tintColorLight = '#6BAB90';
 const tintColorDark = '#09BC8A';
 
 export type ColorScheme = { colorScheme: 'light' | 'dark' };
@@ -32,16 +32,16 @@ export interface ColorsInterface {
 
 export default {
   light: {
-    text: '#fefefe',
-    background: '#111122',
-    tint: tintColorDark,
+    text: '#2E4052',
+    background: '#FFFDFD',
+    tint: tintColorLight,
     tabIconDefault: '#ccc',
-    tabIconSelected: tintColorDark,
-    secondary: tintColorDark + '55',
-    danger: '#A30015',
-    success: '#35FF69',
+    tabIconSelected: tintColorLight,
+    secondary: tintColorLight + '60',
+    danger: '#BD1E1E',
+    success: '#5299D3',
     accountBg: '#ddd',
-    cardBg: '#fefefe',
+    cardBg: '#FC814A',
     alertBackground: '#eeeeee',
   },
   dark: {

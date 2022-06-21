@@ -147,11 +147,8 @@ const Spending = ({ colorScheme }: ColorScheme) => {
   return (
     <Content
       style={{
-        marginBottom: 30,
-        borderWidth: 1.5,
-        borderColor: Colors[colorScheme].tint + '90',
-        backgroundColor: Colors[colorScheme].background,
-        elevation: 10,
+        marginBottom: 10,
+        backgroundColor: Colors[colorScheme].tint + '20',
       }}
     >
       <TimeModal
@@ -175,7 +172,7 @@ const Spending = ({ colorScheme }: ColorScheme) => {
         </DateRange>
       </Row>
       <Row>
-        <SubHeading style={{ color: Colors[colorScheme].text }}>
+        <SubHeading style={{ color: Colors[colorScheme].text, fontSize: 14 }}>
           Spending This {spending.filter}
         </SubHeading>
         <DateToggler
@@ -189,9 +186,9 @@ const Spending = ({ colorScheme }: ColorScheme) => {
           <MaterialIcons
             name="date-range"
             size={12}
-            color={Colors[colorScheme].text + 'cc'}
+            color={Colors[colorScheme].background}
           />
-          <DateText style={{ color: Colors[colorScheme].text + 'cc' }}>
+          <DateText style={{ color: Colors[colorScheme].background }}>
             Change Timeframe
           </DateText>
         </DateToggler>

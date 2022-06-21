@@ -85,6 +85,7 @@ const Alert = () => {
             fontSize: 14,
             fontWeight: '700',
             margin: 10,
+            color: Colors[colorScheme].text,
           }}
         >
           {message}

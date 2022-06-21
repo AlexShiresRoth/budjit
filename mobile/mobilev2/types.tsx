@@ -58,6 +58,7 @@ export type RootTabParamList = {
   Settings: undefined;
   Occasions: undefined;
   BankConnections: undefined;
+  Groups: undefined;
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

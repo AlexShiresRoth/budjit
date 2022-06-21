@@ -8,9 +8,6 @@ import useColorScheme from '../../hooks/useColorScheme';
 
 const Text = styled.Text``;
 
-const Title = styled.Text`
-  font-weight: 700;
-`;
 const DateContainer = styled.View`
   margin: 10px 0;
 `;
@@ -24,14 +21,7 @@ type ComponentProps = {
   param: string;
 };
 
-const DatePickerModal = ({
-  value,
-  onChange,
-  placeholder,
-  placeholderTextColor,
-  style,
-  param,
-}: ComponentProps) => {
+const DatePickerModal = ({ value, onChange, param }: ComponentProps) => {
   const colorScheme = useColorScheme();
 
   const minDate = new Date('2000-01-01');
@@ -87,7 +77,7 @@ const DatePickerModal = ({
     >
       <DateContainer
         style={{
-          padding: 10,
+          padding: 5,
           borderRadius: 5,
           marginLeft: 10,
           width: '100%',

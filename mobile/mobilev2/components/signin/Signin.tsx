@@ -1,26 +1,23 @@
 import { useMutation } from '@apollo/client';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import React, { useEffect, useState } from 'react';
-import { connect, RootStateOrAny } from 'react-redux';
 import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import { SIGN_IN } from '../../graphql/mutations/accounts.mutations';
 import useColorScheme from '../../hooks/useColorScheme';
 import { RootStackParamList } from '../../types';
-import { ReduxThunkActionAuth } from '../../types/ReduxActions.types';
-import { AccountTypes } from '../../types/RootState.types';
 import Input from '../reusable/Input';
 import PrimaryButton from '../reusable/PrimaryButton';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import Alert from '../alerts/Alert';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';
 import { AnyAction, Dispatch } from 'redux';
-import { AppDispatch } from '../../redux/store';
 import {
   authenticate,
   selectAccount,
 } from '../../redux/reducers/accounts.reducers';
 import { setAlert } from '../../redux/reducers/alerts.reducers';
+import Heading from '../text/Heading';
+import SubHeading from '../text/SubHeading';
 
 const Container = styled.View`
   flex: 1;
@@ -28,18 +25,6 @@ const Container = styled.View`
   flex-direction: column;
   justify-content: center;
   width: 100%;
-`;
-
-const Heading = styled.Text`
-  font-weight: 700;
-  color: #fff;
-  font-size: 40px;
-`;
-const Subheading = styled.Text`
-  font-weight: 500;
-  font-size: 20px;
-  color: #fefefe;
-  opacity: 0.8;
 `;
 
 const Text = styled.Text`
@@ -81,8 +66,8 @@ const Signin = ({
 
   return (
     <Container>
-      <Heading>Welcome Back</Heading>
-      <Subheading>Sign in to access your account</Subheading>
+      <Heading headingText="Welcome Back" />
+      <SubHeading subheadingText=" Sign in to access your account" />
       <Inputs dispatch={dispatch} />
     </Container>
   );
@@ -186,7 +171,8 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
               value={item.value}
               icon={item.icon}
               color={Colors[colorScheme].tint}
-              labelStyle={null}
+              labelStyle={{ fontWeight: '700' }}
+              descriptor={`${item.label}`}
             />
           </Row>
         );
@@ -197,7 +183,7 @@ const Inputs = ({ dispatch }: { dispatch: Dispatch<AnyAction> }) => {
           buttonText="Sign In"
           callBack={handleAuthentication}
           callBackArgs={undefined}
-          buttonTextColor={Colors[colorScheme].text}
+          buttonTextColor={Colors[colorScheme].background}
         />
       ) : (
         <Text>Loading...</Text>

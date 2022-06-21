@@ -1,11 +1,12 @@
 import React from 'react';
 import styled from 'styled-components/native';
+import Colors from '../../constants/Colors';
+import useColorScheme from '../../hooks/useColorScheme';
 
 const Container = styled.View`
   display: flex;
   flex-direction: row;
   width: 100%;
-  border-width: 1.4px;
   padding: 5px;
   border-radius: 5px;
 `;
@@ -14,7 +15,6 @@ const IconContainer = styled.View`
   align-items: center;
   justify-content: center;
   padding: 10px;
-  border-right-width: 1.4px;
   margin-right: 10px;
   width: 50px;
 `;
@@ -23,14 +23,13 @@ const Column = styled.View`
 `;
 const Label = styled.Text`
   font-size: 12px;
-  opacity: 0.5;
+  opacity: 0.7;
 `;
 const TextInput = styled.TextInput`
   border-color: #fff;
   border-style: solid;
   padding-top: 5px;
   padding-bottom: 5px;
-  color: #f5f5f5;
   width: 100%;
   flex-wrap: wrap;
   display: flex;
@@ -60,6 +59,8 @@ const Input = ({
   descriptor,
   labelStyle,
 }: Props) => {
+  const colorScheme = useColorScheme();
+
   return (
     <Container style={{ backgroundColor: color + '44' }}>
       <IconContainer>{icon}</IconContainer>
@@ -70,7 +71,7 @@ const Input = ({
           onChangeText={callback}
           secureTextEntry={isSecure ? true : false}
           placeholder={label}
-          placeholderTextColor="#ffffff40"
+          placeholderTextColor={Colors[colorScheme].text + '40'}
           multiline={isSecure ? false : true}
           textAlignVertical="auto"
           style={style}

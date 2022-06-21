@@ -36,6 +36,7 @@ import {
 } from '../../../../../redux/reducers/accounts.reducers';
 import { TransactionItemType } from '../../../../../types/Transaction.types';
 import { AntDesign } from '@expo/vector-icons';
+import DeleteButton from '../../../../buttons/DeleteButton';
 const ModalContainer = styled.View`
   flex: 1;
 `;
@@ -63,14 +64,6 @@ const Row = styled.View`
   flex-direction: row;
 `;
 
-const DeleteButton = styled.TouchableOpacity`
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-  margin-top: 5px;
-  margin-bottom: 15px;
-`;
-
 const Column = styled.View``;
 
 const Content = styled.View`
@@ -85,9 +78,7 @@ const IconContainer = styled.View`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 10px;
-  border-right-width: 1.4px;
-  margin-right: 10px;
+  padding: 5px;
   width: 50px;
 `;
 
@@ -95,7 +86,6 @@ const DateContainer = styled.View`
   display: flex;
   flex-direction: row;
   width: 100%;
-  border-width: 1.4px;
   padding: 5px;
   border-radius: 5px;
 `;
@@ -292,7 +282,7 @@ const ManualTransactionModal = ({
         <Input
           value={name}
           callback={(e: string) => handleTextChange('name', e)}
-          style={null}
+          style={{ color: Colors[colorScheme].text }}
           labelStyle={{ color: Colors[colorScheme].text }}
           label={'What did you purchase?'}
           isSecure={false}
@@ -314,7 +304,7 @@ const ManualTransactionModal = ({
         <Input
           value={location}
           callback={(e: string) => handleTextChange('location', e)}
-          style={null}
+          style={{ color: Colors[colorScheme].text }}
           label="Location"
           descriptor="Where was this?"
           isSecure={false}
@@ -336,7 +326,7 @@ const ManualTransactionModal = ({
         <Input
           value={amount}
           callback={(e: string) => handleAmountFiltering(e)}
-          style={null}
+          style={{ color: Colors[colorScheme].text }}
           label={'Amount'}
           descriptor="What was the amount?"
           isSecure={false}
@@ -358,7 +348,7 @@ const ManualTransactionModal = ({
         <Input
           value={category}
           callback={(e: string) => handleTextChange('category', e)}
-          style={null}
+          style={{ color: Colors[colorScheme].text }}
           label={'Category'}
           descriptor="ex: food, entertainment, groceries..."
           isSecure={false}
@@ -380,7 +370,7 @@ const ManualTransactionModal = ({
         <Input
           value={accountType}
           callback={(e: string) => handleTextChange('accountType', e)}
-          style={null}
+          style={{ color: Colors[colorScheme].text }}
           label="Account type"
           descriptor="Cash, credit, debit, etc..."
           isSecure={false}
@@ -458,7 +448,7 @@ const ManualTransactionModal = ({
         >
           <ModalInterior>
             <ModalHeader
-              style={{ borderBottomColor: Colors[colorScheme].cardBg }}
+              style={{ borderBottomColor: Colors[colorScheme].tint + '20' }}
             >
               <Row style={{ flexWrap: 'wrap', maxWidth: '80%' }}>
                 <Text
@@ -478,15 +468,20 @@ const ManualTransactionModal = ({
                 <TouchableOpacity
                   onPress={() => handleResetOnClose()}
                   style={{
-                    backgroundColor: Colors[colorScheme].danger + '70',
+                    backgroundColor: Colors[colorScheme].cardBg,
                     padding: 5,
+                    paddingLeft: 10,
+                    paddingRight: 10,
                     borderRadius: 5,
                     borderWidth: 1,
-                    borderColor: Colors[colorScheme].danger,
+                    borderColor: Colors[colorScheme].cardBg,
                   }}
                 >
                   <Text
-                    style={{ color: Colors[colorScheme].text, fontSize: 12 }}
+                    style={{
+                      color: Colors[colorScheme].background,
+                      fontSize: 12,
+                    }}
                   >
                     Close
                   </Text>
@@ -496,30 +491,10 @@ const ManualTransactionModal = ({
             {isEditMode ? (
               <Row>
                 <DeleteButton
-                  style={{
-                    padding: 5,
-                    borderWidth: 1,
-                    borderColor: Colors[colorScheme].danger,
-                    backgroundColor: Colors[colorScheme].danger + '70',
-                    borderRadius: 5,
-                  }}
-                  onPress={() => handleDeleteTransaction(itemToEdit?._id)}
-                >
-                  <AntDesign
-                    name="delete"
-                    size={14}
-                    color={Colors[colorScheme].text}
-                  />
-                  <Text
-                    style={{
-                      color: Colors[colorScheme].text,
-                      fontSize: 14,
-                      marginLeft: 5,
-                    }}
-                  >
-                    Delete Transaction
-                  </Text>
-                </DeleteButton>
+                  handleDeleteTransaction={handleDeleteTransaction}
+                  id={itemToEdit?._id.toString() ?? ''}
+                  buttonText="Delete Transaction"
+                />
               </Row>
             ) : null}
             <TransactionInputList inputList={DATA} isEditMode={isEditMode} />
@@ -527,7 +502,7 @@ const ManualTransactionModal = ({
             {!loading || !editLoading || !deleteLoading ? (
               <PrimaryButton
                 buttonText={'Submit transaction'}
-                buttonTextColor={Colors[colorScheme].text}
+                buttonTextColor={Colors[colorScheme].background}
                 callBack={submit}
                 callBackArgs={currentStep + 1}
                 colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}

@@ -47,15 +47,15 @@ const OccasionsCard = ({ route, navigation }: Props) => {
     <Container
       style={{
         width: '100%',
-        paddingTop: 30,
-        paddingBottom: 30,
+        paddingTop: 10,
+        paddingBottom: 10,
         height: '100%',
       }}
     >
       <Content
         style={{
           borderRadius: 10,
-          backgroundColor: Colors[colorScheme].cardBg,
+          backgroundColor: Colors[colorScheme].cardBg + '20',
         }}
       >
         <Box onPress={() => navigation.navigate('Occasions')}>

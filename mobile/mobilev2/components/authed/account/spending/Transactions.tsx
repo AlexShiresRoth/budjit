@@ -19,8 +19,7 @@ import TransactionItem from './transactions/TransactionItem';
 
 const Container = styled.View`
   width: 90%;
-  margin: 0px 0 20px 0;
-  padding: 20px;
+  margin: 10px 0 10px 0;
   border-radius: 10px;
 `;
 
@@ -90,13 +89,8 @@ const Transactions = () => {
   };
 
   return (
-    <Container
-      style={{
-        borderWidth: 1,
-        borderColor: Colors[colorScheme].tint + '90',
-      }}
-    >
-      <Title style={{ color: Colors[colorScheme].text }}>
+    <Container style={{}}>
+      <Title style={{ color: Colors[colorScheme].text, fontSize: 14 }}>
         Transactions This {filter}
       </Title>
       <FlatList

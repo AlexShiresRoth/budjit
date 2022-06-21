@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LineChart } from 'react-native-chart-kit';
 import { Dimensions, Text, View } from 'react-native';
 import Colors from '../../../constants/Colors';
@@ -7,6 +7,7 @@ import { useAppSelector } from '../../../hooks/reduxHooks';
 import { selectAccount } from '../../../redux/reducers/accounts.reducers';
 import { format } from 'date-fns';
 import Skeleton from '../../reusable/Skeleton';
+import { TransactionItemType } from '../../../types/Transaction.types';
 const SpendingChart = () => {
   const colorScheme = useColorScheme();
 
@@ -14,7 +15,45 @@ const SpendingChart = () => {
     spending: { filter, totals },
   } = useAppSelector(selectAccount);
 
-  if (!filter || totals.length === 0) {
+  const [data, setData] = useState<{
+    totalsArr: Array<number>;
+    labelsArr: Array<string>;
+  }>({
+    totalsArr: [],
+    labelsArr: [],
+  });
+
+  const { totalsArr, labelsArr } = data;
+
+  const handleChartData = (
+    filter: 'Month' | 'Week' | 'Year',
+    totals: Array<any>,
+  ) => {
+    let newTotals = [0];
+    let newLabels = [format(new Date(), 'MM')];
+
+    if (totals.length > 0) {
+      newTotals = [
+        ...totals.map((total: TransactionItemType) => total.amount),
+      ].reverse();
+      newLabels = [
+        ...totals.map((total: TransactionItemType) =>
+          format(new Date(total.date), 'MMM dd').toString(),
+        ),
+      ].reverse();
+    }
+
+    setData({
+      totalsArr: newTotals,
+      labelsArr: newLabels,
+    });
+  };
+
+  useEffect(() => {
+    handleChartData(filter, totals);
+  }, [filter, totals]);
+
+  if (!filter || totalsArr.length === 0) {
     return <Skeleton verticalBars={4} />;
   }
 
@@ -30,7 +69,7 @@ const SpendingChart = () => {
       <View style={{ marginTop: 20, marginBottom: 20, width: '90%' }}>
         <Text
           style={{
-            color: Colors[colorScheme].text,
+            color: Colors[colorScheme].background,
             fontWeight: '700',
             fontSize: 24,
             marginBottom: 5,
@@ -40,14 +79,10 @@ const SpendingChart = () => {
         </Text>
         <LineChart
           data={{
-            labels: [
-              ...totals.map((total) =>
-                format(new Date(total.date), 'MMM dd').toString(),
-              ),
-            ].reverse(),
+            labels: labelsArr,
             datasets: [
               {
-                data: [...totals.map((total) => total.amount)].reverse(),
+                data: totalsArr,
               },
             ],
           }}
@@ -58,7 +93,7 @@ const SpendingChart = () => {
           yAxisInterval={1} // optional, defaults to 1
           chartConfig={{
             backgroundColor: Colors[colorScheme].secondary,
-            backgroundGradientFrom: Colors[colorScheme].background,
+            backgroundGradientFrom: Colors[colorScheme].secondary,
             backgroundGradientTo: Colors[colorScheme].secondary,
             decimalPlaces: 2, // optional, defaults to 2dp
             color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
