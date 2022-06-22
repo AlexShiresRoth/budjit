@@ -24,17 +24,20 @@ import {
   LoadGroupResponse,
 } from 'src/graphql/responses/group.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
-import { GroupTypeDef } from 'src/graphql/schemas/group.schema';
-import { AccountTypeDef } from 'src/graphql/schemas/account.schema';
+import { ProfileService } from './profile.service';
+// import {} from 'unsplash-js'
 
 @Injectable()
 export class GroupService {
   constructor(
     @InjectModel(Group.name) private readonly groupModel: Model<GroupDocument>,
+    @Inject(forwardRef(() => ProfileService))
+    private readonly profileService: ProfileService,
     @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
     @Inject(forwardRef(() => InviteService))
     private readonly inviteService: InviteService,
+    @Inject('UNSPLASH') private readonly unsplash,
   ) {}
 
   async fetchMyGroups(user: AuthPayload): Promise<FetchGroupsResponse> {
@@ -73,7 +76,9 @@ export class GroupService {
 
       const members = await Promise.all(
         foundGroup.members.map(async ({ _id }) => {
-          return await this.accountService.findOneById(_id);
+          const account = await this.accountService.findOneById(_id);
+          const profile = await this.profileService.findOneById(_id);
+          return { account, profile };
         }),
       );
 
@@ -100,6 +105,17 @@ export class GroupService {
 
       if (!foundAccount) throw new Error('Could not locate account');
 
+      const randomPhotoFromUnsplash = await this.unsplash.photos.getRandom({
+        count: 1,
+      });
+
+      if (randomPhotoFromUnsplash.type !== 'success')
+        throw new Error('Could not retrieve photo from database');
+
+      console.log(
+        'random photo',
+        randomPhotoFromUnsplash?.response[0].urls?.small,
+      );
       const id = new mongoose.Types.ObjectId();
 
       const newGroup = {
@@ -109,6 +125,7 @@ export class GroupService {
         name: groupName,
         creator: foundAccount,
         creationDate: new Date(),
+        backgroundImage: randomPhotoFromUnsplash.response[0].urls.small,
       };
 
       const group = new this.groupModel(newGroup);
@@ -137,8 +154,6 @@ export class GroupService {
     try {
       const foundGroup = await this.groupModel.findById(id);
 
-      console.log('found group', foundGroup);
-
       if (!foundGroup) throw new Error('Could not locate a group');
 
       return {
@@ -148,6 +163,36 @@ export class GroupService {
       };
     } catch (error) {
       console.error(error);
+      return {
+        message: error,
+        success: false,
+        Group: null,
+      };
+    }
+  }
+
+  async changeBackgroundImage(groupID: string): Promise<CreateGroupResponse> {
+    try {
+      const myGroup = await this.groupModel.findById(groupID);
+
+      if (!myGroup) throw new Error('Could not locate group');
+
+      const randomPhotoFromUnsplash = await this.unsplash.photos.getRandom({
+        count: 1,
+      });
+      if (randomPhotoFromUnsplash.type !== 'success')
+        throw new Error('Could not retrieve photo from database');
+
+      myGroup.backgroundImage = randomPhotoFromUnsplash.response[0].urls.small;
+
+      await myGroup.save();
+
+      return {
+        message: 'Changed background image',
+        success: true,
+        Group: myGroup,
+      };
+    } catch (error) {
       return {
         message: error,
         success: false,

@@ -35,20 +35,9 @@ import {
   deleteTransaction as deleteTransactionAction,
 } from '../../../../../redux/reducers/accounts.reducers';
 import { TransactionItemType } from '../../../../../types/Transaction.types';
-import { AntDesign } from '@expo/vector-icons';
 import DeleteButton from '../../../../buttons/DeleteButton';
-const ModalContainer = styled.View`
-  flex: 1;
-`;
-const ModalView = styled.View`
-  width: 100%;
-  align-items: center;
-  flex: 1;
-`;
-const ModalInterior = styled.View`
-  width: 90%;
-  padding: 30px 0;
-`;
+import ModalContainer from '../../../../modals/ModalContainer';
+import ModalCloseButton from '../../../../buttons/ModalCloseButton';
 
 const ModalHeader = styled.View`
   flex-direction: row;
@@ -65,12 +54,6 @@ const Row = styled.View`
 `;
 
 const Column = styled.View``;
-
-const Content = styled.View`
-  width: 90%;
-  justify-content: center;
-  flex: 0.8;
-`;
 
 const Text = styled.Text``;
 
@@ -434,85 +417,55 @@ const ManualTransactionModal = ({
   }
 
   return (
-    <ModalContainer>
-      <Modal
-        visible={isModalVisible}
-        animationType="slide"
-        onRequestClose={() => handleResetOnClose()}
+    <ModalContainer
+      isModalVisible={isModalVisible}
+      handleResetOnClose={handleResetOnClose}
+    >
+      <ModalHeader
+        style={{ borderBottomColor: Colors[colorScheme].tint + '20' }}
       >
-        {isAlertVisible && alertType === 'danger' ? <Alert /> : null}
-        <ModalView
-          style={{
-            backgroundColor: Colors[colorScheme].background,
-          }}
-        >
-          <ModalInterior>
-            <ModalHeader
-              style={{ borderBottomColor: Colors[colorScheme].tint + '20' }}
-            >
-              <Row style={{ flexWrap: 'wrap', maxWidth: '80%' }}>
-                <Text
-                  style={{
-                    color: Colors[colorScheme].text,
-                    fontWeight: '100',
-                    fontSize: 16,
-                    marginTop: 5,
-                    marginBottom: 5,
-                  }}
-                >
-                  {modalTitle}
-                </Text>
-              </Row>
+        <Row style={{ width: '100%', justifyContent: 'space-between' }}>
+          <Text
+            style={{
+              color: Colors[colorScheme].text,
+              fontWeight: '100',
+              fontSize: 16,
+              marginTop: 5,
+              marginBottom: 5,
+            }}
+          >
+            {modalTitle}
+          </Text>
+          <Row style={{}}>
+            <ModalCloseButton
+              handleResetOnClose={handleResetOnClose}
+              buttonText="Close"
+            />
+          </Row>
+        </Row>
+      </ModalHeader>
+      {isEditMode ? (
+        <Row>
+          <DeleteButton
+            handleDeleteTransaction={handleDeleteTransaction}
+            id={itemToEdit?._id.toString() ?? ''}
+            buttonText="Delete Transaction"
+          />
+        </Row>
+      ) : null}
+      <TransactionInputList inputList={DATA} isEditMode={isEditMode} />
 
-              <Row style={{ maxWidth: '20%' }}>
-                <TouchableOpacity
-                  onPress={() => handleResetOnClose()}
-                  style={{
-                    backgroundColor: Colors[colorScheme].cardBg,
-                    padding: 5,
-                    paddingLeft: 10,
-                    paddingRight: 10,
-                    borderRadius: 5,
-                    borderWidth: 1,
-                    borderColor: Colors[colorScheme].cardBg,
-                  }}
-                >
-                  <Text
-                    style={{
-                      color: Colors[colorScheme].background,
-                      fontSize: 12,
-                    }}
-                  >
-                    Close
-                  </Text>
-                </TouchableOpacity>
-              </Row>
-            </ModalHeader>
-            {isEditMode ? (
-              <Row>
-                <DeleteButton
-                  handleDeleteTransaction={handleDeleteTransaction}
-                  id={itemToEdit?._id.toString() ?? ''}
-                  buttonText="Delete Transaction"
-                />
-              </Row>
-            ) : null}
-            <TransactionInputList inputList={DATA} isEditMode={isEditMode} />
-
-            {!loading || !editLoading || !deleteLoading ? (
-              <PrimaryButton
-                buttonText={'Submit transaction'}
-                buttonTextColor={Colors[colorScheme].background}
-                callBack={submit}
-                callBackArgs={currentStep + 1}
-                colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
-              />
-            ) : (
-              <LoadingSpinner />
-            )}
-          </ModalInterior>
-        </ModalView>
-      </Modal>
+      {!loading || !editLoading || !deleteLoading ? (
+        <PrimaryButton
+          buttonText={'Submit transaction'}
+          buttonTextColor={Colors[colorScheme].background}
+          callBack={submit}
+          callBackArgs={currentStep + 1}
+          colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+        />
+      ) : (
+        <LoadingSpinner />
+      )}
     </ModalContainer>
   );
 };

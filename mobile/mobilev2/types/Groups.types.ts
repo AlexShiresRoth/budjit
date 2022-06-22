@@ -7,4 +7,5 @@ export type GroupType = {
   invites: Array<string>;
   members: Array<string>;
   occasions: Array<string>;
+  backgroundImage: string;
 };

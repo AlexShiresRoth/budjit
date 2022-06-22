@@ -22,4 +22,6 @@ export class GroupTypeDef {
   creationDate: string;
   @Field(() => String)
   _id: string;
+  @Field(() => String)
+  backgroundImage: string;
 }

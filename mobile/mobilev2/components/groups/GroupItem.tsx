@@ -1,22 +1,44 @@
 import { format } from 'date-fns';
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Text, TouchableOpacity, View, Image } from 'react-native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
+import useFetchGroupMembers from '../../hooks/useFetchGroupMembers';
 import { GroupType } from '../../types/Groups.types';
 
+//TODO fetch members on separate api call
 const GroupItem = ({ item }: { item: GroupType }) => {
   const colorScheme = useColorScheme();
 
+  const { members } = useFetchGroupMembers({
+    groupID: item._id,
+  });
+
   return (
     <TouchableOpacity
-      style={{ marginVertical: 5, width: '100%', alignItems: 'center' }}
+      style={{
+        marginVertical: 5,
+        width: '100%',
+        alignItems: 'center',
+        position: 'relative',
+      }}
     >
+      <Image
+        source={{
+          uri: item?.backgroundImage ?? '',
+        }}
+        style={{
+          width: '95%',
+          height: '100%',
+          position: 'absolute',
+          borderRadius: 5,
+        }}
+      />
       <View
         style={{
           width: '95%',
           padding: 10,
-          backgroundColor: Colors[colorScheme].tint + '60',
+          backgroundColor: Colors[colorScheme].tint + '90',
           borderRadius: 5,
           display: 'flex',
           flexDirection: 'row',
@@ -33,27 +55,42 @@ const GroupItem = ({ item }: { item: GroupType }) => {
           >
             {item.name}
           </Text>
-          <Text
-            style={{ fontSize: 12, color: Colors[colorScheme].text + '80' }}
-          >
-            Creation Date,
-          </Text>
-          <Text
-            style={{ fontSize: 12, color: Colors[colorScheme].text + '80' }}
-          >
-            {format(new Date(item.creationDate), 'MMM dd, yyyy')}
-          </Text>
+          <View style={{ marginTop: 5 }}>
+            {members?.map((member) => {
+              return (
+                <View key={member.account._id} style={{ flexDirection: 'row' }}>
+                  <Image
+                    source={{ uri: member?.profile?.avatar }}
+                    style={{
+                      height: 20,
+                      width: 20,
+                      borderRadius: 500,
+                      marginRight: 2,
+                    }}
+                  />
+                  <Text style={{ color: Colors[colorScheme].background }}>
+                    {member.account.name}
+                  </Text>
+                </View>
+              );
+            })}
+            {members.length > 5 ? (
+              <Text style={{ color: Colors[colorScheme].background }}>
+                ... more
+              </Text>
+            ) : null}
+          </View>
         </View>
-        <View>
+        <View style={{ justifyContent: 'flex-end' }}>
+          {/* Make this last time group was updated */}
           <Text
             style={{
               fontSize: 12,
-              color: Colors[colorScheme].text + '80',
+              color: Colors[colorScheme].background,
               fontWeight: '700',
-              marginRight: 10,
             }}
           >
-            {item.members.length}
+            {format(new Date(item.creationDate), 'MMM dd, yyyy')}
           </Text>
         </View>
       </View>

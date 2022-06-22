@@ -1,8 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Account } from 'src/mongo-schemas/account.model';
 import { Group } from 'src/mongo-schemas/group.model';
+import { Profile } from 'src/mongo-schemas/profile.model';
 import { AccountTypeDef } from '../schemas/account.schema';
 import { GroupTypeDef } from '../schemas/group.schema';
+import { ProfileTypeDef } from '../schemas/profile.schema';
 
 @ObjectType()
 export class CreateGroupResponse {
@@ -35,11 +37,19 @@ export class FetchGroupsResponse {
 }
 
 @ObjectType()
+export class AccountAndProfile {
+  @Field(() => AccountTypeDef)
+  account: Account;
+  @Field(() => ProfileTypeDef)
+  profile: Profile;
+}
+
+@ObjectType()
 export class FetchGroupMemberAccountsResponse {
   @Field()
   message: string;
   @Field()
   success: boolean;
-  @Field(() => [AccountTypeDef])
-  accounts: Account[];
+  @Field(() => [AccountAndProfile])
+  accounts: AccountAndProfile[];
 }

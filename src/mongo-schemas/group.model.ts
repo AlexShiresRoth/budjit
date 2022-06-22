@@ -44,6 +44,8 @@ export class Group {
   name: string;
   @Prop()
   creationDate: string;
+  @Prop()
+  backgroundImage: string;
 }
 
 export type GroupDocument = Group & Document;

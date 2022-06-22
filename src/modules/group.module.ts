@@ -6,10 +6,14 @@ import { GroupService } from 'src/services/group.service';
 import { AccountsModule } from './account.module';
 import { AuthModule } from './auth.module';
 import { InviteModule } from './invite.module';
+import { ProfileModule } from './profile.module';
+import { UnsplashModule } from './unsplash.module';
 
 @Module({
   imports: [
     AuthModule,
+    UnsplashModule,
+    forwardRef(() => ProfileModule),
     forwardRef(() => AccountsModule),
     forwardRef(() => InviteModule),
     MongooseModule.forFeature([{ name: Group.name, schema: GroupSchema }]),

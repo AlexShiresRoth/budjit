@@ -9,6 +9,7 @@ export const FETCH_MY_GROUPS = gql`
         _id
         name
         creationDate
+        backgroundImage
         creator {
           _id
         }

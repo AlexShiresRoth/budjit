@@ -45,6 +45,7 @@ type GroupTypeDef {
   creator: AccountTypeDef!
   creationDate: String!
   _id: String!
+  backgroundImage: String!
 }
 
 type InvitesTypeDef {
@@ -174,6 +175,12 @@ type DeleteSentInviteResponse {
   invites: [String!]!
 }
 
+type ProfileTypeDef {
+  name: String!
+  phone: String!
+  avatar: String!
+}
+
 type CreateGroupResponse {
   message: String!
   success: Boolean!
@@ -192,16 +199,15 @@ type FetchGroupsResponse {
   groups: [GroupTypeDef!]!
 }
 
+type AccountAndProfile {
+  account: AccountTypeDef!
+  profile: ProfileTypeDef!
+}
+
 type FetchGroupMemberAccountsResponse {
   message: String!
   success: Boolean!
-  accounts: [AccountTypeDef!]!
-}
-
-type ProfileTypeDef {
-  name: String!
-  phone: String!
-  avatar: String!
+  accounts: [AccountAndProfile!]!
 }
 
 type FindProfileByEmailResponse {
@@ -313,6 +319,7 @@ type Mutation {
   editTransaction(input: EditTransactionInput!): CreateTransactionResponse!
   deleteTransaction(input: DeleteTransactionInput!): DeleteTransactionResponse!
   createGroup(input: CreateGroupInput!): CreateGroupResponse!
+  changeGroupBackgroundImage(input: FetchGroupMembersInput!): CreateGroupResponse!
   createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }

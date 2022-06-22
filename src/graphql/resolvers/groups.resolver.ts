@@ -46,4 +46,12 @@ export class GroupResolver {
       creator: user.account.id,
     });
   }
+
+  @Mutation(() => CreateGroupResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async changeGroupBackgroundImage(
+    @Args('input') input: FetchGroupMembersInput,
+  ) {
+    return await this.groupService.changeBackgroundImage(input.groupID);
+  }
 }
