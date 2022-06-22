@@ -15,14 +15,17 @@ import { AddMembersDTO } from 'src/graphql/dto/group.dto';
 import {
   AddInviteToGroupInput,
   CreateGroupInput,
+  FetchGroupMembersInput,
 } from 'src/graphql/inputs/group.input';
 import {
   CreateGroupResponse,
+  FetchGroupMemberAccountsResponse,
   FetchGroupsResponse,
   LoadGroupResponse,
 } from 'src/graphql/responses/group.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { GroupTypeDef } from 'src/graphql/schemas/group.schema';
+import { AccountTypeDef } from 'src/graphql/schemas/account.schema';
 
 @Injectable()
 export class GroupService {
@@ -51,13 +54,40 @@ export class GroupService {
       return {
         message: 'Found groups',
         success: true,
-        groups: myGroups ?? [],
+        groups: myGroups,
       };
     } catch (error) {
       return {
         message: error,
         success: false,
         groups: [],
+      };
+    }
+  }
+
+  async fetchGroupMembers(
+    input: FetchGroupMembersInput,
+  ): Promise<FetchGroupMemberAccountsResponse> {
+    try {
+      const foundGroup = await this.groupModel.findById(input.groupID);
+
+      const members = await Promise.all(
+        foundGroup.members.map(async ({ _id }) => {
+          return await this.accountService.findOneById(_id);
+        }),
+      );
+
+      return {
+        success: true,
+        message: 'Found group members',
+        accounts: members ?? [],
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        success: false,
+        message: error,
+        accounts: [],
       };
     }
   }

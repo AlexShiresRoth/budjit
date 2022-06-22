@@ -22,3 +22,9 @@ export class LoadGroupInput {
   @Field()
   groupID: string;
 }
+
+@InputType()
+export class FetchGroupMembersInput {
+  @Field()
+  groupID: string;
+}

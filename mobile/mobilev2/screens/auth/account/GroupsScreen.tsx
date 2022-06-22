@@ -11,9 +11,15 @@ const GroupsScreen = () => {
   if (loading) {
     return (
       <SafeAreaView style={{ flex: 1 }}>
-        <Skeleton verticalBars={4} />
-        <Skeleton verticalBars={3} />
-        <Skeleton verticalBars={2} />
+        <View style={{ marginTop: 2, marginBottom: 2 }}>
+          <Skeleton verticalBars={3} />
+        </View>
+        <View style={{ marginTop: 2, marginBottom: 2 }}>
+          <Skeleton verticalBars={3} />
+        </View>
+        <View style={{ marginTop: 2, marginBottom: 2 }}>
+          <Skeleton verticalBars={2} />
+        </View>
       </SafeAreaView>
     );
   }

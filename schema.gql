@@ -192,6 +192,12 @@ type FetchGroupsResponse {
   groups: [GroupTypeDef!]!
 }
 
+type FetchGroupMemberAccountsResponse {
+  message: String!
+  success: Boolean!
+  accounts: [AccountTypeDef!]!
+}
+
 type ProfileTypeDef {
   name: String!
   phone: String!
@@ -265,6 +271,7 @@ type Query {
   getAllManualTransactions: GetAllTransactionsResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   fetchGroups: FetchGroupsResponse!
+  fetchGroupMembers(input: FetchGroupMembersInput!): FetchGroupMemberAccountsResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
   loadMyOccasions: LoadMyOccasionsResponse!
 }
@@ -283,6 +290,10 @@ input FindProfileByEmailInput {
 }
 
 input LoadGroupInput {
+  groupID: String!
+}
+
+input FetchGroupMembersInput {
   groupID: String!
 }
 

@@ -27,11 +27,10 @@ const Skeleton = ({ verticalBars }: Props) => {
       style={{
         minHeight: 200,
         width: '100%',
-        backgroundColor: Colors[colorScheme].secondary,
         display: 'flex',
         alignItems: 'center',
-        paddingTop: 20,
-        paddingBottom: 20,
+        paddingTop: 5,
+        paddingBottom: 5,
       }}
     >
       <Animated.View
