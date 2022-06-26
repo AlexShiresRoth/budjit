@@ -2,19 +2,20 @@ import React, { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 import { GroupType } from '../../types/Groups.types';
 import FloatingButton from '../buttons/FloatingButton';
+import CreateGroupModal from './CreateGroupModal';
 import GroupItem from './GroupItem';
 
 type GroupListProps = {
   groups: Array<GroupType>;
+  isModalVisible: boolean;
+  toggleModal: (isModalVisible: boolean) => void;
 };
 
-//TODO create new group creation modal
-
-const GroupList = ({ groups }: GroupListProps) => {
-  const [modalVisible, toggleModal] = useState(false);
+const GroupList = ({ groups, isModalVisible, toggleModal }: GroupListProps) => {
   const renderItem = ({ item }: { item: GroupType }) => {
     return <GroupItem item={item} />;
   };
+
   return (
     <View style={{ flex: 1 }}>
       <FlatList
@@ -24,8 +25,13 @@ const GroupList = ({ groups }: GroupListProps) => {
       />
       <FloatingButton
         modalToggle={toggleModal}
-        modalVisible={modalVisible}
-        modalComponent={<Text>Hello</Text>}
+        modalVisible={isModalVisible}
+        modalComponent={
+          <CreateGroupModal
+            toggleModal={toggleModal}
+            isModalVisible={isModalVisible}
+          />
+        }
         buttonText="New Group"
       />
     </View>

@@ -2,10 +2,7 @@ import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
-import styled from 'styled-components/native';
-const Row = styled.View`
-  flex-direction: row;
-`;
+
 type Props = {
   handleResetOnClose: () => void;
   buttonText: string;

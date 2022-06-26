@@ -9,18 +9,17 @@ const Button = styled.TouchableOpacity`
   display: flex;
   align-items: center;
   flex-direction: row;
-  margin-top: 5px;
-  margin-bottom: 15px;
 `;
 
 type Props = {
   id: string;
-  handleDeleteTransaction: (id: string) => void;
+  deleteFunction: (id: string) => void;
   buttonText: string;
 };
 
-const DeleteButton = ({ id, handleDeleteTransaction, buttonText }: Props) => {
+const DeleteButton = ({ id, deleteFunction, buttonText }: Props) => {
   const colorScheme = useColorScheme();
+
   return (
     <Button
       style={{
@@ -28,7 +27,7 @@ const DeleteButton = ({ id, handleDeleteTransaction, buttonText }: Props) => {
         backgroundColor: Colors[colorScheme].danger + '90',
         borderRadius: 5,
       }}
-      onPress={() => handleDeleteTransaction(id)}
+      onPress={() => deleteFunction(id)}
     >
       <AntDesign
         name="delete"

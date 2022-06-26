@@ -1,9 +1,9 @@
 import React from 'react';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
-import Dimensions from '../../../../../constants/Layout';
+import Dimensions from '../../constants/Layout';
 
-type ItemParam = { title: string; component: React.ReactNode };
+export type ItemParam = { title: string; component: React.ReactNode };
 
 type Params = {
   inputList: Array<ItemParam>;
@@ -15,7 +15,7 @@ const InputCol = styled.View`
 `;
 
 //should component adjust height for more menu items as per editing?
-const TransactionInputList = ({ inputList, isEditMode }: Params) => {
+const InputList = ({ inputList, isEditMode }: Params) => {
   const renderItem = ({ item }: { item: ItemParam }) => {
     return <InputCol>{item.component}</InputCol>;
   };
@@ -34,4 +34,4 @@ const TransactionInputList = ({ inputList, isEditMode }: Params) => {
   );
 };
 
-export default TransactionInputList;
+export default InputList;

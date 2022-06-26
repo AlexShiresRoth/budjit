@@ -1,12 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Alert from '../../../components/alerts/Alert';
 import GroupList from '../../../components/groups/GroupList';
 import Skeleton from '../../../components/reusable/Skeleton';
+import { useAppSelector } from '../../../hooks/reduxHooks';
 import useFetchGroups from '../../../hooks/useFetchGroups';
+import { selectAlert } from '../../../redux/reducers/alerts.reducers';
 
 const GroupsScreen = () => {
+  const [isModalVisible, setModalVisible] = useState(false);
   const { groups, loading, error } = useFetchGroups();
+
+  const { alert } = useAppSelector(selectAlert);
 
   if (loading) {
     return (
@@ -34,7 +40,12 @@ const GroupsScreen = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <GroupList groups={groups} />
+      {alert.type ? <Alert /> : null}
+      <GroupList
+        groups={groups}
+        isModalVisible={isModalVisible}
+        toggleModal={setModalVisible}
+      />
     </SafeAreaView>
   );
 };

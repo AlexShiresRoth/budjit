@@ -1,5 +1,4 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { Modal, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
@@ -10,7 +9,7 @@ import {
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
 import Input from '../../../../reusable/Input';
-import TransactionInputList from './TransactionInputList';
+import InputList from '../../../../inputs/InputList';
 import DatePickerModal from '../../../../reusable/DatePickerModal';
 import PrimaryButton from '../../../../reusable/PrimaryButton';
 import { useMutation } from '@apollo/client';
@@ -37,25 +36,13 @@ import {
 import { TransactionItemType } from '../../../../../types/Transaction.types';
 import DeleteButton from '../../../../buttons/DeleteButton';
 import ModalContainer from '../../../../modals/ModalContainer';
-import ModalCloseButton from '../../../../buttons/ModalCloseButton';
-
-const ModalHeader = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  margin: 10px 0;
-  padding: 15px 0;
-  border-bottom-width: 1px;
-`;
+import ModalHeader from '../../../../modals/ModalHeader';
 
 const Row = styled.View`
   flex-direction: row;
 `;
 
 const Column = styled.View``;
-
-const Text = styled.Text``;
 
 const IconContainer = styled.View`
   display: flex;
@@ -106,13 +93,6 @@ const ManualTransactionModal = ({
   const colorScheme = useColorScheme();
 
   const dispatch = useAppDispatch();
-  //grab alert state
-  const alertState = useAppSelector(selectAlert);
-
-  const {
-    isVisible: isAlertVisible,
-    alert: { type: alertType },
-  } = alertState;
 
   const [createTransaction, { error, loading }] =
     useMutation(CREATE_TRANSACTION);
@@ -422,28 +402,9 @@ const ManualTransactionModal = ({
       handleResetOnClose={handleResetOnClose}
     >
       <ModalHeader
-        style={{ borderBottomColor: Colors[colorScheme].tint + '20' }}
-      >
-        <Row style={{ width: '100%', justifyContent: 'space-between' }}>
-          <Text
-            style={{
-              color: Colors[colorScheme].text,
-              fontWeight: '100',
-              fontSize: 16,
-              marginTop: 5,
-              marginBottom: 5,
-            }}
-          >
-            {modalTitle}
-          </Text>
-          <Row style={{}}>
-            <ModalCloseButton
-              handleResetOnClose={handleResetOnClose}
-              buttonText="Close"
-            />
-          </Row>
-        </Row>
-      </ModalHeader>
+        modalTitle="Manually Enter New Transaction"
+        handleResetOnClose={handleResetOnClose}
+      />
       {isEditMode ? (
         <Row>
           <DeleteButton
@@ -453,7 +414,7 @@ const ManualTransactionModal = ({
           />
         </Row>
       ) : null}
-      <TransactionInputList inputList={DATA} isEditMode={isEditMode} />
+      <InputList inputList={DATA} isEditMode={isEditMode} />
 
       {!loading || !editLoading || !deleteLoading ? (
         <PrimaryButton
