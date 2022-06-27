@@ -11,6 +11,7 @@ import PrimaryButton from '../reusable/PrimaryButton';
 import DynamicInputGroup from '../inputs/DynamicInputGroup';
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import { setAlert } from '../../redux/reducers/alerts.reducers';
+import AddContacts from './AddContacts';
 
 type Props = {
   isModalVisible: boolean;
@@ -24,34 +25,11 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
 
   const dispatch = useAppDispatch();
 
-  const [groupData, setData] = useState<{
-    name: string;
-    invites: Array<{ phone: string; name: string }>;
-    existingProfileInvites: Array<{ _id: string }>;
-  }>({
-    name: '',
-    invites: [],
-    existingProfileInvites: [],
-  });
+  const [groupName, setGroupName] = useState<string>('');
 
-  const { name, invites, existingProfileInvites } = groupData;
+  const [contactList, setContactList] = useState<Array<any>>([]);
 
-  const handleTextChange = (name: string, text: string) =>
-    setData({ ...groupData, [name]: text });
-
-  //TODO: add contacts package to handle adding from contact list
-  //Should user be able to add from outside contacts?
-  const handleAddToList = () => {
-    // if (text === '') return;
-    // if (data.includes(text)) {
-    //   dispatch(
-    //     setAlert({ type: 'danger', message: 'Item already exists' }),
-    //   );
-    //   return;
-    // }
-    // setData([...data, text]);
-    // setText('');
-  };
+  const handleTextChange = (text: string) => setGroupName(text);
 
   const handleSendSMS = async () => {
     try {
@@ -59,12 +37,12 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
 
       if (!isAvailable) return;
 
-      if (invites.length === 0) return;
+      if (contactList.length === 0) return;
 
       const { result } = await SMS.sendSMSAsync(
-        [...invites.map((invite) => invite.phone)],
+        [...contactList.map((member) => member.phone)],
         'This is a test message from ' +
-          name +
+          groupName +
           'Download BUDJIT APP on the Apple Store or Google Play Store to join the group.',
       );
 
@@ -79,8 +57,8 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
       title: 'Group Name',
       component: (
         <Input
-          value={name}
-          callback={(e: string) => handleTextChange('name', e)}
+          value={groupName}
+          callback={(e: string) => handleTextChange(e)}
           style={{ color: Colors[colorScheme].text }}
           labelStyle={{ color: Colors[colorScheme].text }}
           label={'Give the group a name'}
@@ -97,10 +75,15 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
         />
       ),
     },
-    // {
-    //   title: 'Invite Contacts',
-    //   component: <DynamicInputGroup data={invites} setData={} inputLabel="Add a contact" inputName='Contact Info' />,
-    // },
+    {
+      title: 'Invite Contacts',
+      component: (
+        <AddContacts
+          contactList={contactList}
+          setContactList={setContactList}
+        />
+      ),
+    },
   ];
 
   return (
@@ -113,7 +96,7 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
         handleResetOnClose={handleResetOnClose}
       />
       <InputList isEditMode={false} inputList={DATA} />
-      {invites.length > 0 || existingProfileInvites.length > 0 ? (
+      {contactList.length > 0 ? (
         <PrimaryButton
           buttonText="Create"
           colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
