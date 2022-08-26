@@ -10,9 +10,12 @@ import { selectAlert } from '../../../redux/reducers/alerts.reducers';
 
 const GroupsScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
+
   const { groups, loading, error } = useFetchGroups();
 
   const { alert } = useAppSelector(selectAlert);
+
+  console.log('GroupsScreen', groups);
 
   if (loading) {
     return (

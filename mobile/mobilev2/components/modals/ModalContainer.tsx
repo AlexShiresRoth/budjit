@@ -13,10 +13,12 @@ const ModalView = styled.View`
   width: 100%;
   align-items: center;
   flex: 1;
+
+  padding-bottom: 50px;
 `;
 const ModalInterior = styled.View`
   width: 90%;
-  padding: 30px 0;
+  padding: 10px 0 0 0;
 `;
 
 type Props = {

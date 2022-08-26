@@ -46,7 +46,13 @@ export class GroupService {
 
       if (!myAccount) throw new Error('Could not locate account');
 
-      if (myAccount.groups.length === 0) throw new Error('No groups found');
+      if (myAccount.groups.length === 0) {
+        return {
+          message: "You don't have any groups, try creating one",
+          success: true,
+          groups: [],
+        };
+      }
 
       const myGroups = await Promise.all(
         myAccount.groups.map(async (group) => {

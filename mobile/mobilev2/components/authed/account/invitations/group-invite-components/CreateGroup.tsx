@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { FlatList, Text, TouchableOpacity } from 'react-native';
 import Colors from '../../../../../constants/Colors';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
-import Input from '../../../../reusable/Input';
+import Input from '../../../../inputs/Input';
 import { useMutation } from '@apollo/client';
 import { SEND_INVITES_TO_NEW_GROUP } from '../../../../../graphql/mutations/invites.mutations';
 import LoadingSpinner from '../../../../reusable/LoadingSpinner';
@@ -222,6 +222,8 @@ const CreateGroup = ({
         </Text>
         {step === 0 && (
           <Input
+            labelStyle={null}
+            descriptor={''}
             value={groupName}
             callback={(e) => handleTextChange({ e, name: 'groupName' })}
             label="Name Group"
@@ -242,6 +244,8 @@ const CreateGroup = ({
         )}
         {step === 1 && (
           <Input
+            labelStyle={null}
+            descriptor={''}
             value={invite}
             callback={(e) => handleTextChange({ e, name: 'invite' })}
             label="example@gmail.com"

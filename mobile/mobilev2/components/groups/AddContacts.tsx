@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import * as contacts from 'expo-contacts';
-import { FlatList, Text, TouchableOpacity, View } from 'react-native';
+import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '../../redux/reducers/alerts.reducers';
 import ContactsModal from './ContactsModal';
+import AddButton from '../buttons/AddButton';
+import useColorScheme from '../../hooks/useColorScheme';
+import ContactList from './ContactList';
 
 type Props = {
   contactList: any[];
@@ -14,6 +17,8 @@ type Props = {
 //TODO handle add existing member profile
 
 const AddContacts = ({ contactList, setContactList }: Props) => {
+  const colorScheme = useColorScheme();
+
   const [isModalVisible, toggleModal] = useState<boolean>(false);
 
   const [selectedContacts, selectContact] = useState<any[]>([]);
@@ -67,30 +72,31 @@ const AddContacts = ({ contactList, setContactList }: Props) => {
     }
   };
 
-  const renderItem = ({ item }: any) => {
-    return (
-      <View>
-        <Text>{item?.name} </Text>
-      </View>
-    );
-  };
-
   return (
     <>
-      <View>
-        <TouchableOpacity onPress={handleContacts}>
-          <Text>Click to add contacts</Text>
-        </TouchableOpacity>
+      <View
+        style={{
+          flex: 0.2,
+          justifyContent: 'center',
+          alignItems: 'center',
+          flexDirection: 'row',
+          marginBottom: 10,
+        }}
+      >
+        <AddButton
+          addFunction={handleContacts}
+          buttonText={`Click to add contacts`}
+          args={null}
+        />
       </View>
-      <View>
-        {contactList.length > 0 ? (
-          <FlatList
-            data={selectedContacts}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-          />
-        ) : null}
-      </View>
+
+      {contactList.length > 0 ? (
+        <ContactList
+          colorScheme={colorScheme}
+          selectedContacts={selectedContacts}
+        />
+      ) : null}
+
       <ContactsModal
         data={contactList}
         isModalVisible={isModalVisible}

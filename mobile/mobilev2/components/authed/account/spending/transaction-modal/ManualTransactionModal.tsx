@@ -8,7 +8,7 @@ import {
   Ionicons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
-import Input from '../../../../reusable/Input';
+import Input from '../../../../inputs/Input';
 import InputList from '../../../../inputs/InputList';
 import DatePickerModal from '../../../../reusable/DatePickerModal';
 import PrimaryButton from '../../../../reusable/PrimaryButton';

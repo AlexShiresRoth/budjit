@@ -17,6 +17,7 @@ const IconContainer = styled.View`
   padding: 10px;
   margin-right: 10px;
   width: 50px;
+  border-right-width: 1px;
 `;
 const Column = styled.View`
   justify-content: center;
@@ -26,7 +27,6 @@ const Label = styled.Text`
   opacity: 0.7;
 `;
 const TextInput = styled.TextInput`
-  border-color: #fff;
   border-style: solid;
   padding-top: 5px;
   padding-bottom: 5px;
@@ -62,8 +62,8 @@ const Input = ({
   const colorScheme = useColorScheme();
 
   return (
-    <Container style={{ backgroundColor: color + '44' }}>
-      <IconContainer>{icon}</IconContainer>
+    <Container style={{ borderColor: color, borderWidth: 1 }}>
+      <IconContainer style={{ borderRightColor: color }}>{icon}</IconContainer>
       <Column>
         {descriptor ? <Label style={labelStyle}>{descriptor}</Label> : null}
         <TextInput

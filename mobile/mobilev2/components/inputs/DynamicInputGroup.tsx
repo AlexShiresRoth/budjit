@@ -7,7 +7,7 @@ import { useAppDispatch } from '../../hooks/reduxHooks';
 import useColorScheme from '../../hooks/useColorScheme';
 import { setAlert } from '../../redux/reducers/alerts.reducers';
 import AddButton from '../buttons/AddButton';
-import Input from '../reusable/Input';
+import Input from './Input';
 
 const Container = styled.View`
   flex: 1;

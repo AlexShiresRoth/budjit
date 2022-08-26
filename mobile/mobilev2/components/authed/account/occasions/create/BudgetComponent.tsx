@@ -4,7 +4,7 @@ import { Animated } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
-import Input from '../../../../reusable/Input';
+import Input from '../../../../inputs/Input';
 import PrimaryButton from '../../../../reusable/PrimaryButton';
 
 const Text = styled.Text``;

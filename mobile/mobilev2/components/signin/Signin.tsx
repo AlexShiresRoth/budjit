@@ -6,7 +6,7 @@ import Colors from '../../constants/Colors';
 import { SIGN_IN } from '../../graphql/mutations/accounts.mutations';
 import useColorScheme from '../../hooks/useColorScheme';
 import { RootStackParamList } from '../../types';
-import Input from '../reusable/Input';
+import Input from '../inputs/Input';
 import PrimaryButton from '../reusable/PrimaryButton';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useAppDispatch, useAppSelector } from '../../hooks/reduxHooks';

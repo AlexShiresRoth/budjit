@@ -6,11 +6,9 @@ import * as SMS from 'expo-sms';
 import InputList, { ItemParam } from '../inputs/InputList';
 import ModalContainer from '../modals/ModalContainer';
 import ModalHeader from '../modals/ModalHeader';
-import Input from '../reusable/Input';
+import Input from '../inputs/Input';
 import PrimaryButton from '../reusable/PrimaryButton';
-import DynamicInputGroup from '../inputs/DynamicInputGroup';
 import { useAppDispatch } from '../../hooks/reduxHooks';
-import { setAlert } from '../../redux/reducers/alerts.reducers';
 import AddContacts from './AddContacts';
 
 type Props = {
