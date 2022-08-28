@@ -16,37 +16,57 @@ type Props = {
   toggleModal: (isModalVisible: boolean) => void;
 };
 
+//TODO create group on sms send
 const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
   const colorScheme = useColorScheme();
 
   const handleResetOnClose = () => toggleModal(!isModalVisible);
 
   const dispatch = useAppDispatch();
-
+  //name of group
   const [groupName, setGroupName] = useState<string>('');
-
+  //this is the list of contacts from user's phone
   const [contactList, setContactList] = useState<Array<any>>([]);
+  //This will be a list of who is sent in the sms
+  const [selectedContacts, selectContact] = useState<Array<any>>([]);
 
   const handleTextChange = (text: string) => setGroupName(text);
 
-  const handleSendSMS = async () => {
+  const handleSendSMS = async (): Promise<{
+    message: string | unknown;
+    success: boolean;
+  }> => {
     try {
       const isAvailable = await SMS.isAvailableAsync();
 
-      if (!isAvailable) return;
+      if (!isAvailable) throw new Error('SMS is not available');
 
-      if (contactList.length === 0) return;
+      if (selectedContacts.length === 0)
+        throw new Error('No contacts selected');
 
-      const { result } = await SMS.sendSMSAsync(
-        [...contactList.map((member) => member.phone)],
+      await SMS.sendSMSAsync(
+        selectedContacts.map(
+          (member) =>
+            member?.phoneNumbers?.filter(
+              (phone: { label: string; number: string }) =>
+                phone.label === 'mobile',
+            )[0]?.number,
+        ),
         'This is a test message from ' +
           groupName +
           'Download BUDJIT APP on the Apple Store or Google Play Store to join the group.',
       );
 
-      console.log('text result', result);
+      return {
+        message: 'SMS sent successfully',
+        success: true,
+      };
     } catch (error) {
       console.error(error);
+      return {
+        message: error ?? 'Something went wrong',
+        success: false,
+      };
     }
   };
 
@@ -79,6 +99,8 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
         <AddContacts
           contactList={contactList}
           setContactList={setContactList}
+          selectContact={selectContact}
+          selectedContacts={selectedContacts}
         />
       ),
     },

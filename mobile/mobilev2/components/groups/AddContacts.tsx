@@ -9,19 +9,28 @@ import useColorScheme from '../../hooks/useColorScheme';
 import ContactList from './ContactList';
 
 type Props = {
+  //List of available contacts from user's phone
   contactList: any[];
+  //set the list of contacts available in modal
   setContactList: (contactList: any[]) => void;
+  //list of user selected contacts to invite to group
+  selectedContacts: any[];
+  //set the list of selected contacts to invite to group
+  selectContact: (contact: any) => void;
 };
 
 //TODO handle remove contact list
 //TODO handle add existing member profile
 
-const AddContacts = ({ contactList, setContactList }: Props) => {
+const AddContacts = ({
+  contactList,
+  setContactList,
+  selectedContacts,
+  selectContact,
+}: Props) => {
   const colorScheme = useColorScheme();
 
   const [isModalVisible, toggleModal] = useState<boolean>(false);
-
-  const [selectedContacts, selectContact] = useState<any[]>([]);
 
   const dispatch = useDispatch();
 
@@ -56,8 +65,6 @@ const AddContacts = ({ contactList, setContactList }: Props) => {
 
       const { data } = await contacts.getContactsAsync();
 
-      console.log('contacts', data);
-
       setContactList(data);
 
       toggleModal(true);
@@ -89,14 +96,14 @@ const AddContacts = ({ contactList, setContactList }: Props) => {
           args={null}
         />
       </View>
-
-      {contactList.length > 0 ? (
+      {/* Chosen contacts list */}
+      {selectedContacts.length > 0 ? (
         <ContactList
           colorScheme={colorScheme}
           selectedContacts={selectedContacts}
         />
       ) : null}
-
+      {/* Modal of contacts to choose from */}
       <ContactsModal
         data={contactList}
         isModalVisible={isModalVisible}

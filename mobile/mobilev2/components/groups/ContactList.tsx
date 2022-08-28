@@ -1,6 +1,7 @@
 import React from 'react';
 import { FlatList, Text, View } from 'react-native';
 import Colors from '../../constants/Colors';
+import RemovableUserItem from '../list-items/RemovableUserItem';
 
 type Props = {
   colorScheme: 'light' | 'dark';
@@ -9,11 +10,7 @@ type Props = {
 
 const ContactList = ({ colorScheme, selectedContacts }: Props) => {
   const renderItem = ({ item }: any) => {
-    return (
-      <View style={{ padding: 5, marginBottom: 5 }}>
-        <Text>{item?.name} </Text>
-      </View>
-    );
+    return <RemovableUserItem user={item} removeFunc={() => {}} />;
   };
   return (
     <View
