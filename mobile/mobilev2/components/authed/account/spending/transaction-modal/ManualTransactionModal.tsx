@@ -11,7 +11,7 @@ import {
 import Input from '../../../../inputs/Input';
 import InputList from '../../../../inputs/InputList';
 import DatePickerModal from '../../../../reusable/DatePickerModal';
-import PrimaryButton from '../../../../reusable/PrimaryButton';
+import PrimaryButton from '../../../../buttons/PrimaryButton';
 import { useMutation } from '@apollo/client';
 import {
   CREATE_TRANSACTION,

@@ -6,12 +6,24 @@ import RemovableUserItem from '../list-items/RemovableUserItem';
 type Props = {
   colorScheme: 'light' | 'dark';
   selectedContacts: any[];
+  selectContact: (contact: any) => void;
 };
 
-const ContactList = ({ colorScheme, selectedContacts }: Props) => {
-  const renderItem = ({ item }: any) => {
-    return <RemovableUserItem user={item} removeFunc={() => {}} />;
+const ContactList = ({
+  colorScheme,
+  selectedContacts,
+  selectContact,
+}: Props) => {
+  //Remove a user from the list of selected contacts
+  const removeFromList = (contact: { id: string; name: string }): void => {
+    const newList = selectedContacts.filter((c) => c.id !== contact.id);
+    selectContact(newList);
   };
+
+  const renderItem = ({ item }: any) => (
+    <RemovableUserItem user={item} removeFunc={removeFromList} />
+  );
+
   return (
     <View
       style={{
@@ -26,7 +38,7 @@ const ContactList = ({ colorScheme, selectedContacts }: Props) => {
         style={{ flex: 1 }}
         data={selectedContacts}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.lookupKey}
         keyboardShouldPersistTaps="always"
         ItemSeparatorComponent={() => (
           <View

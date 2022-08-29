@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dimensions, FlatList } from 'react-native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
 import ModalContainer from '../modals/ModalContainer';
 import ModalHeader from '../modals/ModalHeader';
-import PrimaryButton from '../reusable/PrimaryButton';
+import PrimaryButton from '../buttons/PrimaryButton';
 import ContactItem from './ContactItem';
 
 type Props = {
-  data: Array<any>;
+  contactsList: Array<any>;
   isModalVisible: boolean;
   toggleModal: (val: boolean) => void;
   selectFunction: (data: any) => void;
@@ -17,7 +17,7 @@ type Props = {
 };
 
 const ContactsModal = ({
-  data,
+  contactsList,
   isModalVisible,
   toggleModal,
   selectFunction,
@@ -25,6 +25,8 @@ const ContactsModal = ({
   selectedContacts,
 }: Props) => {
   const colorScheme = useColorScheme();
+
+  // console.log('selectedContacts', selectedContacts);
 
   const renderItem = ({ item }: { item: any }) => {
     return (
@@ -47,8 +49,8 @@ const ContactsModal = ({
       />
       <FlatList
         renderItem={renderItem}
-        data={data}
-        keyExtractor={(item) => item.id}
+        data={contactsList}
+        keyExtractor={(item) => item.lookupKey}
         style={{
           maxHeight:
             selectedContacts.length > 0
@@ -58,15 +60,15 @@ const ContactsModal = ({
           borderRadius: 5,
         }}
       />
-      {selectedContacts.length > 0 ? (
-        <PrimaryButton
-          buttonText="Accept"
-          colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
-          callBack={() => toggleModal(false)}
-          callBackArgs={false}
-          buttonTextColor={Colors[colorScheme].background}
-        />
-      ) : null}
+
+      <PrimaryButton
+        buttonText="Accept"
+        colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+        callBack={() => toggleModal(false)}
+        callBackArgs={false}
+        buttonTextColor={Colors[colorScheme].background}
+        disabled={selectedContacts.length > 0 ? false : true}
+      />
     </ModalContainer>
   );
 };

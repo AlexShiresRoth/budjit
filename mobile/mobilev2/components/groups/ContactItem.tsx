@@ -20,15 +20,30 @@ const ContactItem = ({ item, selectFunction, selectedContacts }: Props) => {
 
   const colorScheme = useColorScheme();
 
-  const handleSelect = () => selectFunction(item);
-
-  const checkIfContactIsSelected = (contact: any) => {
-    return select(selectedContacts.find((c) => c.id === contact.id));
+  const checkIfContactIsSelected = (contact: any): void => {
+    //check if user is already selected
+    if (selectedContacts.find((c) => c.lookupKey === contact.lookupKey)) {
+      console.log('contact in', contact.name);
+      const removeSelected = selectedContacts.filter(
+        (c) => c.lookupKey !== contact.lookupKey,
+      );
+      selectFunction(removeSelected);
+      select(false);
+    }
+    //remove from list if already selected
+    else {
+      console.log('contact not in', contact.name);
+      selectFunction([...selectedContacts, contact]);
+      select(true);
+    }
   };
 
+  //check if contacts are already selected on load
   useEffect(() => {
-    checkIfContactIsSelected(item);
-  }, [item, selectedContacts]);
+    return selectedContacts.find((c) => c.lookupKey === item.lookupKey)
+      ? select(true)
+      : select(false);
+  }, []);
 
   return (
     <Row
@@ -40,7 +55,7 @@ const ContactItem = ({ item, selectFunction, selectedContacts }: Props) => {
           ? Colors[colorScheme].tint + '60'
           : 'transparent',
       }}
-      onPress={() => handleSelect()}
+      onPress={() => checkIfContactIsSelected(item)}
     >
       <View>
         <Text style={{ fontWeight: '700', color: Colors[colorScheme].text }}>

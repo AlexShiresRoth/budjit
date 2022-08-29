@@ -18,6 +18,7 @@ interface PrimaryButtonParams {
   callBack: undefined | ((args: any | undefined) => any);
   callBackArgs: null | undefined | any;
   buttonTextColor: string | undefined | null;
+  disabled: boolean;
 }
 
 const PrimaryButton = ({
@@ -26,10 +27,18 @@ const PrimaryButton = ({
   callBack,
   callBackArgs,
   buttonTextColor = '#fff',
+  disabled = false,
 }: PrimaryButtonParams) => {
+  console.log('disabled', disabled);
   return (
-    <Button onPress={callBack ? () => callBack(callBackArgs) : () => {}}>
-      <LinearGradient colors={colorArr} style={Styles.button}>
+    <Button
+      onPress={callBack ? () => callBack(callBackArgs) : () => {}}
+      disabled={disabled}
+    >
+      <LinearGradient
+        colors={disabled ? ['#ddd', '#ddd'] : colorArr}
+        style={Styles.button}
+      >
         <Text style={{ color: buttonTextColor || '#fff' }}>{buttonText}</Text>
       </LinearGradient>
     </Button>

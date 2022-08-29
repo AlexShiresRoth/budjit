@@ -2,7 +2,7 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
-import PrimaryButton from '../../../../reusable/PrimaryButton';
+import PrimaryButton from '../../../../buttons/PrimaryButton';
 import { Animated, TextInput } from 'react-native';
 
 const Text = styled.Text``;

@@ -5,7 +5,7 @@ import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
 import Input from '../../../../inputs/Input';
-import PrimaryButton from '../../../../reusable/PrimaryButton';
+import PrimaryButton from '../../../../buttons/PrimaryButton';
 
 const Text = styled.Text``;
 

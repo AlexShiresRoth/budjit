@@ -7,7 +7,7 @@ import InputList, { ItemParam } from '../inputs/InputList';
 import ModalContainer from '../modals/ModalContainer';
 import ModalHeader from '../modals/ModalHeader';
 import Input from '../inputs/Input';
-import PrimaryButton from '../reusable/PrimaryButton';
+import PrimaryButton from '../buttons/PrimaryButton';
 import { useAppDispatch } from '../../hooks/reduxHooks';
 import AddContacts from './AddContacts';
 
@@ -43,6 +43,8 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
 
       if (selectedContacts.length === 0)
         throw new Error('No contacts selected');
+
+      console.log('selectedContacts', selectedContacts);
 
       await SMS.sendSMSAsync(
         selectedContacts.map(
@@ -106,6 +108,8 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
     },
   ];
 
+  console.log('selectedContacts', selectedContacts);
+
   return (
     <ModalContainer
       isModalVisible={isModalVisible}
@@ -116,15 +120,15 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
         handleResetOnClose={handleResetOnClose}
       />
       <InputList isEditMode={false} inputList={DATA} />
-      {contactList.length > 0 ? (
-        <PrimaryButton
-          buttonText="Create"
-          colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
-          callBack={handleSendSMS}
-          callBackArgs={false}
-          buttonTextColor={Colors[colorScheme].background}
-        />
-      ) : null}
+
+      <PrimaryButton
+        buttonText="Create"
+        colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+        callBack={handleSendSMS}
+        callBackArgs={false}
+        buttonTextColor={Colors[colorScheme].background}
+        disabled={selectedContacts.length > 0 && groupName ? false : true}
+      />
     </ModalContainer>
   );
 };

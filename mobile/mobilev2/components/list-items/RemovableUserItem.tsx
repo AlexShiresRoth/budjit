@@ -13,6 +13,9 @@ const RemovableUserItem = ({ user, removeFunc }: Props) => {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        padding: 10,
+        paddingLeft: 5,
+        paddingRight: 5,
       }}
     >
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -26,6 +29,7 @@ const RemovableUserItem = ({ user, removeFunc }: Props) => {
       </View>
       <TouchableOpacity
         style={{ backgroundColor: '#eee', padding: 8, borderRadius: 500 }}
+        onPress={() => removeFunc(user)}
       >
         <FontAwesome
           name="trash-o"

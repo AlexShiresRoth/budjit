@@ -2,7 +2,7 @@ import React, { Dispatch, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import Input from '../inputs/Input';
-import PrimaryButton from '../reusable/PrimaryButton';
+import PrimaryButton from '../buttons/PrimaryButton';
 import {
   MaterialCommunityIcons,
   FontAwesome5,

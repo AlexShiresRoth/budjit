@@ -4,7 +4,7 @@ import { Modal, TextInput, TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
-import PrimaryButton from '../../../reusable/PrimaryButton';
+import PrimaryButton from '../../../buttons/PrimaryButton';
 import BudgetComponent from './create/BudgetComponent';
 import CategoryComponent from './create/CategoryComponent';
 import DatePickComponent from './create/DatePickComponent';

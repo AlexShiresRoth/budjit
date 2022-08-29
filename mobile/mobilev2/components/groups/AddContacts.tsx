@@ -6,7 +6,7 @@ import { setAlert } from '../../redux/reducers/alerts.reducers';
 import ContactsModal from './ContactsModal';
 import AddButton from '../buttons/AddButton';
 import useColorScheme from '../../hooks/useColorScheme';
-import ContactList from './ContactList';
+import ContactList from './SelectedContactList';
 
 type Props = {
   //List of available contacts from user's phone
@@ -34,16 +34,13 @@ const AddContacts = ({
 
   const dispatch = useDispatch();
 
-  const handleSelectContact = (contact: any) => {
+  const handleSelectContact = (contact: any): void => {
+    // console.log('in the hole', contact);
     if (selectedContacts.find((c) => c.id === contact.id)) {
-      console.log('contact already selected');
-
       selectContact(selectedContacts.filter((c) => c.id !== contact.id));
-
-      return;
     }
 
-    selectContact([...selectedContacts, contact]);
+    selectContact(contact);
   };
 
   const handleRequestOnClose = () => {
@@ -65,7 +62,20 @@ const AddContacts = ({
 
       const { data } = await contacts.getContactsAsync();
 
-      setContactList(data);
+      //filter out contacts that do not have mobile numbers
+      const filteredContacts = data.filter((contact: contacts.Contact) =>
+        contact?.phoneNumbers && contact.phoneNumbers.length > 0
+          ? contact.phoneNumbers?.filter((phone) => phone.label === 'mobile')
+              .length > 0
+          : false,
+      );
+
+      //sort alphabetically
+      const sortedContacts = filteredContacts.sort((a, b) =>
+        a.name > b.name ? 1 : -1,
+      );
+
+      setContactList(sortedContacts);
 
       toggleModal(true);
     } catch (error) {
@@ -101,11 +111,12 @@ const AddContacts = ({
         <ContactList
           colorScheme={colorScheme}
           selectedContacts={selectedContacts}
+          selectContact={selectContact}
         />
       ) : null}
       {/* Modal of contacts to choose from */}
       <ContactsModal
-        data={contactList}
+        contactsList={contactList}
         isModalVisible={isModalVisible}
         toggleModal={toggleModal}
         selectFunction={handleSelectContact}

@@ -9,7 +9,7 @@ import { Animated, Modal, TextInput } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../../../../constants/Colors';
 import useColorScheme from '../../../../../hooks/useColorScheme';
-import PrimaryButton from '../../../../reusable/PrimaryButton';
+import PrimaryButton from '../../../../buttons/PrimaryButton';
 
 const ModalComponent = styled.View``;
 
@@ -102,6 +102,7 @@ const TitleComponent = ({
           callBack={setStep}
           callBackArgs={currentStep + 1}
           buttonTextColor={Colors[colorScheme].text}
+          disabled={false}
         />
       ) : (
         <PrimaryButton
@@ -110,6 +111,7 @@ const TitleComponent = ({
           callBack={() => {}}
           callBackArgs={null}
           buttonTextColor={Colors[colorScheme].text + '40'}
+          disabled={true}
         />
       )}
     </Animated.View>

@@ -17,7 +17,7 @@ const AddButton = ({ addFunction, args, buttonText }: Props) => {
     <TouchableOpacity
       style={{
         padding: 10,
-        backgroundColor: Colors[colorScheme].secondary,
+        backgroundColor: Colors[colorScheme].success,
         borderRadius: 5,
         width: '100%',
       }}
