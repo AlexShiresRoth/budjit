@@ -32,6 +32,10 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
 
   const handleTextChange = (text: string) => setGroupName(text);
 
+  const handleGroupCreation = async () => { 
+    
+  }
+
   const handleSendSMS = async (): Promise<{
     message: string | unknown;
     success: boolean;

@@ -10,9 +10,29 @@ export class AddInviteToGroupInput {
 }
 
 @InputType()
+export class Contact {
+  @Field()
+  name: string;
+  @Field()
+  phone: string;
+}
+
+@InputType()
+export class Member {
+  @Field()
+  name: string;
+  @Field()
+  id: string;
+}
+
+@InputType()
 export class CreateGroupInput {
   @Field()
   groupName: string;
+  @Field(() => [Contact], { nullable: true })
+  contacts: Contact[];
+  @Field(() => [Member], { nullable: true })
+  members: Member[];
   @Field({ nullable: true })
   creator: string;
 }

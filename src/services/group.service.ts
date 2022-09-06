@@ -103,6 +103,7 @@ export class GroupService {
     }
   }
 
+  //TODO redo this to add contacts and members to group
   async create(input: CreateGroupInput): Promise<CreateGroupResponse> {
     try {
       const { groupName, creator } = input;
