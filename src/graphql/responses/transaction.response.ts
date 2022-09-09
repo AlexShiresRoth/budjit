@@ -34,7 +34,7 @@ export class CreateTransactionResponse {
 @ObjectType()
 export class GetAllTransactionsResponse {
   @Field(() => [TransactionType])
-  transactions: TransactionType[];
+  transactions: Transaction[];
   @Field()
   message: string;
   @Field()

@@ -20,6 +20,7 @@ export const SIGN_UP = gql`
         name
         email
         profile
+        phone
       }
       token
     }

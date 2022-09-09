@@ -25,6 +25,7 @@ import {
 } from 'src/graphql/responses/group.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { ProfileService } from './profile.service';
+import { Account } from 'src/mongo-schemas/account.model';
 // import {} from 'unsplash-js'
 
 @Injectable()
@@ -106,9 +107,11 @@ export class GroupService {
   //TODO redo this to add contacts and members to group
   async create(input: CreateGroupInput): Promise<CreateGroupResponse> {
     try {
-      const { groupName, creator } = input;
+      const { groupName, creator, contacts, members } = input;
 
-      const foundAccount = await this.accountService.findOneById(creator);
+      const foundAccount: Account = await this.accountService.findOneById(
+        creator,
+      );
 
       if (!foundAccount) throw new Error('Could not locate account');
 
@@ -135,12 +138,45 @@ export class GroupService {
         backgroundImage: randomPhotoFromUnsplash.response[0].urls.small,
       };
 
+      if (Array.isArray(contacts) && contacts.length > 0) {
+        //TODO need to create contact in db and push to group
+        //TODO need to generate password until user resets password from temp link
+        const newMembers = await Promise.all(
+          contacts.map(async (contact: { name: string; phone: string }) => {
+            const newAccount = await this.accountService.createAccount({
+              email: 'temp@budjit.com',
+              phone: contact.phone,
+              password: 'temp',
+              name: contact.name,
+              passwordConfirm: 'temp',
+            });
+            //TODO handle any errors???
+            return newAccount;
+          }),
+        );
+
+        newGroup.invites = [...newGroup.invites, ...newMembers];
+      }
+
+      if (Array.isArray(members) && members.length > 0) {
+        const foundMembers = await Promise.all(
+          members.map(async (member) => {
+            const foundMember = await this.accountService.findOneById(
+              member._id,
+            );
+            return foundMember;
+          }),
+        );
+
+        newGroup.invites = [...newGroup.invites, ...foundMembers];
+      }
+
       const group = new this.groupModel(newGroup);
 
       await group.save();
 
       await this.accountService.addGroupRefToAccount({
-        groupId: group._id,
+        groupId: group,
         userID: creator,
       });
 

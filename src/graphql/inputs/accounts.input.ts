@@ -15,6 +15,8 @@ export class CreateAccountInput {
   @Field()
   password: string;
   @Field()
+  phone: string;
+  @Field()
   passwordConfirm: string;
 }
 
@@ -28,7 +30,7 @@ export class LoginInput {
 
 @InputType()
 export class AddGroupRefToAccountInput {
-  @Field(() => String)
+  @Field(() => Group)
   groupId: Group;
   @Field()
   userID: string;

@@ -65,12 +65,14 @@ export class AccountsService {
     createAccountInput: CreateAccountInput,
   ): Promise<CreateAccountResponse> {
     try {
-      const { name, email, password, passwordConfirm } = createAccountInput;
+      const { name, email, password, passwordConfirm, phone } =
+        createAccountInput;
 
       if (!name) throw new Error('Please add your name');
       if (!email) throw new Error('Please add your email');
       if (!password) throw new Error('Please create a password');
       if (!passwordConfirm) throw new Error('Please confirm your password');
+      if (!phone) throw new Error('Please add your phone number');
 
       if (password !== passwordConfirm)
         throw new Error('Passwords do not match');
@@ -82,11 +84,13 @@ export class AccountsService {
         name: string;
         email: string;
         password: string;
+        phone: string;
         _id: typeof id;
       } = {
-        name: '',
-        email: '',
-        password: '',
+        name,
+        email,
+        phone,
+        password,
         _id: id,
       };
 

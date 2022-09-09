@@ -163,6 +163,7 @@ export class TransactionService {
       };
     }
   }
+
   async getAllTransactions(
     input: AuthPayload,
   ): Promise<GetAllTransactionsResponse> {

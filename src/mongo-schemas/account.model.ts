@@ -27,6 +27,8 @@ export class Account {
   @Prop()
   email: string;
   @Prop()
+  phone: string;
+  @Prop()
   password: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Profile' })
   profile: string;

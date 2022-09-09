@@ -1,5 +1,8 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { AccountType } from 'plaid';
+import { Account } from 'src/mongo-schemas/account.model';
 import { Invite } from 'src/mongo-schemas/Invite.model';
+import { AccountTypeDef } from '../schemas/account.schema';
 
 @InputType()
 export class AddInviteToGroupInput {
@@ -19,10 +22,8 @@ export class Contact {
 
 @InputType()
 export class Member {
-  @Field()
-  name: string;
-  @Field()
-  id: string;
+  @Field(() => Account)
+  account: Account;
 }
 
 @InputType()
@@ -31,8 +32,8 @@ export class CreateGroupInput {
   groupName: string;
   @Field(() => [Contact], { nullable: true })
   contacts: Contact[];
-  @Field(() => [Member], { nullable: true })
-  members: Member[];
+  @Field(() => [String], { nullable: true })
+  members: Account[];
   @Field({ nullable: true })
   creator: string;
 }

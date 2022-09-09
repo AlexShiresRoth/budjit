@@ -19,6 +19,8 @@ export class AccountTypeDef {
   @Field()
   email: string;
   @Field()
+  phone: string;
+  @Field()
   password: string;
   @Field(() => String, { nullable: true })
   profile: string;

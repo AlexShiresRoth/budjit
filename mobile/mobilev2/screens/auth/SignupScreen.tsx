@@ -7,10 +7,10 @@ import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { RootStackParamList } from '../../types';
 import styled from 'styled-components/native';
 
-const Content = styled.View`
+const Content = styled.ScrollView`
   width: 90%;
   flex: 1;
-  justify-content: center;
+  padding-top: 40px;
 `;
 
 type Props = BottomTabScreenProps<RootStackParamList, 'Signup'>;

@@ -32,14 +32,14 @@ export class OccasionResolver {
     return this.occasionService.findAll(user.account.id);
   }
 
-  @Mutation(() => OccasionTypeDef)
-  @UseGuards(GraphqlAuthGuard)
-  async createOccasion(
-    @Args('createOccsionInput') createOccasionInput: CreateOccasionInput,
-    @CurrentAccount() user: AuthPayload,
-  ): Promise<Occasion> {
-    return await this.occasionService.create(createOccasionInput, user);
-  }
+  // @Mutation(() => OccasionTypeDef)
+  // @UseGuards(GraphqlAuthGuard)
+  // async createOccasion(
+  //   @Args('createOccsionInput') createOccasionInput: CreateOccasionInput,
+  //   @CurrentAccount() user: AuthPayload,
+  // ): Promise<Occasion> {
+  //   return await this.occasionService.create(createOccasionInput, user);
+  // }
 
   @Mutation(() => OccasionTypeDef)
   @UseGuards(GraphqlAuthGuard)

@@ -12,6 +12,7 @@ type AccountTypeDef {
   _id: String!
   name: String!
   email: String!
+  phone: String!
   password: String!
   profile: String
   plaidAccounts: [PlaidAccountTypeDef!]!
@@ -320,7 +321,6 @@ type Mutation {
   deleteTransaction(input: DeleteTransactionInput!): DeleteTransactionResponse!
   createGroup(input: CreateGroupInput!): CreateGroupResponse!
   changeGroupBackgroundImage(input: FetchGroupMembersInput!): CreateGroupResponse!
-  createOccasion(createOccsionInput: CreateOccasionInput!): OccasionTypeDef!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
@@ -339,6 +339,7 @@ input CreateAccountInput {
   name: String!
   email: String!
   password: String!
+  phone: String!
   passwordConfirm: String!
 }
 
@@ -403,13 +404,14 @@ input DeleteTransactionInput {
 
 input CreateGroupInput {
   groupName: String!
+  contacts: [Contact!]
+  members: [String!]
   creator: String
 }
 
-input CreateOccasionInput {
-  title: String!
-  budget: String!
-  occasionStartDate: String!
+input Contact {
+  name: String!
+  phone: String!
 }
 
 input ContributeToBudgetInput {

@@ -4,8 +4,10 @@ import Colors from '../../constants/Colors';
 import Input from '../inputs/Input';
 import PrimaryButton from '../buttons/PrimaryButton';
 import {
-  MaterialCommunityIcons,
   FontAwesome5,
+  FontAwesome,
+  MaterialCommunityIcons,
+  MaterialIcons,
   Ionicons,
 } from '@expo/vector-icons';
 import { useMutation } from '@apollo/client';
@@ -22,7 +24,10 @@ import { AnyAction } from 'redux';
 import Heading from '../text/Heading';
 import SubHeading from '../text/SubHeading';
 
-const Container = styled.View``;
+const Container = styled.View`
+  flex: 1;
+  margin-bottom: 80px;
+`;
 
 const FormContainer = styled.View`
   margin-top: 20px;
@@ -43,8 +48,16 @@ interface DataProp {
   style: { borderColor: string };
   key: string;
   isSecure: boolean;
-  icon: React.ReactElement;
+  icon: any;
 }
+
+type FormParams = {
+  email: string;
+  name: string;
+  password: string;
+  passwordConfirm: string;
+  phone: string;
+};
 
 const Signup = ({
   colorScheme,
@@ -76,18 +89,30 @@ const Form = ({
   colorScheme,
   dispatch,
 }: ColorScheme & { dispatch: Dispatch<AnyAction> }) => {
+  //each input should be required?
   const [inputs, setInputs] = useState({
     email: '',
     name: '',
     password: '',
     passwordConfirm: '',
+    phone: '',
   });
 
-  const { email, name, password, passwordConfirm } = inputs;
+  const { email, name, password, passwordConfirm, phone } = inputs;
+  //check if person has filled all required fields
+  const [isFormComplete, setIsFormComplete] = useState(false);
 
   const [submitAccount, { error, loading, data }] = useMutation(SIGN_UP);
 
-  const DATA = [
+  //TODO handle any missing fields
+  const handleFormCheck = ({ ...formData }: FormParams) => {
+    const formValues = Object.values(formData);
+    //check every value has been filled
+    const isFormComplete = formValues.every((value) => value.length > 0);
+    setIsFormComplete(isFormComplete);
+  };
+
+  const DATA: Array<DataProp> = [
     {
       label: 'Email',
       value: email,
@@ -95,13 +120,24 @@ const Form = ({
       key: 'email',
       isSecure: false,
       icon: (
+        <FontAwesome5 name="at" size={25} color={Colors[colorScheme].tint} />
+      ),
+    },
+    {
+      label: 'Phone',
+      value: phone,
+      style: { borderColor: Colors[colorScheme].tint },
+      key: 'phone',
+      isSecure: false,
+      icon: (
         <MaterialCommunityIcons
-          name="email-outline"
+          name="phone-outline"
           size={25}
           color={Colors[colorScheme].tint}
         />
       ),
     },
+
     {
       label: 'Name',
       value: name,
@@ -158,6 +194,10 @@ const Form = ({
     }
   }, [data, error]);
 
+  useEffect(() => {
+    handleFormCheck(inputs);
+  }, [inputs]);
+
   return (
     <FormContainer>
       {DATA.map((item: DataProp, key: number) => {
@@ -187,6 +227,7 @@ const Form = ({
           callBack={submitAccount}
           callBackArgs={{ variables: { createAccountInput: { ...inputs } } }}
           buttonTextColor={Colors[colorScheme].background}
+          disabled={!isFormComplete}
         />
       ) : (
         <Text>Loading...</Text>

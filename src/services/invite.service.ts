@@ -75,9 +75,12 @@ export class InviteService {
 
       const currentDate = new Date();
 
+      //TODO fix this
       const newGroup = await this.groupService.create({
         groupName,
         creator: user.account.id,
+        members: null,
+        contacts: null,
       });
 
       //create all new invites
