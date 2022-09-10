@@ -26,7 +26,7 @@ import {
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { ProfileService } from './profile.service';
 import { Account } from 'src/mongo-schemas/account.model';
-// import {} from 'unsplash-js'
+import { ExternalInviteService } from './externalInvite.service';
 
 @Injectable()
 export class GroupService {
@@ -38,6 +38,8 @@ export class GroupService {
     private readonly accountService: AccountsService,
     @Inject(forwardRef(() => InviteService))
     private readonly inviteService: InviteService,
+    @Inject(forwardRef(() => ExternalInviteService))
+    private readonly externalInviteService: ExternalInviteService,
     @Inject('UNSPLASH') private readonly unsplash,
   ) {}
 
@@ -139,23 +141,23 @@ export class GroupService {
       };
 
       if (Array.isArray(contacts) && contacts.length > 0) {
-        //TODO need to create contact in db and push to group
-        //TODO need to generate password until user resets password from temp link
-        const newMembers = await Promise.all(
-          contacts.map(async (contact: { name: string; phone: string }) => {
-            const newAccount = await this.accountService.createAccount({
-              email: 'temp@budjit.com',
-              phone: contact.phone,
-              password: 'temp',
-              name: contact.name,
-              passwordConfirm: 'temp',
-            });
-            //TODO handle any errors???
-            return newAccount;
+        //it should create an invite and a person can join by matching their phone
+        const externalInvites = await Promise.all(
+          contacts.map(async (contact) => {
+            const externalInvite =
+              await this.externalInviteService.createExternalInvite({
+                occasionRef: null,
+                groupRef: id.toString(),
+                receiverName: contact.name,
+                receiverPhone: contact.phone,
+                inviteType: 'group',
+              });
+
+            return externalInvite;
           }),
         );
 
-        newGroup.invites = [...newGroup.invites, ...newMembers];
+        newGroup.invites = [...newGroup.invites, ...externalInvites];
       }
 
       if (Array.isArray(members) && members.length > 0) {
