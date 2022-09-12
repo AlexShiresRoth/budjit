@@ -38,9 +38,21 @@ type OccasionTypeDef {
   initialBudget: String!
 }
 
+type ExternalInviteTypeDef {
+  _id: String!
+  inviteDate: String!
+  receiverName: String!
+  receiverPhone: String!
+  status: String!
+  groupRef: GroupTypeDef
+  occasionRef: OccasionTypeDef
+  inviteType: String!
+}
+
 type GroupTypeDef {
   members: [AccountTypeDef!]!
   invites: [InvitesTypeDef!]
+  externalInvites: [ExternalInviteTypeDef!]
   occasions: [OccasionTypeDef!]
   name: String!
   creator: AccountTypeDef!
@@ -197,7 +209,7 @@ type LoadGroupResponse {
 type FetchGroupsResponse {
   message: String!
   success: Boolean!
-  groups: [GroupTypeDef!]!
+  groups: [GroupTypeDef!]
 }
 
 type AccountAndProfile {

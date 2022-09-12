@@ -57,16 +57,22 @@ export class GroupService {
         };
       }
 
+      //look for all groups
       const myGroups = await Promise.all(
         myAccount.groups.map(async (group) => {
           return await this.groupModel.findById(group);
         }),
       );
+      //probably just for testing db, groups being deleted manually show as null on user's account group array
+      //once function for delete group is created, this will be removed
+      const filterGroups = myGroups.filter((group) => group !== null);
+
+      console.log('myGroups: ', filterGroups);
 
       return {
         message: 'Found groups',
         success: true,
-        groups: myGroups,
+        groups: filterGroups,
       };
     } catch (error) {
       return {
@@ -133,6 +139,7 @@ export class GroupService {
       const newGroup = {
         members: [foundAccount],
         invites: [],
+        externalInvites: [],
         _id: id,
         name: groupName,
         creator: foundAccount,
@@ -157,7 +164,7 @@ export class GroupService {
           }),
         );
 
-        newGroup.invites = [...newGroup.invites, ...externalInvites];
+        newGroup.externalInvites = [...newGroup.invites, ...externalInvites];
       }
 
       if (Array.isArray(members) && members.length > 0) {

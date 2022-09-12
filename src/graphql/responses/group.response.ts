@@ -32,7 +32,7 @@ export class FetchGroupsResponse {
   message: string;
   @Field()
   success: boolean;
-  @Field(() => [GroupTypeDef])
+  @Field(() => [GroupTypeDef], { nullable: true })
   groups: Group[];
 }
 

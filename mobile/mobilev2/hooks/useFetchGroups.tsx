@@ -5,7 +5,7 @@ import { fetchMyGroups, selectGroups } from '../redux/reducers/groups.reducers';
 import { useAppDispatch, useAppSelector } from './reduxHooks';
 
 const useFetchGroups = () => {
-  const { groups } = useAppSelector(selectGroups);
+  const { groups = [] } = useAppSelector(selectGroups);
 
   const dispatch = useAppDispatch();
 
