@@ -7,7 +7,7 @@ export const LOAD_GROUP = gql`
       success
       Group {
         name
-        creator
+        backgroundImage
       }
     }
   }

@@ -18,10 +18,13 @@ export const groupSlice = createSlice({
     fetchMyGroups: (state, action: PayloadAction<Array<GroupType>>) => {
       state.groups = action.payload;
     },
+    addNewGroupToState: (state, action: PayloadAction<GroupType>) => {
+      state.groups.push(action.payload);
+    },
   },
 });
 
-export const { fetchMyGroups } = groupSlice.actions;
+export const { fetchMyGroups, addNewGroupToState } = groupSlice.actions;
 
 export const selectGroups = (state: RootState) => state.groups;
 

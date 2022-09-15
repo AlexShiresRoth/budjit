@@ -1,29 +1,31 @@
-import { MaterialCommunityIcons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
 import * as SMS from 'expo-sms';
-import InputList, { ItemParam } from '../inputs/InputList';
 import ModalContainer from '../modals/ModalContainer';
 import ModalHeader from '../modals/ModalHeader';
-import Input from '../inputs/Input';
 import PrimaryButton from '../buttons/PrimaryButton';
 import { useAppDispatch } from '../../hooks/reduxHooks';
-import AddContacts from './AddContacts';
 import { useMutation } from '@apollo/client';
 import { CREATE_GROUP } from '../../graphql/mutations/groups.mutations';
 import { PromiseReturnType } from '../../types/Promises.types';
+import { addNewGroupToState } from '../../redux/reducers/groups.reducers';
+import GroupInputList from './GroupInputList';
 
 type Props = {
   isModalVisible: boolean;
   toggleModal: (isModalVisible: boolean) => void;
+  setGroupCreated: (groupCreated: boolean) => void;
 };
 
-const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
+const CreateGroupModal = ({
+  isModalVisible,
+  toggleModal,
+  setGroupCreated,
+}: Props) => {
   const colorScheme = useColorScheme();
   //creating the group via graphql to server and db
-  const [createGroupMutation, { error, loading, data }] =
-    useMutation(CREATE_GROUP);
+  const [createGroupMutation] = useMutation(CREATE_GROUP);
 
   const handleResetOnClose = () => toggleModal(!isModalVisible);
   //redux dispatch method
@@ -36,6 +38,7 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
   const [selectedContacts, selectContact] = useState<Array<any>>([]);
   //TODO add a way to search for existing members user is associated with
   const [selectedMembers, selectMembers] = useState<Array<any>>([]);
+
   //handling groupname change essentially
   const handleTextChange = (text: string) => setGroupName(text);
 
@@ -58,12 +61,13 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
     members: Array<{ _id: string }> = [],
   ): Promise<PromiseReturnType> => {
     try {
+      //attempt group creation
       const mutationRequest = await createGroupMutation({
         variables: { input: { groupName, contacts, members } },
       });
 
       const { data, errors } = mutationRequest;
-
+      //short out of function if there are errors
       if (errors) {
         errors.map((error: any) => {
           throw new Error(error.message);
@@ -85,7 +89,10 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
     }
   };
 
-  const handleSendSMS = async (): Promise<{
+  //send sms to external list of contacts
+  const handleSendSMS = async (
+    contacts: Array<{ name: string; phone: string }>,
+  ): Promise<{
     message: string | unknown;
     success: boolean;
   }> => {
@@ -97,19 +104,11 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
       if (selectedContacts.length === 0)
         throw new Error('No contacts selected');
 
-      console.log('selectedContacts', selectedContacts);
-
       await SMS.sendSMSAsync(
-        selectedContacts.map(
-          (member) =>
-            member?.phoneNumbers?.filter(
-              (phone: { label: string; number: string }) =>
-                phone.label === 'mobile',
-            )[0]?.number,
-        ),
+        contacts.map((contact) => contact.phone),
         'This is a test message from ' +
           groupName +
-          'Download BUDJIT APP on the Apple Store or Google Play Store to join the group.',
+          ' Download BUDJIT APP on the Apple Store or Google Play Store to join the group.',
       );
 
       return {
@@ -125,8 +124,6 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
     }
   };
 
-  //group creation works for right now
-  //TODO handle closing modal on success and displaying new group!
   //main function for creating the group
   const handleGroupCreation = async (
     contacts: any[],
@@ -138,20 +135,28 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
       const contactArrFormattedForMutation =
         contacts.length > 0 ? parseContacts(contacts) : [];
 
-      //will need a function to handle members
-
+      //TODO will need a function to handle members
       const { message, success, data } = await handleGroupCreationMutation(
         groupName,
         contactArrFormattedForMutation,
         selectedMembers,
       );
 
-      //TODO fix this
-      if (!success) throw new Error(message ?? "Couldn't create group");
+      if (!success)
+        throw new Error(
+          typeof message === 'string' ? message : "Couldn't create group",
+        );
 
-      console.log('data', data);
+      //only send sms if there are contacts to send to
+      if (contacts.length > 0) {
+        //send out text messages to all contacts
+        await handleSendSMS(contactArrFormattedForMutation);
+      }
 
-      const sendSMS = await handleSendSMS();
+      //add new group to state via redux
+      dispatch(addNewGroupToState(data?.createGroup?.Group));
+      //notify parent component that group was created
+      setGroupCreated(true);
 
       return {
         message: 'Group created successfully',
@@ -168,43 +173,9 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
     }
   };
 
-  const DATA: Array<ItemParam> = [
-    {
-      title: 'Group Name',
-      component: (
-        <Input
-          value={groupName}
-          callback={(e: string) => handleTextChange(e)}
-          style={{ color: Colors[colorScheme].text }}
-          labelStyle={{ color: Colors[colorScheme].text }}
-          label={'Give the group a name'}
-          isSecure={false}
-          descriptor="Group Name"
-          icon={
-            <MaterialCommunityIcons
-              name="account-group-outline"
-              color={Colors[colorScheme].tint}
-              size={20}
-            />
-          }
-          color={Colors[colorScheme].tint}
-        />
-      ),
-    },
-    {
-      title: 'Invite Contacts',
-      component: (
-        <AddContacts
-          contactList={contactList}
-          setContactList={setContactList}
-          selectContact={selectContact}
-          selectedContacts={selectedContacts}
-        />
-      ),
-    },
-  ];
-
-  console.log('selectedContacts', selectedContacts);
+  useEffect(() => {
+    setGroupCreated(false);
+  }, []);
 
   return (
     <ModalContainer
@@ -215,15 +186,22 @@ const CreateGroupModal = ({ isModalVisible, toggleModal }: Props) => {
         modalTitle="Create A New Group"
         handleResetOnClose={handleResetOnClose}
       />
-      <InputList isEditMode={false} inputList={DATA} />
-
+      <GroupInputList
+        setContactList={setContactList}
+        selectedContacts={selectedContacts}
+        colorScheme={colorScheme}
+        groupName={groupName}
+        handleTextChange={handleTextChange}
+        contactList={contactList}
+        selectContact={selectContact}
+      />
       <PrimaryButton
         buttonText="Create"
         colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
         callBack={handleGroupCreation}
         callBackArgs={selectedContacts}
         buttonTextColor={Colors[colorScheme].background}
-        disabled={selectedContacts.length > 0 && groupName ? false : true}
+        disabled={groupName ? false : true}
       />
     </ModalContainer>
   );

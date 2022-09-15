@@ -59,6 +59,8 @@
     "@types/node": "^16.11.57",
     "@types/passport-jwt": "^3.0.6",
     "@types/passport-local": "^1.0.34",
+    "@types/react": "^18.0.20",
+    "@types/react-dom": "^18.0.6",
     "@types/supertest": "^2.0.11",
     "@types/unsplash-js": "^7.0.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",

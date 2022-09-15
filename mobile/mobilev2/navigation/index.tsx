@@ -35,6 +35,7 @@ import {
 } from '../types';
 import LinkingConfiguration from './LinkingConfiguration';
 import GroupsScreen from '../screens/auth/account/GroupsScreen';
+import GroupScreen from '../screens/auth/account/group/GroupScreen';
 
 export default function Navigation({
   colorScheme,
@@ -85,10 +86,36 @@ function RootNavigator() {
         name="BankConnections"
         component={BankConnectionScreen}
       />
+
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
     </Stack.Navigator>
+  );
+}
+//TODO figure out better nav system, this is WHACK
+const GroupStack = createNativeStackNavigator<RootStackParamList>();
+
+function GroupStackNavigator() {
+  return (
+    <GroupStack.Navigator>
+      <GroupStack.Screen
+        name="GroupsScreen"
+        component={GroupsScreen}
+        options={({ navigation }: RootStackScreenProps<'GroupsScreen'>) => ({
+          title: 'My Groups',
+          headerShown: false,
+        })}
+      />
+      <GroupStack.Screen
+        name="GroupScreen"
+        component={GroupScreen}
+        options={{
+          title: 'Group',
+          headerLeft: () => null,
+        }}
+      />
+    </GroupStack.Navigator>
   );
 }
 
@@ -145,7 +172,7 @@ function BottomTabAccountNavigator() {
       />
       <AccountTabs.Screen
         name="Groups"
-        component={GroupsScreen}
+        component={GroupStackNavigator}
         options={() => ({
           title: 'Groups',
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
@@ -214,6 +241,7 @@ function BottomTabAccountNavigator() {
  */
 const BottomTab = createBottomTabNavigator<RootTabParamList>();
 
+//Landing screen navigator
 function BottomTabNavigator() {
   const colorScheme = useColorScheme();
 
@@ -342,6 +370,33 @@ function OccasionInviteTabNavigator() {
         }}
       />
     </OccasionNavigator.Navigator>
+  );
+}
+
+const GroupNavigator = createBottomTabNavigator<RootTabParamList>();
+
+function GroupScreenBottomNavigator() {
+  const colorScheme = useColorScheme();
+  return (
+    <GroupNavigator.Navigator>
+      <GroupNavigator.Screen
+        name="GroupScreen"
+        component={GroupScreen}
+        options={{
+          headerLeft: () => null,
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+
+          tabBarIcon: ({ color }) => (
+            <Ionicons
+              name="home-outline"
+              size={24}
+              style={{ marginBottom: -3 }}
+              color={color}
+            />
+          ),
+        }}
+      />
+    </GroupNavigator.Navigator>
   );
 }
 

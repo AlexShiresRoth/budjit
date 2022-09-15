@@ -21,6 +21,8 @@ export type RootStackParamList = {
   Modal: undefined;
   NotFound: undefined;
   Account: undefined;
+  GroupsScreen: undefined;
+  GroupScreen: { groupId: string };
   Landing: undefined;
   Signin: undefined;
   Signup: undefined;
@@ -59,6 +61,7 @@ export type RootTabParamList = {
   Occasions: undefined;
   BankConnections: undefined;
   Groups: undefined;
+  GroupScreen: undefined | { groupId: string };
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

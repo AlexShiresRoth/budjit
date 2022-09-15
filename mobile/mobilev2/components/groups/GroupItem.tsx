@@ -1,27 +1,41 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { format } from 'date-fns';
 import React from 'react';
 import { Text, TouchableOpacity, View, Image } from 'react-native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
 import useFetchGroupMembers from '../../hooks/useFetchGroupMembers';
+import { RootStackParamList } from '../../types';
 import { GroupType } from '../../types/Groups.types';
 
-//TODO fetch members on separate api call
-const GroupItem = ({ item }: { item: GroupType }) => {
+type Props = {
+  item: GroupType;
+};
+
+type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupScreen'>;
+
+const GroupItem = ({ item, navigation }: Props & Navigation) => {
   const colorScheme = useColorScheme();
 
   const { members } = useFetchGroupMembers({
     groupID: item._id,
   });
 
+  const goToGroupScreen = (id: string) => {
+    console.log('id', id);
+    //Need to handle navigation like this for nested navigators
+    navigation.navigate('GroupScreen', { groupId: id });
+  };
+
   return (
     <TouchableOpacity
       style={{
-        marginVertical: 5,
+        marginVertical: 2,
         width: '100%',
         alignItems: 'center',
         position: 'relative',
       }}
+      onPress={() => goToGroupScreen(item._id)}
     >
       <Image
         source={{

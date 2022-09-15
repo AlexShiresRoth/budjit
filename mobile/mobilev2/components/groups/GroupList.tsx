@@ -1,5 +1,7 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
+import { RootStackParamList } from '../../types';
 import { GroupType } from '../../types/Groups.types';
 import FloatingButton from '../buttons/FloatingButton';
 import EmptyState from '../reusable/EmptyState';
@@ -10,11 +12,21 @@ type GroupListProps = {
   groups: Array<GroupType>;
   isModalVisible: boolean;
   toggleModal: (isModalVisible: boolean) => void;
+  setGroupCreated: (groupCreated: boolean) => void;
 };
 
-const GroupList = ({ groups, isModalVisible, toggleModal }: GroupListProps) => {
+type Navigation = NativeStackScreenProps<RootStackParamList, 'Group'>;
+
+const GroupList = ({
+  groups,
+  isModalVisible,
+  toggleModal,
+  setGroupCreated,
+  navigation,
+  route,
+}: GroupListProps & Navigation) => {
   const renderItem = ({ item }: { item: GroupType }) => {
-    return <GroupItem item={item} />;
+    return <GroupItem item={item} navigation={navigation} route={route} />;
   };
 
   return (
@@ -35,6 +47,7 @@ const GroupList = ({ groups, isModalVisible, toggleModal }: GroupListProps) => {
           <CreateGroupModal
             toggleModal={toggleModal}
             isModalVisible={isModalVisible}
+            setGroupCreated={setGroupCreated}
           />
         }
         buttonText="New Group"

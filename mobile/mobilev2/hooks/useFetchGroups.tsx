@@ -9,13 +9,18 @@ const useFetchGroups = () => {
 
   const dispatch = useAppDispatch();
 
-  const { error, data, loading } = useQuery(FETCH_MY_GROUPS);
+  const { error, data, loading, refetch } = useQuery(FETCH_MY_GROUPS);
 
   useEffect(() => {
     if (data?.fetchGroups?.success) {
       dispatch(fetchMyGroups(data?.fetchGroups?.groups));
     }
   }, [data]);
+
+  //refetch groups if any are removed or aded in db
+  useEffect(() => {
+    refetch();
+  }, [groups.length]);
 
   return { groups, loading, error };
 };
