@@ -10,7 +10,7 @@ import useFetchGroups from '../../../hooks/useFetchGroups';
 import { selectAlert, setAlert } from '../../../redux/reducers/alerts.reducers';
 import { RootStackParamList } from '../../../types';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'Group'>;
+type Props = NativeStackScreenProps<RootStackParamList, 'GroupsScreen'>;
 
 const GroupsScreen = ({ route, navigation }: Props) => {
   const dispatch = useAppDispatch();

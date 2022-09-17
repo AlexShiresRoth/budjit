@@ -76,26 +76,84 @@ function RootNavigator() {
           headerShown: false,
         }}
       />
+      {/* We want this to have it's own tabs */}
+      <Stack.Screen component={GroupStackNavigator} name="GroupsScreen" />
+
       <Stack.Screen
         name="NotFound"
         component={NotFoundScreen}
         options={{ title: 'Oops!' }}
       />
+
       <Stack.Screen component={ProfileScreen} name="Profile" />
+      {/* located in settings screen */}
       <AccountTabs.Screen
         name="BankConnections"
         component={BankConnectionScreen}
       />
-
+      {/* What modal is this? */}
       <Stack.Group screenOptions={{ presentation: 'modal' }}>
         <Stack.Screen name="Modal" component={ModalScreen} />
       </Stack.Group>
     </Stack.Navigator>
   );
 }
-//TODO figure out better nav system, this is WHACK
-const GroupStack = createNativeStackNavigator<RootStackParamList>();
 
+/**
+ * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
+ * https://reactnavigation.org/docs/bottom-tab-navigator
+ */
+const BottomTab = createBottomTabNavigator<RootTabParamList>();
+
+//Landing screen navigator
+//Switches to other tab nav on sign in or up
+function BottomTabNavigator() {
+  const colorScheme = useColorScheme();
+
+  return (
+    <BottomTab.Navigator
+      screenOptions={{
+        tabBarStyle: {
+          height: 60,
+          paddingBottom: 10,
+        },
+        tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+      }}
+    >
+      <BottomTab.Screen
+        name="Landing"
+        component={LandingScreen}
+        options={{ headerShown: false, tabBarItemStyle: { display: 'none' } }}
+      />
+      <BottomTab.Screen
+        name="Signin"
+        component={SigninScreen}
+        options={{
+          title: 'Sign In',
+          tabBarIcon: ({ color }) => (
+            <Feather name="user" color={color} size={24} />
+          ),
+          headerShown: false,
+        }}
+      />
+      <BottomTab.Screen
+        name="Signup"
+        component={SignupScreen}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <Feather name="user-plus" color={color} size={24} />
+          ),
+        }}
+      />
+    </BottomTab.Navigator>
+  );
+}
+
+//TODO figure out better nav system, this is WHACK
+const GroupStack = createBottomTabNavigator<RootStackParamList>();
+
+//issue with header showing under first header
 function GroupStackNavigator() {
   return (
     <GroupStack.Navigator>
@@ -113,12 +171,14 @@ function GroupStackNavigator() {
         options={{
           title: 'Group',
           headerLeft: () => null,
+          headerShown: false,
         }}
       />
     </GroupStack.Navigator>
   );
 }
 
+//Main navigator for authenticated user
 const AccountTabs = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabAccountNavigator() {
@@ -140,7 +200,6 @@ function BottomTabAccountNavigator() {
           gestureEnabled: false,
           headerBackVisible: false,
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-
           tabBarIcon: ({ color }) => (
             <Ionicons
               name="home-outline"
@@ -170,6 +229,7 @@ function BottomTabAccountNavigator() {
           ),
         })}
       />
+      {/* Need to figure out a way to remove this but have it here? So that switching shows groups tab bars instead of tabs */}
       <AccountTabs.Screen
         name="Groups"
         component={GroupStackNavigator}
@@ -232,57 +292,6 @@ function BottomTabAccountNavigator() {
         }}
       />
     </AccountTabs.Navigator>
-  );
-}
-
-/**
- * A bottom tab navigator displays tab buttons on the bottom of the display to switch screens.
- * https://reactnavigation.org/docs/bottom-tab-navigator
- */
-const BottomTab = createBottomTabNavigator<RootTabParamList>();
-
-//Landing screen navigator
-function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
-
-  return (
-    <BottomTab.Navigator
-      initialRouteName="Landing"
-      screenOptions={{
-        tabBarStyle: {
-          height: 60,
-          paddingBottom: 10,
-        },
-        tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-      }}
-    >
-      <BottomTab.Screen
-        name="Landing"
-        component={LandingScreen}
-        options={{ headerShown: false, tabBarItemStyle: { display: 'none' } }}
-      />
-      <BottomTab.Screen
-        name="Signin"
-        component={SigninScreen}
-        options={{
-          title: 'Sign In',
-          tabBarIcon: ({ color }) => (
-            <Feather name="user" color={color} size={24} />
-          ),
-          headerShown: false,
-        }}
-      />
-      <BottomTab.Screen
-        name="Signup"
-        component={SignupScreen}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Feather name="user-plus" color={color} size={24} />
-          ),
-        }}
-      />
-    </BottomTab.Navigator>
   );
 }
 

@@ -11,15 +11,16 @@ type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupScreen'>;
 
 export const Group = ({ route }: Navigation) => {
   const colorScheme = useColorScheme();
-
+  //group id should be passed from the previous screen
   const groupID = route?.params?.groupId ?? '';
-
+  //fetch the group with provided id
   const { error, data, loading } = useQuery(LOAD_GROUP, {
     variables: { input: { groupID } },
   });
 
   console.log('group!', error, data, loading, 'group id', route);
 
+  //TODO create main loading screen. Probably a skeleton screen with dynamic height
   if (loading) {
     return (
       <View>

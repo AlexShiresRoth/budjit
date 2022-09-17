@@ -12,20 +12,19 @@ type Props = {
   item: GroupType;
 };
 
-type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupScreen'>;
+type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupsScreen'>;
 
 const GroupItem = ({ item, navigation }: Props & Navigation) => {
   const colorScheme = useColorScheme();
 
+  //fetch members to show as a preview on the item
   const { members } = useFetchGroupMembers({
     groupID: item._id,
   });
 
-  const goToGroupScreen = (id: string) => {
-    console.log('id', id);
-    //Need to handle navigation like this for nested navigators
+  //navigate to each group's feed
+  const goToGroupScreen = (id: string) =>
     navigation.navigate('GroupScreen', { groupId: id });
-  };
 
   return (
     <TouchableOpacity

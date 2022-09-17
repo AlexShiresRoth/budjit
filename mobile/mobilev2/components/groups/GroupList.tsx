@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import React, { useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import React from 'react';
+import { FlatList, View } from 'react-native';
 import { RootStackParamList } from '../../types';
 import { GroupType } from '../../types/Groups.types';
 import FloatingButton from '../buttons/FloatingButton';
@@ -15,7 +15,7 @@ type GroupListProps = {
   setGroupCreated: (groupCreated: boolean) => void;
 };
 
-type Navigation = NativeStackScreenProps<RootStackParamList, 'Group'>;
+type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupsScreen'>;
 
 const GroupList = ({
   groups,

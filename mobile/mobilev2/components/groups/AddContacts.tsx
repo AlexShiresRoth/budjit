@@ -19,7 +19,6 @@ type Props = {
   selectContact: (contact: any) => void;
 };
 
-//TODO handle remove contact list
 //TODO handle add existing member profile
 
 const AddContacts = ({
