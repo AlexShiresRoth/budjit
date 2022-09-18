@@ -8,6 +8,10 @@ import Skeleton from '../../../components/reusable/Skeleton';
 import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
 import useFetchGroups from '../../../hooks/useFetchGroups';
 import { selectAlert, setAlert } from '../../../redux/reducers/alerts.reducers';
+import {
+  changeCurrentRoute,
+  showBackButton,
+} from '../../../redux/reducers/navigation.reducers';
 import { RootStackParamList } from '../../../types';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'GroupsScreen'>;
@@ -32,6 +36,14 @@ const GroupsScreen = ({ route, navigation }: Props) => {
       dispatch(setAlert({ message: 'Group Created', type: 'success' }));
     }
   }, [groupCreated]);
+
+  useEffect(() => {
+    //reset if back to main group list screen
+    dispatch(changeCurrentRoute({ route: route.name }));
+    //dont show custom back button here
+    dispatch(showBackButton({ show: false }));
+    console.log('groups screen', route.name);
+  }, [route]);
 
   if (loading) {
     return (

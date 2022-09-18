@@ -1,10 +1,4 @@
-import {
-  Feather,
-  FontAwesome,
-  Ionicons,
-  MaterialIcons,
-  SimpleLineIcons,
-} from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
@@ -13,7 +7,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName } from 'react-native';
+import { ColorSchemeName, Text, TouchableOpacity } from 'react-native';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import AccountScreen from '../screens/auth/account/AccountScreen';
@@ -36,6 +30,9 @@ import {
 import LinkingConfiguration from './LinkingConfiguration';
 import GroupsScreen from '../screens/auth/account/GroupsScreen';
 import GroupScreen from '../screens/auth/account/group/GroupScreen';
+import { useAppSelector } from '../hooks/reduxHooks';
+import { selectNavState } from '../redux/reducers/navigation.reducers';
+import HeaderBackButton from '../components/buttons/HeaderBackButton';
 
 export default function Navigation({
   colorScheme,
@@ -76,8 +73,6 @@ function RootNavigator() {
           headerShown: false,
         }}
       />
-      {/* We want this to have it's own tabs */}
-      <Stack.Screen component={GroupStackNavigator} name="GroupsScreen" />
 
       <Stack.Screen
         name="NotFound"
@@ -130,10 +125,11 @@ function BottomTabNavigator() {
         component={SigninScreen}
         options={{
           title: 'Sign In',
-          tabBarIcon: ({ color }) => (
-            <Feather name="user" color={color} size={24} />
-          ),
           headerShown: false,
+          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <ADTabBarIcon name="login" color={color} />
+          ),
         }}
       />
       <BottomTab.Screen
@@ -142,39 +138,11 @@ function BottomTabNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <Feather name="user-plus" color={color} size={24} />
+            <FTabBarIcon name="user-plus" color={color} />
           ),
         }}
       />
     </BottomTab.Navigator>
-  );
-}
-
-//TODO figure out better nav system, this is WHACK
-const GroupStack = createBottomTabNavigator<RootStackParamList>();
-
-//issue with header showing under first header
-function GroupStackNavigator() {
-  return (
-    <GroupStack.Navigator>
-      <GroupStack.Screen
-        name="GroupsScreen"
-        component={GroupsScreen}
-        options={({ navigation }: RootStackScreenProps<'GroupsScreen'>) => ({
-          title: 'My Groups',
-          headerShown: false,
-        })}
-      />
-      <GroupStack.Screen
-        name="GroupScreen"
-        component={GroupScreen}
-        options={{
-          title: 'Group',
-          headerLeft: () => null,
-          headerShown: false,
-        }}
-      />
-    </GroupStack.Navigator>
   );
 }
 
@@ -183,6 +151,9 @@ const AccountTabs = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabAccountNavigator() {
   const colorScheme = useColorScheme();
+
+  const { showBackButton } = useAppSelector(selectNavState);
+
   return (
     <AccountTabs.Navigator
       screenOptions={{
@@ -200,14 +171,6 @@ function BottomTabAccountNavigator() {
           gestureEnabled: false,
           headerBackVisible: false,
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="home-outline"
-              size={24}
-              style={{ marginBottom: -3 }}
-              color={color}
-            />
-          ),
         })}
       />
       <AccountTabs.Screen
@@ -219,31 +182,33 @@ function BottomTabAccountNavigator() {
           title: 'Invites',
           headerShown: false,
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-          tabBarIcon: ({ color }) => (
-            <SimpleLineIcons
-              name="envelope-letter"
-              color={color}
-              size={24}
-              style={{ marginBottom: -3 }}
-            />
-          ),
         })}
       />
-      {/* Need to figure out a way to remove this but have it here? So that switching shows groups tab bars instead of tabs */}
       <AccountTabs.Screen
-        name="Groups"
-        component={GroupStackNavigator}
+        name="GroupsScreen"
+        component={GroupsScreen}
         options={() => ({
           title: 'Groups',
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-          tabBarIcon: ({ color }) => (
-            <Feather
-              name="users"
-              color={color}
-              size={24}
-              style={{ marginBottom: -3 }}
-            />
-          ),
+        })}
+      />
+
+      <AccountTabs.Screen
+        name="GroupScreen"
+        component={GroupScreen}
+        options={({ navigation }) => ({
+          title: 'Group',
+          tabBarItemStyle: { display: 'none' },
+          headerRight: () => {
+            console.log('navigation: ', navigation);
+            return showBackButton ? (
+              <HeaderBackButton
+                navFunction={() =>
+                  navigation.getParent().navigate('GroupsScreen')
+                }
+              />
+            ) : null;
+          },
         })}
       />
       <AccountTabs.Screen
@@ -252,14 +217,6 @@ function BottomTabAccountNavigator() {
         options={() => ({
           title: 'Occasions',
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons
-              name="event"
-              color={color}
-              size={24}
-              style={{ marginBottom: -3 }}
-            />
-          ),
         })}
       />
 
@@ -281,14 +238,6 @@ function BottomTabAccountNavigator() {
         component={SettingsScreen}
         options={{
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="settings-outline"
-              color={color}
-              size={24}
-              style={{ marginBottom: -3 }}
-            />
-          ),
         }}
       />
     </AccountTabs.Navigator>
@@ -318,7 +267,6 @@ function InviteTabNavigator() {
         options={{
           headerShown: false,
           tabBarLabel: 'Sent',
-          tabBarIcon: ({ color }) => <TabBarIcon name="send" color={color} />,
         }}
       />
       <InviteBottomTab.Screen
@@ -327,9 +275,6 @@ function InviteTabNavigator() {
         options={{
           headerShown: false,
           tabBarLabel: 'Received',
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="mail-reply" color={color} />
-          ),
         }}
       />
     </InviteBottomTab.Navigator>
@@ -362,7 +307,6 @@ function OccasionInviteTabNavigator() {
         options={{
           headerShown: false,
           tabBarLabel: 'Sent',
-          tabBarIcon: ({ color }) => <TabBarIcon name="send" color={color} />,
           title: 'OccasionInvites',
         }}
       />
@@ -372,9 +316,7 @@ function OccasionInviteTabNavigator() {
         options={{
           headerShown: false,
           tabBarLabel: 'Received',
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name="mail-reply" color={color} />
-          ),
+
           title: 'OccasionInvites',
         }}
       />
@@ -382,39 +324,26 @@ function OccasionInviteTabNavigator() {
   );
 }
 
-const GroupNavigator = createBottomTabNavigator<RootTabParamList>();
-
-function GroupScreenBottomNavigator() {
-  const colorScheme = useColorScheme();
-  return (
-    <GroupNavigator.Navigator>
-      <GroupNavigator.Screen
-        name="GroupScreen"
-        component={GroupScreen}
-        options={{
-          headerLeft: () => null,
-          tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
-
-          tabBarIcon: ({ color }) => (
-            <Ionicons
-              name="home-outline"
-              size={24}
-              style={{ marginBottom: -3 }}
-              color={color}
-            />
-          ),
-        }}
-      />
-    </GroupNavigator.Navigator>
-  );
-}
-
 /**
  * You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
  */
-function TabBarIcon(props: {
+function FATabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>['name'];
   color: string;
 }) {
   return <FontAwesome size={24} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function ADTabBarIcon(props: {
+  name: React.ComponentProps<typeof AntDesign>['name'];
+  color: string;
+}) {
+  return <AntDesign size={24} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function FTabBarIcon(props: {
+  name: React.ComponentProps<typeof Feather>['name'];
+  color: string;
+}) {
+  return <Feather size={24} style={{ marginBottom: -3 }} {...props} />;
 }

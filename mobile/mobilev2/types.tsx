@@ -22,7 +22,6 @@ export type RootStackParamList = {
   NotFound: undefined;
   Account: undefined;
   GroupsScreen: undefined;
-  GroupScreen: { groupId: string };
   Landing: undefined;
   Signin: undefined;
   Signup: undefined;
@@ -60,7 +59,7 @@ export type RootTabParamList = {
   Settings: undefined;
   Occasions: undefined;
   BankConnections: undefined;
-  Groups: undefined;
+  GroupsScreen: undefined;
   GroupScreen: undefined | { groupId: string };
 };
 

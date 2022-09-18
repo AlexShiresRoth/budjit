@@ -1,13 +1,14 @@
 import { Image, Text, TouchableOpacity, View } from 'react-native';
 import React from 'react';
-import { RootStackParamList } from '../../../types';
+import { RootStackParamList, RootTabParamList } from '../../../types';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useQuery } from '@apollo/client';
 import { LOAD_GROUP } from '../../../graphql/queries/group.query';
 import Colors from '../../../constants/Colors';
 import useColorScheme from '../../../hooks/useColorScheme';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
-type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupScreen'>;
+type Navigation = BottomTabScreenProps<RootTabParamList, 'GroupScreen'>;
 
 export const Group = ({ route }: Navigation) => {
   const colorScheme = useColorScheme();

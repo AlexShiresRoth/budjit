@@ -3,6 +3,7 @@ import accountsReducers from './reducers/accounts.reducers';
 import profilesReducers from './reducers/profiles.reducers';
 import alertsReducers from './reducers/alerts.reducers';
 import groupsReducers from './reducers/groups.reducers';
+import navigationReducers from './reducers/navigation.reducers';
 
 export const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ export const store = configureStore({
     profiles: profilesReducers,
     alerts: alertsReducers,
     groups: groupsReducers,
+    navigation: navigationReducers,
   },
 });
 
