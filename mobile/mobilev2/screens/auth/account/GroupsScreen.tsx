@@ -1,3 +1,4 @@
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
@@ -12,9 +13,9 @@ import {
   changeCurrentRoute,
   showBackButton,
 } from '../../../redux/reducers/navigation.reducers';
-import { RootStackParamList } from '../../../types';
+import { RootTabParamList } from '../../../types';
 
-type Props = NativeStackScreenProps<RootStackParamList, 'GroupsScreen'>;
+type Props = BottomTabScreenProps<RootTabParamList, 'GroupsScreen'>;
 
 const GroupsScreen = ({ route, navigation }: Props) => {
   const dispatch = useAppDispatch();

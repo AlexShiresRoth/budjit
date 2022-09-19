@@ -1,3 +1,4 @@
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { format } from 'date-fns';
 import React from 'react';
@@ -5,14 +6,17 @@ import { Text, TouchableOpacity, View, Image } from 'react-native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
 import useFetchGroupMembers from '../../hooks/useFetchGroupMembers';
-import { RootStackParamList } from '../../types';
+import { GroupStackParamList } from '../../types';
 import { GroupType } from '../../types/Groups.types';
 
 type Props = {
   item: GroupType;
 };
 
-type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupsScreen'>;
+type Navigation = NativeStackScreenProps<
+  GroupStackParamList,
+  'GroupScreenNavigator'
+>;
 
 const GroupItem = ({ item, navigation }: Props & Navigation) => {
   const colorScheme = useColorScheme();
@@ -22,9 +26,13 @@ const GroupItem = ({ item, navigation }: Props & Navigation) => {
     groupID: item._id,
   });
 
+  console.log('NAVIGATION', navigation);
   //navigate to each group's feed
   const goToGroupScreen = (id: string) =>
-    navigation.navigate('GroupScreen', { groupId: id });
+    navigation.navigate('GroupScreenNavigator', {
+      screen: 'GroupScreen',
+      params: { groupId: id },
+    });
 
   return (
     <TouchableOpacity

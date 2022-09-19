@@ -1,7 +1,8 @@
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { FlatList, View } from 'react-native';
-import { RootStackParamList } from '../../types';
+import { GroupStackParamList, RootTabParamList } from '../../types';
 import { GroupType } from '../../types/Groups.types';
 import FloatingButton from '../buttons/FloatingButton';
 import EmptyState from '../reusable/EmptyState';
@@ -15,7 +16,9 @@ type GroupListProps = {
   setGroupCreated: (groupCreated: boolean) => void;
 };
 
-type Navigation = NativeStackScreenProps<RootStackParamList, 'GroupsScreen'>;
+type Navigation = BottomTabScreenProps<RootTabParamList, 'GroupsScreen'> &
+  NativeStackScreenProps<GroupStackParamList, 'GroupScreen'> &
+  NativeStackScreenProps<GroupStackParamList, 'GroupScreenNavigator'>;
 
 const GroupList = ({
   groups,

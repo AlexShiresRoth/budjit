@@ -36,6 +36,17 @@ export type RootStackParamList = {
   BankConnections: undefined;
 };
 
+export type GroupStackParamList = {
+  GroupScreenNavigator:
+    | undefined
+    | ({ screen: any } & { params: { groupId: string } });
+  GroupScreen: undefined | { groupId: string };
+  GroupMembersScreen: undefined | { groupId: string };
+  GroupSettingsScreen: undefined | { groupId: string };
+  GroupInvitesScreen: undefined | { groupId: string };
+  GroupOccasionsScreen: undefined | { groupId: string };
+};
+
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
@@ -59,8 +70,9 @@ export type RootTabParamList = {
   Settings: undefined;
   Occasions: undefined;
   BankConnections: undefined;
-  GroupsScreen: undefined;
+  GroupsScreen: undefined | { groupId: string };
   GroupScreen: undefined | { groupId: string };
+  GroupScreenNavigator: undefined | { groupId: string };
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

@@ -1,4 +1,4 @@
-import { AntDesign, Feather, FontAwesome } from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome, Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {
   NavigationContainer,
@@ -7,7 +7,7 @@ import {
 } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { ColorSchemeName, Text, TouchableOpacity } from 'react-native';
+import { ColorSchemeName } from 'react-native';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import AccountScreen from '../screens/auth/account/AccountScreen';
@@ -23,6 +23,7 @@ import LandingScreen from '../screens/LandingScreen';
 import ModalScreen from '../screens/ModalScreen';
 import NotFoundScreen from '../screens/NotFoundScreen';
 import {
+  GroupStackParamList,
   RootStackParamList,
   RootStackScreenProps,
   RootTabParamList,
@@ -33,6 +34,10 @@ import GroupScreen from '../screens/auth/account/group/GroupScreen';
 import { useAppSelector } from '../hooks/reduxHooks';
 import { selectNavState } from '../redux/reducers/navigation.reducers';
 import HeaderBackButton from '../components/buttons/HeaderBackButton';
+import GroupMembersScreen from '../screens/auth/account/group/GroupMembersScreen';
+import GroupInvitesScreen from '../screens/auth/account/group/GroupInvitesScreen';
+import GroupSettingsScreen from '../screens/auth/account/group/GroupSettingsScreen';
+import GroupOccasionsScreen from '../screens/auth/account/group/GroupOccasionsScreen';
 
 export default function Navigation({
   colorScheme,
@@ -146,13 +151,60 @@ function BottomTabNavigator() {
   );
 }
 
+//Navigator for singlegroup screen
+const GroupStack = createNativeStackNavigator<GroupStackParamList>();
+
+function GroupStackNavigator() {
+  return (
+    <GroupStack.Navigator>
+      <GroupStack.Screen
+        name="GroupScreen"
+        component={GroupScreen}
+        options={({ navigation }) => ({
+          title: 'Group',
+          headerShown: false,
+          tabBarItemStyle: { display: 'none' },
+        })}
+      />
+      <GroupStack.Screen
+        name="GroupMembersScreen"
+        component={GroupMembersScreen}
+        options={({ navigation }) => ({
+          title: 'Group Members',
+        })}
+      />
+      <GroupStack.Screen
+        name="GroupInvitesScreen"
+        component={GroupInvitesScreen}
+        options={({ navigation }) => ({
+          title: 'Group Invites',
+        })}
+      />
+      <GroupStack.Screen
+        name="GroupSettingsScreen"
+        component={GroupSettingsScreen}
+        options={({ navigation }) => ({
+          title: 'Group Settings',
+        })}
+      />
+      <GroupStack.Screen
+        name="GroupOccasionsScreen"
+        component={GroupOccasionsScreen}
+        options={({ navigation }) => ({
+          title: 'Group Occasions',
+        })}
+      />
+    </GroupStack.Navigator>
+  );
+}
+
 //Main navigator for authenticated user
 const AccountTabs = createBottomTabNavigator<RootTabParamList>();
 
 function BottomTabAccountNavigator() {
   const colorScheme = useColorScheme();
 
-  const { showBackButton } = useAppSelector(selectNavState);
+  const { showBackButton, showHeader } = useAppSelector(selectNavState);
 
   return (
     <AccountTabs.Navigator
@@ -171,6 +223,9 @@ function BottomTabAccountNavigator() {
           gestureEnabled: false,
           headerBackVisible: false,
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <ITabBarIcon name="home-outline" color={color} />
+          ),
         })}
       />
       <AccountTabs.Screen
@@ -182,6 +237,7 @@ function BottomTabAccountNavigator() {
           title: 'Invites',
           headerShown: false,
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => <ADTabBarIcon name="mail" color={color} />,
         })}
       />
       <AccountTabs.Screen
@@ -190,17 +246,20 @@ function BottomTabAccountNavigator() {
         options={() => ({
           title: 'Groups',
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <ITabBarIcon name="people-outline" color={color} />
+          ),
         })}
       />
 
       <AccountTabs.Screen
-        name="GroupScreen"
-        component={GroupScreen}
+        name="GroupScreenNavigator"
+        component={GroupStackNavigator}
         options={({ navigation }) => ({
           title: 'Group',
+          headerShown: showHeader,
           tabBarItemStyle: { display: 'none' },
           headerRight: () => {
-            console.log('navigation: ', navigation);
             return showBackButton ? (
               <HeaderBackButton
                 navFunction={() =>
@@ -217,6 +276,9 @@ function BottomTabAccountNavigator() {
         options={() => ({
           title: 'Occasions',
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <ADTabBarIcon name="calendar" color={color} />
+          ),
         })}
       />
 
@@ -238,6 +300,9 @@ function BottomTabAccountNavigator() {
         component={SettingsScreen}
         options={{
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
+          tabBarIcon: ({ color }) => (
+            <ITabBarIcon name="settings-outline" color={color} />
+          ),
         }}
       />
     </AccountTabs.Navigator>
@@ -346,4 +411,11 @@ function FTabBarIcon(props: {
   color: string;
 }) {
   return <Feather size={24} style={{ marginBottom: -3 }} {...props} />;
+}
+
+function ITabBarIcon(props: {
+  name: React.ComponentProps<typeof Ionicons>['name'];
+  color: string;
+}) {
+  return <Ionicons size={24} style={{ marginBottom: -3 }} {...props} />;
 }

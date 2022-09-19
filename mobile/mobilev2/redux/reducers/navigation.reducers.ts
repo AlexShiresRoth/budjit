@@ -4,11 +4,13 @@ import { RootState } from '../store';
 type InitialState = {
   currentRoute: string;
   showBackButton: boolean;
+  showHeader: boolean;
 };
 
 const initialState: InitialState = {
   currentRoute: 'Home',
   showBackButton: false,
+  showHeader: true,
 };
 
 const navigationSlice = createSlice({
@@ -21,10 +23,14 @@ const navigationSlice = createSlice({
     showBackButton: (state, action: PayloadAction<{ show: boolean }>) => {
       state.showBackButton = action.payload.show;
     },
+    showHeader: (state, action: PayloadAction<{ show: boolean }>) => {
+      state.showHeader = action.payload.show;
+    },
   },
 });
 
-export const { changeCurrentRoute, showBackButton } = navigationSlice.actions;
+export const { changeCurrentRoute, showBackButton, showHeader } =
+  navigationSlice.actions;
 
 export const selectNavState = (state: RootState) => state.navigation;
 
