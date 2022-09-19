@@ -8,6 +8,7 @@ export const LOAD_GROUP = gql`
       Group {
         name
         backgroundImage
+        _id
       }
     }
   }

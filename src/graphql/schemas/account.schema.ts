@@ -12,7 +12,7 @@ export class PlaidAccountTypeDef {
 
 @ObjectType()
 export class AccountTypeDef {
-  @Field(() => String)
+  @Field()
   _id: string;
   @Field()
   name: string;

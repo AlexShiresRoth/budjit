@@ -26,3 +26,12 @@ export const CREATE_GROUP = gql`
     }
   }
 `;
+
+export const DELETE_GROUP = gql`
+  mutation deleteGroup($input: DeleteGroupInput!) {
+    deleteGroup(input: $input) {
+      message
+      success
+    }
+  }
+`;

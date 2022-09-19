@@ -53,3 +53,11 @@ export class FetchGroupMemberAccountsResponse {
   @Field(() => [AccountAndProfile])
   accounts: AccountAndProfile[];
 }
+
+@ObjectType()
+export class DeleteGroupResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+}

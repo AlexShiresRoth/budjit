@@ -223,6 +223,11 @@ type FetchGroupMemberAccountsResponse {
   accounts: [AccountAndProfile!]!
 }
 
+type DeleteGroupResponse {
+  message: String!
+  success: Boolean!
+}
+
 type FindProfileByEmailResponse {
   message: String!
   success: Boolean!
@@ -333,6 +338,7 @@ type Mutation {
   deleteTransaction(input: DeleteTransactionInput!): DeleteTransactionResponse!
   createGroup(input: CreateGroupInput!): CreateGroupResponse!
   changeGroupBackgroundImage(input: FetchGroupMembersInput!): CreateGroupResponse!
+  deleteGroup(input: DeleteGroupInput!): DeleteGroupResponse!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
@@ -424,6 +430,11 @@ input CreateGroupInput {
 input Contact {
   name: String!
   phone: String!
+}
+
+input DeleteGroupInput {
+  groupID: String!
+  creatorID: String
 }
 
 input ContributeToBudgetInput {

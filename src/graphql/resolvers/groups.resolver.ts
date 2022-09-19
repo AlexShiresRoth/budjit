@@ -4,11 +4,13 @@ import { CurrentAccount, GraphqlAuthGuard } from 'src/auth/auth.guard';
 import { GroupService } from 'src/services/group.service';
 import {
   CreateGroupInput,
+  DeleteGroupInput,
   FetchGroupMembersInput,
   LoadGroupInput,
 } from '../inputs/group.input';
 import {
   CreateGroupResponse,
+  DeleteGroupResponse,
   FetchGroupMemberAccountsResponse,
   FetchGroupsResponse,
   LoadGroupResponse,
@@ -53,5 +55,17 @@ export class GroupResolver {
     @Args('input') input: FetchGroupMembersInput,
   ) {
     return await this.groupService.changeBackgroundImage(input.groupID);
+  }
+
+  @Mutation(() => DeleteGroupResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async deleteGroup(
+    @Args('input') input: DeleteGroupInput,
+    @CurrentAccount() user,
+  ) {
+    return await this.groupService.deleteGroupById({
+      groupID: input.groupID,
+      creatorID: user.account.id,
+    });
   }
 }

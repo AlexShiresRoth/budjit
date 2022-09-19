@@ -48,6 +48,7 @@ import {
 } from 'plaid';
 import { SpendingService } from './spending.service';
 import { Transaction } from 'src/mongo-schemas/transaction.model';
+import { Group } from 'src/mongo-schemas/group.model';
 
 @Injectable()
 export class AccountsService {
@@ -584,6 +585,41 @@ export class AccountsService {
       console.error(error);
       return {
         message: 'Could not remove transaction from account',
+        success: false,
+      };
+    }
+  }
+
+  async removeGroupFromAccount({
+    userID,
+    groupID,
+  }: {
+    userID: string;
+    groupID: string;
+  }): Promise<{ message: string; success: boolean }> {
+    try {
+      //find the user
+      const foundAccount = await this.accountModel.findById(userID);
+
+      if (!foundAccount) throw new Error('Could not locate account');
+      //find the group in the user's groups
+      const filteredGroups = foundAccount?.groups?.filter(
+        (group: Group & { _id: mongoose.Types.ObjectId }) =>
+          group._id.toString() !== groupID.toString(),
+      );
+      //remove the group from the user's groups
+      foundAccount.groups = filteredGroups;
+      //save the user account without that group
+      await foundAccount.save();
+
+      return {
+        message: 'Removed group from account',
+        success: true,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: 'Could not remove group from account',
         success: false,
       };
     }

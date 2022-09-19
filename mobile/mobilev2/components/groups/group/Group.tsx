@@ -11,20 +11,22 @@ import { useQuery } from '@apollo/client';
 import { LOAD_GROUP } from '../../../graphql/queries/group.query';
 import Colors from '../../../constants/Colors';
 import useColorScheme from '../../../hooks/useColorScheme';
+import { FontAwesome } from '@expo/vector-icons';
 
 type Navigation = NativeStackScreenProps<GroupStackParamList, 'GroupScreen'>;
 
 type ScreenItemsType = Array<{
   displayText: string;
   screenName: string;
-  iconName: string;
+  iconName: 'calendar' | 'group' | 'envelope' | 'gear' | 'dollar';
 }>;
 
 type AvailableScreens =
   | 'GroupOccasionsScreen'
   | 'GroupMembersScreen'
   | 'GroupSettingsScreen'
-  | 'GroupInvitesScreen';
+  | 'GroupInvitesScreen'
+  | 'GroupTransactionsScreen';
 
 export const Group = ({ route, navigation }: Navigation) => {
   const colorScheme = useColorScheme();
@@ -43,6 +45,11 @@ export const Group = ({ route, navigation }: Navigation) => {
   //easier to maintain the screens in an array
   const ITEMS_DATA: ScreenItemsType = [
     {
+      displayText: 'Transactions',
+      screenName: 'GroupTransactionsScreen',
+      iconName: 'dollar',
+    },
+    {
       displayText: 'Occassions',
       screenName: 'GroupOccasionsScreen',
       iconName: 'calendar',
@@ -50,17 +57,17 @@ export const Group = ({ route, navigation }: Navigation) => {
     {
       displayText: 'Members',
       screenName: 'GroupMembersScreen',
-      iconName: 'people',
+      iconName: 'group',
     },
     {
       displayText: 'Invites',
       screenName: 'GroupInvitesScreen',
-      iconName: 'people',
+      iconName: 'envelope',
     },
     {
       displayText: 'Settings',
       screenName: 'GroupSettingsScreen',
-      iconName: 'people',
+      iconName: 'gear',
     },
   ];
 
@@ -120,25 +127,37 @@ export const Group = ({ route, navigation }: Navigation) => {
         style={{
           paddingTop: 5,
           paddingBottom: 5,
-          borderBottomWidth: 1,
-          borderBottomColor: Colors[colorScheme].accountBg,
         }}
         data={ITEMS_DATA}
         keyExtractor={(item) => item.screenName}
+        ItemSeparatorComponent={() => (
+          <View
+            style={{
+              height: 1,
+              backgroundColor: Colors[colorScheme].accountBg,
+            }}
+          />
+        )}
         renderItem={({ item }) => {
           return (
             <TouchableOpacity
               style={{
-                margin: 5,
                 padding: 20,
-                borderRadius: 5,
                 backgroundColor: Colors[colorScheme].background,
+                flexDirection: 'row',
+                alignItems: 'center',
               }}
               onPress={() =>
                 handleNavigation(item.screenName as AvailableScreens)
               }
             >
-              <Text>{item.displayText}</Text>
+              <FontAwesome
+                name={item.iconName}
+                color={Colors[colorScheme].tint}
+                style={{ marginRight: 10 }}
+                size={16}
+              />
+              <Text style={{ fontSize: 16 }}>{item.displayText}</Text>
             </TouchableOpacity>
           );
         }}

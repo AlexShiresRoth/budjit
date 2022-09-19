@@ -26,7 +26,6 @@ const GroupItem = ({ item, navigation }: Props & Navigation) => {
     groupID: item._id,
   });
 
-  console.log('NAVIGATION', navigation);
   //navigate to each group's feed
   const goToGroupScreen = (id: string) =>
     navigation.navigate('GroupScreenNavigator', {

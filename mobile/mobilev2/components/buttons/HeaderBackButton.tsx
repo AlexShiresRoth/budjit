@@ -14,7 +14,7 @@ const HeaderBackButton = ({ navFunction }: Nav) => {
     <TouchableOpacity
       onPress={navFunction}
       style={{
-        marginRight: 20,
+        marginRight: 0,
         backgroundColor: Colors[colorScheme].accountBg,
         padding: 5,
         borderRadius: 5,

@@ -1,11 +1,20 @@
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { SafeAreaView, Text, View } from 'react-native';
+import GroupSettings from '../../../../components/groups/group/group-settings/GroupSettings';
+import { GroupStackParamList } from '../../../../types';
 
-const GroupSettingsScreen = () => {
+type NavType = NativeStackScreenProps<
+  GroupStackParamList,
+  'GroupSettingsScreen'
+>;
+
+const GroupSettingsScreen = ({ navigation, route }: NavType) => {
   return (
-    <View>
-      <Text>Group Settings</Text>
-    </View>
+    <SafeAreaView style={{ flex: 1 }}>
+      <GroupSettings navigation={navigation} route={route} />
+    </SafeAreaView>
   );
 };
 

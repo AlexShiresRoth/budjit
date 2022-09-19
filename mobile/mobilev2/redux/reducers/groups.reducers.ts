@@ -21,10 +21,16 @@ export const groupSlice = createSlice({
     addNewGroupToState: (state, action: PayloadAction<GroupType>) => {
       state.groups.push(action.payload);
     },
+    removeGroupFromState: (state, action: PayloadAction<string>) => {
+      state.groups = state.groups.filter(
+        (group) => group._id !== action.payload,
+      );
+    },
   },
 });
 
-export const { fetchMyGroups, addNewGroupToState } = groupSlice.actions;
+export const { fetchMyGroups, addNewGroupToState, removeGroupFromState } =
+  groupSlice.actions;
 
 export const selectGroups = (state: RootState) => state.groups;
 

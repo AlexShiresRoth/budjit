@@ -22,8 +22,8 @@ export class Contact {
 
 @InputType()
 export class Member {
-  @Field(() => Account)
-  account: Account;
+  @Field()
+  _id: string;
 }
 
 @InputType()
@@ -48,4 +48,12 @@ export class LoadGroupInput {
 export class FetchGroupMembersInput {
   @Field()
   groupID: string;
+}
+
+@InputType()
+export class DeleteGroupInput {
+  @Field()
+  groupID: string;
+  @Field({ nullable: true })
+  creatorID: string;
 }

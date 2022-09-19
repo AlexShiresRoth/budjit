@@ -45,6 +45,7 @@ export type GroupStackParamList = {
   GroupSettingsScreen: undefined | { groupId: string };
   GroupInvitesScreen: undefined | { groupId: string };
   GroupOccasionsScreen: undefined | { groupId: string };
+  GroupTransactionsScreen: undefined | { groupId: string };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

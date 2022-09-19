@@ -15,10 +15,12 @@ import { AddMembersDTO } from 'src/graphql/dto/group.dto';
 import {
   AddInviteToGroupInput,
   CreateGroupInput,
+  DeleteGroupInput,
   FetchGroupMembersInput,
 } from 'src/graphql/inputs/group.input';
 import {
   CreateGroupResponse,
+  DeleteGroupResponse,
   FetchGroupMemberAccountsResponse,
   FetchGroupsResponse,
   LoadGroupResponse,
@@ -315,6 +317,46 @@ export class GroupService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+
+  //remove group from db and user's account
+  async deleteGroupById(input: DeleteGroupInput): Promise<DeleteGroupResponse> {
+    try {
+      const { groupID, creatorID } = input;
+
+      const foundGroup = await this.groupModel.findById(groupID);
+
+      if (!foundGroup) throw new Error('Could not locate group');
+
+      if (foundGroup.creator._id.toString() !== creatorID)
+        throw new Error('You are not authorized to do this');
+
+      await foundGroup.remove();
+
+      //creator is a member so no need to add into this
+      if (foundGroup?.members?.length > 0) {
+        //remove from the account of all members?
+        await Promise.all(
+          foundGroup.members.map(async (member) => {
+            return await this.accountService.removeGroupFromAccount({
+              groupID: groupID,
+              userID: member._id,
+            });
+          }),
+        );
+      }
+
+      return {
+        message: 'Deleted group',
+        success: true,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error,
+        success: false,
+      };
     }
   }
 }
