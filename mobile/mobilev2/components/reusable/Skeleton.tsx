@@ -16,6 +16,7 @@ const Skeleton = ({ verticalBars }: Props) => {
       Animated.timing(fadeAnim, {
         toValue: 1,
         duration: 1500,
+
         useNativeDriver: true,
         easing: Easing.inOut(Easing.ease),
       }),
@@ -25,7 +26,6 @@ const Skeleton = ({ verticalBars }: Props) => {
   return (
     <View
       style={{
-        minHeight: 200,
         width: '100%',
         display: 'flex',
         alignItems: 'center',
@@ -33,31 +33,20 @@ const Skeleton = ({ verticalBars }: Props) => {
         paddingBottom: 5,
       }}
     >
-      <Animated.View
-        style={{
-          opacity: fadeAnim,
-          height: 200,
-          width: '90%',
-          backgroundColor: Colors[colorScheme].secondary,
-          borderRadius: 5,
-          display: 'flex',
-          padding: 10,
-        }}
-      >
-        {Array.from({ length: verticalBars }).map((_, i) => (
-          <View
-            style={{
-              backgroundColor: Colors[colorScheme].tint + '70',
-              width: '100%',
-              height: 74 / verticalBars + '%',
-              borderRadius: 5,
-              marginTop: 6,
-              marginBottom: 6,
-            }}
-            key={i}
-          />
-        ))}
-      </Animated.View>
+      {Array.from({ length: verticalBars }).map((_, i) => (
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            height: 140,
+            width: '100%',
+            backgroundColor: Colors[colorScheme].accountBg,
+            borderRadius: 10,
+            display: 'flex',
+            padding: 10,
+          }}
+          key={i}
+        ></Animated.View>
+      ))}
     </View>
   );
 };

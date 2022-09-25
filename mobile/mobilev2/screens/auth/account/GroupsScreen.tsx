@@ -43,7 +43,6 @@ const GroupsScreen = ({ route, navigation }: Props) => {
     dispatch(changeCurrentRoute({ route: route.name }));
     //dont show custom back button here
     dispatch(showBackButton({ show: false }));
-    console.log('groups screen', route.name);
   }, [route]);
 
   if (loading) {
