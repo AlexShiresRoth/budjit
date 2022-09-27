@@ -17,6 +17,7 @@ import {
   CreateGroupInput,
   DeleteGroupInput,
   FetchGroupMembersInput,
+  UpdateGroupInput,
 } from 'src/graphql/inputs/group.input';
 import {
   CreateGroupResponse,
@@ -24,11 +25,13 @@ import {
   FetchGroupMemberAccountsResponse,
   FetchGroupsResponse,
   LoadGroupResponse,
+  UpdateGroupResponse,
 } from 'src/graphql/responses/group.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { ProfileService } from './profile.service';
 import { Account } from 'src/mongo-schemas/account.model';
 import { ExternalInviteService } from './externalInvite.service';
+import { UpdateService } from './update.service';
 
 @Injectable()
 export class GroupService {
@@ -42,6 +45,8 @@ export class GroupService {
     private readonly inviteService: InviteService,
     @Inject(forwardRef(() => ExternalInviteService))
     private readonly externalInviteService: ExternalInviteService,
+    @Inject(forwardRef(() => UpdateService))
+    private readonly updateService: UpdateService,
     @Inject('UNSPLASH') private readonly unsplash,
   ) {}
 
@@ -320,6 +325,57 @@ export class GroupService {
     }
   }
 
+  //update only allows for groupname or image changes
+  async updateGroup(
+    input: UpdateGroupInput,
+    user: AuthPayload,
+  ): Promise<UpdateGroupResponse> {
+    try {
+      const { groupID, image, groupName } = input;
+
+      const foundGroup = await this.groupModel.findById(groupID);
+
+      if (!foundGroup) throw new Error('Could not locate group');
+
+      //check if user attempting an update is a group member
+      const isMember = foundGroup.members.find(
+        (member) => member._id.toString() === user.account.id,
+      );
+
+      if (!isMember) throw new Error('You are not a member of this group');
+
+      if (image) foundGroup.backgroundImage = image;
+
+      if (groupName) foundGroup.name = groupName;
+
+      //create an update object to keep track of who updates what in a group
+      const update = await this.updateService.createUpdate({
+        userRef: user.account.id,
+        groupRef: foundGroup,
+        updateDetails: image ? 'Changed group image' : 'Changed group name',
+      });
+
+      if (!update.success) throw new Error('Could not create update');
+
+      //add the update to the group
+      foundGroup.updates.push(update.update);
+
+      await foundGroup.save();
+
+      return {
+        message: 'Updated group',
+        success: true,
+        Group: foundGroup,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error,
+        success: false,
+        Group: null,
+      };
+    }
+  }
   //remove group from db and user's account
   async deleteGroupById(input: DeleteGroupInput): Promise<DeleteGroupResponse> {
     try {

@@ -6,6 +6,7 @@ import { AccountsService } from 'src/services/account.service';
 import {
   CreateAccountInput,
   ExchangePublicTokenInput,
+  FetchAccountProfileInput,
   GetPlaidInstitutionInput,
   GetPlaidTransactionsInput,
   LoadPlaidAccountDataInput,
@@ -13,6 +14,7 @@ import {
 } from '../inputs/accounts.input';
 import {
   CreateAccountResponse,
+  FetchAccountProfileResponse,
   GetPlaidInstitutionResponse,
   GetPlaidTransactionsResponse,
   LoadPlaidAccountDataResponse,
@@ -31,6 +33,12 @@ export class AccountsResolver {
   @UseGuards(GraphqlAuthGuard)
   async account(@Args('id') id: string, @CurrentAccount() user: AuthPayload) {
     return await this.accountsService.findOneById(user.account.id);
+  }
+
+  @Query(() => FetchAccountProfileResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async fetchAccountProfile(@Args('input') input: FetchAccountProfileInput) {
+    return this.accountsService.fetchAccountProfile(input);
   }
 
   @Query(() => AccountTypeDef)

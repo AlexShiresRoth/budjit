@@ -1,12 +1,14 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CurrentAccount, GraphqlAuthGuard } from 'src/auth/auth.guard';
+import { AuthPayload } from 'src/interfaces/auth.interface';
 import { GroupService } from 'src/services/group.service';
 import {
   CreateGroupInput,
   DeleteGroupInput,
   FetchGroupMembersInput,
   LoadGroupInput,
+  UpdateGroupInput,
 } from '../inputs/group.input';
 import {
   CreateGroupResponse,
@@ -14,6 +16,7 @@ import {
   FetchGroupMemberAccountsResponse,
   FetchGroupsResponse,
   LoadGroupResponse,
+  UpdateGroupResponse,
 } from '../responses/group.response';
 
 @Resolver()
@@ -41,7 +44,7 @@ export class GroupResolver {
   @UseGuards(GraphqlAuthGuard)
   async createGroup(
     @Args('input') input: CreateGroupInput,
-    @CurrentAccount() user,
+    @CurrentAccount() user: AuthPayload,
   ) {
     return await this.groupService.create({
       ...input,
@@ -61,11 +64,20 @@ export class GroupResolver {
   @UseGuards(GraphqlAuthGuard)
   async deleteGroup(
     @Args('input') input: DeleteGroupInput,
-    @CurrentAccount() user,
+    @CurrentAccount() user: AuthPayload,
   ) {
     return await this.groupService.deleteGroupById({
       groupID: input.groupID,
       creatorID: user.account.id,
     });
+  }
+
+  @Mutation(() => UpdateGroupResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async updateGroup(
+    @Args('input') input: UpdateGroupInput,
+    @CurrentAccount() user: AuthPayload,
+  ) {
+    return await this.groupService.updateGroup(input, user);
   }
 }

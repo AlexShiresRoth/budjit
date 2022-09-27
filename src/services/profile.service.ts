@@ -44,6 +44,19 @@ export class ProfileService {
       return error;
     }
   }
+
+  async fetchProfile(id: string): Promise<Profile> {
+    try {
+      const foundProfile = await this.profileModel.findById(id);
+
+      if (!foundProfile) throw new Error('Could not locate a profile');
+
+      return foundProfile;
+    } catch (error) {
+      console.error(error);
+      return error;
+    }
+  }
   async findOneByEmail(
     input: FindProfileByEmailInput,
   ): Promise<FindProfileByEmailResponse> {

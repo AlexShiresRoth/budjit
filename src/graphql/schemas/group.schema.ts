@@ -3,10 +3,12 @@ import { Account } from 'src/mongo-schemas/account.model';
 import { ExternalInvite } from 'src/mongo-schemas/ExternalInvite';
 import { Invite } from 'src/mongo-schemas/Invite.model';
 import { Occasion } from 'src/mongo-schemas/occasion.model';
+import { Update } from 'src/mongo-schemas/update.model';
 import { AccountTypeDef } from './account.schema';
 import { ExternalInviteTypeDef } from './externalInvite.schema';
 import { InvitesTypeDef } from './invite.schema';
 import { OccasionTypeDef } from './occasion.schema';
+import { UpdateTypeDef } from './update.schema';
 
 @ObjectType()
 export class GroupTypeDef {
@@ -28,4 +30,6 @@ export class GroupTypeDef {
   _id: string;
   @Field()
   backgroundImage: string;
+  @Field(() => [UpdateTypeDef])
+  updates: Update[];
 }

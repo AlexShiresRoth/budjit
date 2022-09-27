@@ -79,3 +79,9 @@ export class GetPlaidTransactionsInput {
   @Field()
   endDate: string;
 }
+
+@InputType()
+export class FetchAccountProfileInput {
+  @Field()
+  accountId: string;
+}

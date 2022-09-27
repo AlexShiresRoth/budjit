@@ -3,6 +3,8 @@ import { Account } from 'src/mongo-schemas/account.model';
 import { AccountTypeDef, PlaidAccountTypeDef } from '../schemas/account.schema';
 import { InvitesTypeDef } from '../schemas/invite.schema';
 import { AccountBase } from 'plaid';
+import { Profile } from 'src/mongo-schemas/profile.model';
+import { ProfileTypeDef } from '../schemas/profile.schema';
 
 @ObjectType()
 export class CreateAccountResponse {
@@ -183,4 +185,14 @@ export class GetPlaidTransactionsResponse {
   endDate: string;
   @Field(() => Transactions)
   account_transactions: Transactions;
+}
+
+@ObjectType()
+export class FetchAccountProfileResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => ProfileTypeDef)
+  profile: Profile;
 }

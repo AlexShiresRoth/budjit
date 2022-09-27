@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { Invite } from './Invite.model';
 import { Occasion } from './occasion.model';
 import { ExternalInvite } from './ExternalInvite';
+import { Update } from './update.model';
 
 //this allows for ids to be passed as an object but not accessible via gql?
 @Schema()
@@ -50,6 +51,12 @@ export class Group {
     ]),
   )
   occasions: Occasion[];
+  @Prop(
+    raw([
+      { updateRef: { type: mongoose.Schema.Types.ObjectId, ref: 'Update' } },
+    ]),
+  )
+  updates: Update[];
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
   creator: Account;
   @Prop()

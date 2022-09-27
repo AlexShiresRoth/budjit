@@ -12,6 +12,7 @@ import { LOAD_GROUP } from '../../../graphql/queries/group.query';
 import Colors from '../../../constants/Colors';
 import useColorScheme from '../../../hooks/useColorScheme';
 import { FontAwesome } from '@expo/vector-icons';
+import GroupActivity from './group-recent-activity/GroupActivity';
 
 type Navigation = NativeStackScreenProps<GroupStackParamList, 'GroupScreen'>;
 
@@ -120,9 +121,7 @@ export const Group = ({ route, navigation }: Navigation) => {
         </Text>
       </View>
       {/* TODO Show recent activity feed */}
-      <View style={{ margin: 10 }}>
-        <Text>Recent Activity</Text>
-      </View>
+      <GroupActivity groupUpdates={data?.loadGroup?.Group?.updates} />
       <FlatList
         style={{
           paddingTop: 5,

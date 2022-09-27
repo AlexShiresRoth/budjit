@@ -49,6 +49,14 @@ type ExternalInviteTypeDef {
   inviteType: String!
 }
 
+type UpdateTypeDef {
+  _id: String!
+  updateDetails: String!
+  groupRef: String!
+  userRef: String!
+  updateTime: String!
+}
+
 type GroupTypeDef {
   members: [AccountTypeDef!]!
   invites: [InvitesTypeDef!]
@@ -59,6 +67,7 @@ type GroupTypeDef {
   creationDate: String!
   _id: String!
   backgroundImage: String!
+  updates: [UpdateTypeDef!]!
 }
 
 type InvitesTypeDef {
@@ -70,6 +79,12 @@ type InvitesTypeDef {
   groupRef: GroupTypeDef!
   occasionRef: OccasionTypeDef!
   inviteType: String!
+}
+
+type ProfileTypeDef {
+  name: String!
+  phone: String!
+  avatar: String!
 }
 
 type CreateAccountResponse {
@@ -158,6 +173,12 @@ type GetPlaidTransactionsResponse {
   account_transactions: Transactions!
 }
 
+type FetchAccountProfileResponse {
+  message: String!
+  success: Boolean!
+  profile: ProfileTypeDef!
+}
+
 type CreateInvitesResponse {
   message: String!
   success: Boolean!
@@ -186,12 +207,6 @@ type DeleteSentInviteResponse {
   message: String!
   success: Boolean!
   invites: [String!]!
-}
-
-type ProfileTypeDef {
-  name: String!
-  phone: String!
-  avatar: String!
 }
 
 type CreateGroupResponse {
@@ -228,11 +243,23 @@ type DeleteGroupResponse {
   success: Boolean!
 }
 
+type UpdateGroupResponse {
+  message: String!
+  success: Boolean!
+  Group: GroupTypeDef!
+}
+
 type FindProfileByEmailResponse {
   message: String!
   success: Boolean!
   profile: ProfileTypeDef
   defaultAvatar: String!
+}
+
+type FetchUpdateResponse {
+  message: String!
+  success: Boolean!
+  update: UpdateTypeDef!
 }
 
 type SetTimeFrameResponse {
@@ -282,6 +309,7 @@ type LoadMyOccasionsResponse {
 
 type Query {
   account(id: String!): AccountTypeDef!
+  fetchAccountProfile(input: FetchAccountProfileInput!): FetchAccountProfileResponse!
   findMyAccount: AccountTypeDef!
   loadPlaidAccounts: LoadPlaidAccountsResponse!
   loadPlaidData(input: LoadPlaidAccountDataInput!): LoadPlaidAccountDataResponse!
@@ -296,8 +324,13 @@ type Query {
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   fetchGroups: FetchGroupsResponse!
   fetchGroupMembers(input: FetchGroupMembersInput!): FetchGroupMemberAccountsResponse!
+  fetchUpdate(input: FetchUpdateInput!): FetchUpdateResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
   loadMyOccasions: LoadMyOccasionsResponse!
+}
+
+input FetchAccountProfileInput {
+  accountId: String!
 }
 
 input LoadPlaidAccountDataInput {
@@ -321,6 +354,10 @@ input FetchGroupMembersInput {
   groupID: String!
 }
 
+input FetchUpdateInput {
+  updateId: String!
+}
+
 type Mutation {
   getPlaidTransactions(input: GetPlaidTransactionsInput!): GetPlaidTransactionsResponse!
   retrievePlaidAuthToken: RetrievePlaidAuthTokenResponse!
@@ -339,6 +376,7 @@ type Mutation {
   createGroup(input: CreateGroupInput!): CreateGroupResponse!
   changeGroupBackgroundImage(input: FetchGroupMembersInput!): CreateGroupResponse!
   deleteGroup(input: DeleteGroupInput!): DeleteGroupResponse!
+  updateGroup(input: UpdateGroupInput!): UpdateGroupResponse!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
@@ -435,6 +473,12 @@ input Contact {
 input DeleteGroupInput {
   groupID: String!
   creatorID: String
+}
+
+input UpdateGroupInput {
+  groupID: String!
+  groupName: String
+  image: String
 }
 
 input ContributeToBudgetInput {

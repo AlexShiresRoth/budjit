@@ -28,13 +28,16 @@ const LoadingSpinner = () => {
   return (
     <Animated.View
       style={{
-        height: 30,
-        width: 30,
-        backgroundColor: 'transparent',
-        borderWidth: 5,
-        borderBottomColor: Colors[colorScheme].success,
+        height: 25,
+        width: 25,
+        borderWidth: 2,
+        backgroundColor: Colors[colorScheme].background,
+        borderTopColor: Colors[colorScheme].background,
+        borderLeftColor: Colors[colorScheme].background,
+        borderRightColor: Colors[colorScheme].background,
+        borderBottomColor: Colors[colorScheme].tint,
         borderRadius: 900,
-        marginTop: 20,
+
         transform: [
           {
             rotate: interpSpin,

@@ -1,5 +1,17 @@
 import { gql } from '@apollo/client';
 
+export const FETCH_ACCOUNT_PROFILE = gql`
+  query fetchAccountProfile($input: FetchAccountProfileInput!) {
+    fetchAccountProfile(input: $input) {
+      message
+      success
+      profile {
+        name
+      }
+    }
+  }
+`;
+
 export const LOAD_PLAID_ACCOUNTS = gql`
   query loadPlaidAccounts {
     loadPlaidAccounts {

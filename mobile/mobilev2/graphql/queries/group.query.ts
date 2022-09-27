@@ -6,9 +6,25 @@ export const LOAD_GROUP = gql`
       message
       success
       Group {
-        name
-        backgroundImage
         _id
+        backgroundImage
+        name
+        invites {
+          _id
+          inviteType
+        }
+        members {
+          _id
+        }
+        externalInvites {
+          _id
+        }
+        creator {
+          _id
+        }
+        updates {
+          _id
+        }
       }
     }
   }

@@ -48,8 +48,6 @@ const GroupSettings = ({ route, navigation }: NavProps) => {
     variables: { input: { groupID: route?.params?.groupId } },
   });
 
-  console.log('groupData', groupData);
-
   const [isGroupImageModalVisible, setToggleGroupImageModal] = useState(false);
 
   const handleDeleteGroup = async (groupID: string = '') => {
@@ -151,11 +149,15 @@ const GroupSettings = ({ route, navigation }: NavProps) => {
         </View>
       </View>
       {/* Show when toggled for group image */}
-      <ChangeGroupImageModal
-        isModalVisible={isGroupImageModalVisible}
-        toggleModal={() => setToggleGroupImageModal(false)}
-        currentImage={groupData?.loadGroup?.Group?.backgroundImage ?? ''}
-      />
+      {/* Also, only show if group id is passed */}
+      {route?.params?.groupId ? (
+        <ChangeGroupImageModal
+          isModalVisible={isGroupImageModalVisible}
+          toggleModal={() => setToggleGroupImageModal(false)}
+          currentImage={groupData?.loadGroup?.Group?.backgroundImage ?? ''}
+          groupID={route?.params?.groupId}
+        />
+      ) : null}
     </>
   );
 };

@@ -9,6 +9,7 @@ import { ExternalInviteModule } from './externalInvite.module';
 import { InviteModule } from './invite.module';
 import { ProfileModule } from './profile.module';
 import { UnsplashModule } from './unsplash.module';
+import { UpdateModule } from './update.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UnsplashModule } from './unsplash.module';
     forwardRef(() => AccountsModule),
     forwardRef(() => InviteModule),
     forwardRef(() => ExternalInviteModule),
+    forwardRef(() => UpdateModule),
     MongooseModule.forFeature([{ name: Group.name, schema: GroupSchema }]),
   ],
   providers: [GroupService, Group, GroupResolver],

@@ -27,6 +27,20 @@ export const CREATE_GROUP = gql`
   }
 `;
 
+export const UPDATE_GROUP = gql`
+  mutation updateGroup($input: UpdateGroupInput!) {
+    updateGroup(input: $input) {
+      Group {
+        backgroundImage
+        name
+        _id
+      }
+      message
+      success
+    }
+  }
+`;
+
 export const DELETE_GROUP = gql`
   mutation deleteGroup($input: DeleteGroupInput!) {
     deleteGroup(input: $input) {

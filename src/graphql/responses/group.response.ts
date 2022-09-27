@@ -61,3 +61,13 @@ export class DeleteGroupResponse {
   @Field()
   success: boolean;
 }
+
+@ObjectType()
+export class UpdateGroupResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => GroupTypeDef)
+  Group: Group;
+}

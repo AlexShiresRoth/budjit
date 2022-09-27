@@ -11,6 +11,7 @@ import {
   AddInviteToAccountInput,
   CreateAccountInput,
   ExchangePublicTokenInput,
+  FetchAccountProfileInput,
   GetPlaidInstitutionInput,
   GetPlaidTransactionsInput,
   LoadPlaidAccountDataInput,
@@ -23,6 +24,7 @@ import {
   AddInviteToAccountResponse,
   CreateAccountResponse,
   DeleteInviteFromAccountResponse,
+  FetchAccountProfileResponse,
   GetPlaidInstitutionResponse,
   GetPlaidTransactionsResponse,
   LoadPlaidAccountDataResponse,
@@ -145,6 +147,35 @@ export class AccountsService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+
+  async fetchAccountProfile(
+    input: FetchAccountProfileInput,
+  ): Promise<FetchAccountProfileResponse> {
+    try {
+      const foundAccount = await this.findOneById(input.accountId);
+
+      if (!foundAccount) throw new Error('Could not locate an account');
+
+      const foundProfile = await this.profileService.fetchProfile(
+        foundAccount.profile,
+      );
+
+      if (!foundProfile) throw new Error('Could not locate a profile');
+
+      return {
+        message: 'Found a profile',
+        success: true,
+        profile: foundProfile,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error.message,
+        success: false,
+        profile: null,
+      };
     }
   }
 

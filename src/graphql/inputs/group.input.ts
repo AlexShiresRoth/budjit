@@ -57,3 +57,13 @@ export class DeleteGroupInput {
   @Field({ nullable: true })
   creatorID: string;
 }
+
+@InputType()
+export class UpdateGroupInput {
+  @Field()
+  groupID: string;
+  @Field({ nullable: true })
+  groupName: string;
+  @Field({ nullable: true })
+  image: string;
+}
