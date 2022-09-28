@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import ActivityCard from './ActivityCard';
+import AllActivityModal from './AllActivityModal';
 
 type Props = {
   groupUpdates: Array<any>;
@@ -12,6 +13,8 @@ const GroupActivity = ({ groupUpdates }: Props) => {
   const colorScheme = useColorScheme();
 
   const [sortedUpdates, setSortedUpdates] = useState<any[]>([]);
+
+  const [isActivityModalVisible, setIsActivityModalVisible] = useState(false);
 
   const renderItem = ({ item }: any) => {
     return <ActivityCard key={item._id} item={item} />;
@@ -32,32 +35,44 @@ const GroupActivity = ({ groupUpdates }: Props) => {
     }
   }, [groupUpdates]);
 
-  console.log('sorted updates', sortedUpdates);
-
   return (
-    <View style={{ marginTop: 20, marginBottom: 20, alignItems: 'center' }}>
-      <View style={{ width: '90%' }}>
-        <View
-          style={{
-            borderBottomWidth: 1,
-            borderBottomColor: Colors[colorScheme].background,
-            paddingBottom: 5,
-            marginBottom: 10,
-          }}
-        >
-          <Text>Recent Activity</Text>
+    <>
+      <AllActivityModal
+        isModalVisible={isActivityModalVisible}
+        handleResetOnClose={() => setIsActivityModalVisible(false)}
+        activityList={sortedUpdates}
+      />
+      <View style={{ marginTop: 20, alignItems: 'center' }}>
+        <View style={{ width: '90%' }}>
+          <View
+            style={{
+              borderBottomWidth: 1,
+              borderBottomColor: Colors[colorScheme].background,
+              paddingBottom: 5,
+              marginBottom: 10,
+            }}
+          >
+            <View
+              style={{ flexDirection: 'row', justifyContent: 'space-between' }}
+            >
+              <Text>Recent Activity</Text>
+              <TouchableOpacity onPress={() => setIsActivityModalVisible(true)}>
+                <Text style={{ color: Colors[colorScheme].tint }}>See All</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+          {groupUpdates.length > 0 ? (
+            <FlatList
+              data={sortedUpdates.slice(0, 8)}
+              renderItem={renderItem}
+              horizontal={true}
+            />
+          ) : (
+            <Text>No recent activity</Text>
+          )}
         </View>
-        {groupUpdates.length > 0 ? (
-          <FlatList
-            data={sortedUpdates.slice(0, 8)}
-            renderItem={renderItem}
-            horizontal={true}
-          />
-        ) : (
-          <Text>No recent activity</Text>
-        )}
       </View>
-    </View>
+    </>
   );
 };
 

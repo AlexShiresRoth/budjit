@@ -8,7 +8,7 @@ import DateFormatDisplay from '../../../reusable/DateFormatDisplay';
 import Skeleton from '../../../reusable/Skeleton';
 import UserDisplay from './UserDisplay';
 
-const ActivityCard = ({ item }: any) => {
+const AllActivityCard = ({ item }: any) => {
   const colorScheme = useColorScheme();
 
   const { error, data, loading } = useQuery(FETCH_UPDATE, {
@@ -22,20 +22,18 @@ const ActivityCard = ({ item }: any) => {
   return (
     <View
       style={{
-        marginRight: 10,
-        borderRadius: 10,
-        backgroundColor: Colors[colorScheme].tint + '20',
         padding: 10,
+        width: '100%',
       }}
     >
       <UserDisplay
         userId={data?.fetchUpdate?.update?.userRef}
         textColor={Colors[colorScheme].text + '60'}
-        fontSize={12}
+        fontSize={16}
       />
       <Text
         style={{
-          fontSize: 12,
+          fontSize: 16,
           marginTop: 4,
           marginBottom: 4,
           fontStyle: 'italic',
@@ -53,4 +51,4 @@ const ActivityCard = ({ item }: any) => {
   );
 };
 
-export default ActivityCard;
+export default AllActivityCard;

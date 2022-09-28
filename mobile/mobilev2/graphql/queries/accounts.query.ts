@@ -7,6 +7,7 @@ export const FETCH_ACCOUNT_PROFILE = gql`
       success
       profile {
         name
+        avatar
       }
     }
   }

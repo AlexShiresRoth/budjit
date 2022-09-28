@@ -40,7 +40,7 @@ export default {
     secondary: tintColorLight + '60',
     danger: '#BD1E1E',
     success: '#5299D3',
-    accountBg: '#ddd',
+    accountBg: '#dddddd',
     cardBg: '#FC814A',
     alertBackground: '#eeeeee',
   },

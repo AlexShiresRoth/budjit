@@ -1,4 +1,5 @@
 import { useMutation } from '@apollo/client';
+import { FontAwesome } from '@expo/vector-icons';
 import { current } from '@reduxjs/toolkit';
 import React, { useEffect, useState } from 'react';
 import { Image, Text, TouchableOpacity, View } from 'react-native';
@@ -9,6 +10,7 @@ import useColorScheme from '../../../../hooks/useColorScheme';
 import { setAlert } from '../../../../redux/reducers/alerts.reducers';
 import { setShouldRefreshGroup } from '../../../../redux/reducers/updates.reducers';
 import PrimaryButton from '../../../buttons/PrimaryButton';
+import Input from '../../../inputs/Input';
 import ModalContainer from '../../../modals/ModalContainer';
 import ModalHeader from '../../../modals/ModalHeader';
 import ImagePickerComp from '../../../reusable/ImagePicker';
@@ -18,46 +20,40 @@ import Skeleton from '../../../reusable/Skeleton';
 type Props = {
   isModalVisible: boolean;
   toggleModal: () => void;
-  currentImage: string;
+  currentName: string;
   groupID: string;
 };
 
-const ChangeGroupImageModal = ({
+const ChangeGroupNameModal = ({
   isModalVisible,
   toggleModal,
-  currentImage,
+  currentName,
   groupID,
 }: Props) => {
   const dispatch = useAppDispatch();
 
   const colorScheme = useColorScheme();
 
-  const [imageString, setImageString] = useState<string>(currentImage);
+  const [updateGroupName, { error, data, loading }] = useMutation(UPDATE_GROUP);
 
-  const [newImageSelected, setNewImageSelected] = useState<boolean>(false);
+  const [groupName, setGroupName] = useState<string>(currentName);
 
-  const [isImageLoading, setIsImageLoading] = useState<boolean>(false);
-
-  const [updateGroupImage, { error, data, loading }] =
-    useMutation(UPDATE_GROUP);
+  const handleTextChange = (text: string) => setGroupName(text);
 
   const resetOnClose = () => {
-    //default to
-    setImageString('');
     toggleModal();
-    setIsImageLoading(false);
-    setNewImageSelected(false);
+    setGroupName('');
   };
 
-  const handleUpdateGroupImage = async (
-    image: string,
+  const handleUpdateGroupName = async (
+    name: string,
   ): Promise<{ message: string; success: boolean }> => {
     try {
-      const { errors } = await updateGroupImage({
+      const { errors } = await updateGroupName({
         variables: {
           input: {
             groupID,
-            image,
+            groupName: name,
           },
         },
       });
@@ -73,7 +69,7 @@ const ChangeGroupImageModal = ({
       resetOnClose();
 
       //notify parent component that image has been updated
-      dispatch(setAlert({ message: 'Group image updated', type: 'success' }));
+      dispatch(setAlert({ message: 'Group name updated', type: 'success' }));
 
       //notify recent activity that image has been updated and refetch the group
       dispatch(setShouldRefreshGroup(true));
@@ -91,49 +87,43 @@ const ChangeGroupImageModal = ({
     }
   };
 
-  useEffect(() => {
-    //only want to update if a new image is selected
-    if (currentImage === imageString || imageString === '') {
-      setNewImageSelected(false);
-    }
-    //Will only set save button as not disabled if a new image is selected
-    if (currentImage !== imageString && imageString !== '') {
-      setNewImageSelected(true);
-    }
-  }, [currentImage, imageString]);
-
   return (
     <ModalContainer
       isModalVisible={isModalVisible}
       handleResetOnClose={resetOnClose}
     >
       <ModalHeader
-        modalTitle={`Change Group Image`}
+        modalTitle={`Change Group Name`}
         handleResetOnClose={resetOnClose}
       />
-      <View style={{ marginTop: 20 }}>
-        <Text>Current Image:</Text>
-        {!currentImage ? (
-          <Text>Could Not Load Image</Text>
-        ) : !isImageLoading ? (
-          <Image
-            source={{ uri: imageString ? imageString : currentImage }}
-            style={{ width: '100%', height: 150, borderRadius: 10 }}
-          />
-        ) : (
-          <View>
-            <Text>Processing Image</Text>
-            <Skeleton verticalBars={1} />
-          </View>
-        )}
-      </View>
 
-      {!isImageLoading ? (
-        <ImagePickerComp
-          setImageString={setImageString}
-          getImageLoadingState={setIsImageLoading}
+      <View style={{ marginTop: 40 }}>
+        <View style={{ marginBottom: 30 }}>
+          <Text style={{ fontSize: 30, fontWeight: '700' }}>
+            Current Group Name
+          </Text>
+          <Text
+            style={{
+              fontSize: 20,
+              fontStyle: 'italic',
+              color: Colors[colorScheme].text + '80',
+            }}
+          >
+            {currentName}
+          </Text>
+        </View>
+        <Input
+          descriptor="Edit Group Name"
+          label={'Edit Group Name'}
+          style={null}
+          labelStyle={{ color: Colors[colorScheme].text }}
+          isSecure={false}
+          value={groupName}
+          callback={handleTextChange}
+          color={Colors[colorScheme].tint}
+          icon={<FontAwesome name="pencil" color={Colors[colorScheme].tint} />}
         />
-      ) : null}
+      </View>
 
       {loading ? (
         <View
@@ -141,23 +131,24 @@ const ChangeGroupImageModal = ({
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'center',
+            marginTop: 20,
           }}
         >
           <LoadingSpinner />
-          <Text style={{ marginLeft: 10 }}>Updating Image...</Text>
+          <Text style={{ marginLeft: 10 }}>Updating group name...</Text>
         </View>
       ) : (
         <PrimaryButton
           buttonText="Save"
           colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
-          callBack={handleUpdateGroupImage}
-          callBackArgs={imageString}
+          callBack={handleUpdateGroupName}
+          callBackArgs={groupName}
           buttonTextColor={Colors[colorScheme].background}
-          disabled={newImageSelected ? false : true}
+          disabled={groupName !== currentName ? false : true}
         />
       )}
     </ModalContainer>
   );
 };
 
-export default ChangeGroupImageModal;
+export default ChangeGroupNameModal;

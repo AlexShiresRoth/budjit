@@ -13,6 +13,7 @@ import { setAlert } from '../../../../redux/reducers/alerts.reducers';
 import { removeGroupFromState } from '../../../../redux/reducers/groups.reducers';
 import { GroupStackParamList } from '../../../../types';
 import ChangeGroupImageModal from './ChangeGroupImageModal';
+import ChangeGroupNameModal from './ChangeGroupNameModal';
 
 const SettingsCard = styled.View`
   border-radius: 5px;
@@ -37,8 +38,13 @@ const GroupSettings = ({ route, navigation }: NavProps) => {
 
   const dispatch = useAppDispatch();
 
-  const [deleteGroupMutation, { error, loading, data }] =
-    useMutation(DELETE_GROUP);
+  const [deleteGroupMutation] = useMutation(DELETE_GROUP);
+
+  const [isGroupImageModalVisible, setToggleGroupImageModal] =
+    useState<boolean>(false);
+
+  const [isGroupNameModalVisible, setToggleGroupNameModal] =
+    useState<boolean>(false);
 
   const {
     error: groupError,
@@ -47,8 +53,6 @@ const GroupSettings = ({ route, navigation }: NavProps) => {
   } = useQuery(LOAD_GROUP, {
     variables: { input: { groupID: route?.params?.groupId } },
   });
-
-  const [isGroupImageModalVisible, setToggleGroupImageModal] = useState(false);
 
   const handleDeleteGroup = async (groupID: string = '') => {
     try {
@@ -116,7 +120,7 @@ const GroupSettings = ({ route, navigation }: NavProps) => {
               backgroundColor: Colors[colorScheme].background,
             }}
           >
-            <Button>
+            <Button onPress={() => setToggleGroupNameModal(true)}>
               <FontAwesome
                 name="pencil"
                 size={20}
@@ -155,6 +159,16 @@ const GroupSettings = ({ route, navigation }: NavProps) => {
           isModalVisible={isGroupImageModalVisible}
           toggleModal={() => setToggleGroupImageModal(false)}
           currentImage={groupData?.loadGroup?.Group?.backgroundImage ?? ''}
+          groupID={route?.params?.groupId}
+        />
+      ) : null}
+
+      {/* Show when toggled for group name */}
+      {route?.params?.groupId ? (
+        <ChangeGroupNameModal
+          isModalVisible={isGroupNameModalVisible}
+          toggleModal={() => setToggleGroupNameModal(false)}
+          currentName={groupData?.loadGroup?.Group?.name ?? ''}
           groupID={route?.params?.groupId}
         />
       ) : null}

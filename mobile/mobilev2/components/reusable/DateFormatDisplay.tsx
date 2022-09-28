@@ -14,7 +14,6 @@ const DateFormatDisplay = ({
   formatting = 'p P',
   dateTextColor,
 }: Props) => {
-  console.log('date string', new Date(parseFloat(dateString)));
   const date = new Date(parseFloat(dateString));
 
   const dateFormatted = format(date, formatting);

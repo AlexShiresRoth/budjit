@@ -43,6 +43,8 @@ const Skeleton = ({ verticalBars }: Props) => {
             borderRadius: 10,
             display: 'flex',
             padding: 10,
+            marginBottom: 10,
+            marginTop: 10,
           }}
           key={i}
         ></Animated.View>

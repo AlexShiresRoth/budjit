@@ -5,8 +5,6 @@ import { Group } from './group.model';
 
 @Schema()
 export class Update {
-  @Prop({ type: mongoose.Schema.Types.ObjectId })
-  _id: string;
   @Prop({ default: Date.now })
   updateTime: Date;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })

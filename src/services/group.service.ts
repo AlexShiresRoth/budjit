@@ -352,8 +352,14 @@ export class GroupService {
       const update = await this.updateService.createUpdate({
         userRef: user.account.id,
         groupRef: foundGroup,
-        updateDetails: image ? 'Changed group image' : 'Changed group name',
+        updateDetails: image
+          ? 'Changed group image'
+          : groupName
+          ? 'Changed group name'
+          : 'Updated group',
       });
+
+      console.log('update', update);
 
       if (!update.success) throw new Error('Could not create update');
 
