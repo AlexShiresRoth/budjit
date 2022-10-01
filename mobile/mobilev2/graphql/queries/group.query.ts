@@ -30,6 +30,27 @@ export const LOAD_GROUP = gql`
   }
 `;
 
+export const FETCH_GROUP_INVITES = gql`
+  query loadGroup($input: LoadGroupInput!) {
+    loadGroup(input: $input) {
+      message
+      success
+      Group {
+        invites {
+          _id
+          inviteType
+        }
+        members {
+          _id
+        }
+        externalInvites {
+          _id
+        }
+      }
+    }
+  }
+`;
+
 export const FETCH_GROUP_MEMBERS = gql`
   query fetchGroupMembers($input: FetchGroupMembersInput!) {
     fetchGroupMembers(input: $input) {
