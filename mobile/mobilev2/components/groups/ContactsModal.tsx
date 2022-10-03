@@ -26,8 +26,6 @@ const ContactsModal = ({
 }: Props) => {
   const colorScheme = useColorScheme();
 
-  // console.log('selectedContacts', selectedContacts);
-
   const renderItem = ({ item }: { item: any }) => {
     return (
       <ContactItem

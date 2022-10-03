@@ -42,7 +42,7 @@ const GroupActivity = ({ groupUpdates }: Props) => {
         handleResetOnClose={() => setIsActivityModalVisible(false)}
         activityList={sortedUpdates}
       />
-      <View style={{ marginTop: 20, alignItems: 'center' }}>
+      <View style={{ marginTop: 20, alignItems: 'center', width: '100%' }}>
         <View style={{ width: '90%' }}>
           <View
             style={{

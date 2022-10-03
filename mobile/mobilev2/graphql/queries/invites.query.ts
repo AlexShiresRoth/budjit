@@ -25,3 +25,18 @@ export const LOAD_OCCASION_INVITES = gql`
     }
   }
 `;
+
+export const FETCH_EXTERNAL_INVITE = gql`
+  query fetchExternalInvite($input: FetchExternalInviteInput!) {
+    fetchExternalInvite(input: $input) {
+      message
+      success
+      externalInvite {
+        inviteDate
+        receiverName
+        receiverPhone
+        status
+      }
+    }
+  }
+`;

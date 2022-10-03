@@ -6,6 +6,7 @@ import { SafeAreaView, Text, View } from 'react-native';
 import AllInvitesList from '../../../../components/groups/group/group-invites/AllInvitesList';
 import { FETCH_GROUP_INVITES } from '../../../../graphql/queries/group.query';
 import { useAppDispatch } from '../../../../hooks/reduxHooks';
+import AuthRoute from '../../../../navigation/authed/AuthRoute';
 import { changeCurrentRoute } from '../../../../redux/reducers/navigation.reducers';
 import { GroupStackParamList } from '../../../../types';
 
@@ -48,9 +49,16 @@ const GroupInvitesScreen = ({ route }: Navigation) => {
   if (loading) return <Text>Loading...</Text>;
   if (error) return <Text>Error...</Text>;
 
+  if (combinedInvites.length === 0) return <Text>No invites</Text>;
+
   return (
     <SafeAreaView>
-      <AllInvitesList />
+      <AuthRoute>
+        <AllInvitesList
+          groupInvites={combinedInvites}
+          groupId={route?.params?.groupId ?? ''}
+        />
+      </AuthRoute>
     </SafeAreaView>
   );
 };

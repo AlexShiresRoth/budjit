@@ -23,7 +23,6 @@ const ContactItem = ({ item, selectFunction, selectedContacts }: Props) => {
   const checkIfContactIsSelected = (contact: any): void => {
     //check if user is already selected
     if (selectedContacts.find((c) => c.lookupKey === contact.lookupKey)) {
-      console.log('contact in', contact.name);
       const removeSelected = selectedContacts.filter(
         (c) => c.lookupKey !== contact.lookupKey,
       );
@@ -32,7 +31,6 @@ const ContactItem = ({ item, selectFunction, selectedContacts }: Props) => {
     }
     //remove from list if already selected
     else {
-      console.log('contact not in', contact.name);
       selectFunction([...selectedContacts, contact]);
       select(true);
     }
