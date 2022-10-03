@@ -3,8 +3,8 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import Colors from '../../../../constants/Colors';
-import useColorScheme from '../../../../hooks/useColorScheme';
+import Colors from '../../constants/Colors';
+import useColorScheme from '../../hooks/useColorScheme';
 import MyOccasions from './MyOccasions';
 import SearchOccasions from './SearchOccasions';
 

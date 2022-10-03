@@ -2,11 +2,12 @@ import React from 'react';
 import { Text, TouchableOpacity, View } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 type Props = {
-  user: any;
+  user: { name: string };
   removeFunc: (user: any) => void;
 };
 
 const RemovableUserItem = ({ user, removeFunc }: Props) => {
+  // console.log('user', user);
   return (
     <View
       style={{

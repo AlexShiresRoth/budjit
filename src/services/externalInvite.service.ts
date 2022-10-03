@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { CreateExternalInviteInput } from 'src/graphql/inputs/externalInvite.input';
-import { CreateExternalInviteResponse } from 'src/graphql/responses/externalInvite.response';
+import mongoose, { Model } from 'mongoose';
+import {
+  CreateExternalInviteInput,
+  FetchExternalInviteInput,
+} from 'src/graphql/inputs/externalInvite.input';
+import {
+  CreateExternalInviteResponse,
+  FetchExternalInviteResponse,
+} from 'src/graphql/responses/externalInvite.response';
 import {
   ExternalInvite,
   ExternalInviteDocument,
@@ -21,15 +27,23 @@ export class ExternalInviteService {
     try {
       if (!externalInvite) throw new Error('Could not create external invite');
 
+      const id = new mongoose.Types.ObjectId();
+
+      const newInvite = {
+        _id: id,
+        ...externalInvite,
+      };
       //an external invite is created when a user is invited to a group via phone or email
       const newExternalInvite = await this.externalInviteModel.create(
-        externalInvite,
+        newInvite,
       );
+
+      await newExternalInvite.save();
 
       return {
         message: 'External Invite Created',
         success: true,
-        externalInviteId: newExternalInvite._id.toString(),
+        externalInvite: newExternalInvite,
       };
     } catch (error) {
       console.error(error);
@@ -37,7 +51,35 @@ export class ExternalInviteService {
       return {
         message: error?.message ?? "Couldn't create external invite",
         success: false,
-        externalInviteId: null,
+        externalInvite: null,
+      };
+    }
+  }
+  async fetchInvite(
+    input: FetchExternalInviteInput,
+  ): Promise<FetchExternalInviteResponse> {
+    try {
+      const { _id } = input;
+
+      if (!_id) throw new Error('Could not fetch external invite');
+
+      const externalInvite = await this.externalInviteModel.findById(_id);
+
+      if (!externalInvite) throw new Error('Could not fetch external invite');
+
+      console.log('ext inv', externalInvite);
+
+      return {
+        message: 'External Invite Fetched',
+        success: true,
+        externalInvite,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error?.message ?? "Couldn't fetch external invite",
+        success: false,
+        externalInvite: null,
       };
     }
   }

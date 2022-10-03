@@ -137,10 +137,6 @@ export class GroupService {
       if (randomPhotoFromUnsplash.type !== 'success')
         throw new Error('Could not retrieve photo from database');
 
-      console.log(
-        'random photo',
-        randomPhotoFromUnsplash?.response[0].urls?.small,
-      );
       const id = new mongoose.Types.ObjectId();
 
       const newGroup = {
@@ -166,12 +162,14 @@ export class GroupService {
                 receiverPhone: contact.phone,
                 inviteType: 'group',
               });
-
-            return externalInvite;
+            //correct id was not being saved on the group
+            return { _id: externalInvite.externalInvite._id };
           }),
         );
 
-        newGroup.externalInvites = [...newGroup.invites, ...externalInvites];
+        externalInvites.forEach((invite) =>
+          newGroup.externalInvites.push(invite),
+        );
       }
 
       if (Array.isArray(members) && members.length > 0) {

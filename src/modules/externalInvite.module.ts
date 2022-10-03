@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ExternalInvitesResolver } from 'src/graphql/resolvers/externalInvites.resolver';
 import { InviteResolver } from 'src/graphql/resolvers/invites.resolver';
 import {
   ExternalInvite,
@@ -17,7 +18,7 @@ import { GroupModule } from './group.module';
       { name: ExternalInvite.name, schema: ExternalInviteSchema },
     ]),
   ],
-  providers: [ExternalInvite, ExternalInviteService],
+  providers: [ExternalInvite, ExternalInviteService, ExternalInvitesResolver],
   exports: [ExternalInviteService],
 })
 export class ExternalInviteModule {}

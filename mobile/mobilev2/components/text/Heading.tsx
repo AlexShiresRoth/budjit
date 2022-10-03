@@ -5,7 +5,7 @@ import useColorScheme from '../../hooks/useColorScheme';
 
 const Text = styled.Text`
   font-weight: 700;
-  font-size: 40px;
+  font-size: 32px;
 `;
 
 type Props = {

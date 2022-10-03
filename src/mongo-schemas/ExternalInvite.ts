@@ -5,6 +5,8 @@ import { Occasion } from './occasion.model';
 
 @Schema()
 export class ExternalInvite {
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  _id: string;
   @Prop({ type: Date, default: Date.now })
   inviteDate: Date;
   @Prop()

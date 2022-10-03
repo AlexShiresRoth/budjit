@@ -249,6 +249,12 @@ type UpdateGroupResponse {
   Group: GroupTypeDef!
 }
 
+type FetchExternalInviteResponse {
+  message: String!
+  success: Boolean!
+  externalInvite: ExternalInviteTypeDef!
+}
+
 type FindProfileByEmailResponse {
   message: String!
   success: Boolean!
@@ -324,6 +330,7 @@ type Query {
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   fetchGroups: FetchGroupsResponse!
   fetchGroupMembers(input: FetchGroupMembersInput!): FetchGroupMemberAccountsResponse!
+  fetchExternalInvite(input: FetchExternalInviteInput!): FetchExternalInviteResponse!
   fetchUpdate(input: FetchUpdateInput!): FetchUpdateResponse!
   loadOccasion(id: String!): LoadOccasionResponse!
   loadMyOccasions: LoadMyOccasionsResponse!
@@ -352,6 +359,10 @@ input LoadGroupInput {
 
 input FetchGroupMembersInput {
   groupID: String!
+}
+
+input FetchExternalInviteInput {
+  _id: String!
 }
 
 input FetchUpdateInput {

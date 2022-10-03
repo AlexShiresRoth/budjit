@@ -5,10 +5,10 @@ import useColorScheme from '../../hooks/useColorScheme';
 import ModalContainer from '../modals/ModalContainer';
 import ModalHeader from '../modals/ModalHeader';
 import PrimaryButton from '../buttons/PrimaryButton';
-import ContactItem from './ContactItem';
+import ContactItem from '../groups/ContactItem';
+import useFetchContacts from '../../hooks/useFetchContacts';
 
 type Props = {
-  contactsList: Array<any>;
   isModalVisible: boolean;
   toggleModal: (val: boolean) => void;
   selectFunction: (data: any) => void;
@@ -17,7 +17,6 @@ type Props = {
 };
 
 const ContactsModal = ({
-  contactsList,
   isModalVisible,
   toggleModal,
   selectFunction,
@@ -25,6 +24,8 @@ const ContactsModal = ({
   selectedContacts,
 }: Props) => {
   const colorScheme = useColorScheme();
+
+  const { contactList, errors } = useFetchContacts();
 
   const renderItem = ({ item }: { item: any }) => {
     return (
@@ -42,12 +43,12 @@ const ContactsModal = ({
       handleResetOnClose={() => handleRequestOnClose()}
     >
       <ModalHeader
-        modalTitle="Invite friends from contact list"
+        modalTitle="Select Contacts"
         handleResetOnClose={() => handleRequestOnClose()}
       />
       <FlatList
         renderItem={renderItem}
-        data={contactsList}
+        data={contactList}
         keyExtractor={(item) => item.lookupKey}
         style={{
           maxHeight:

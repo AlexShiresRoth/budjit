@@ -1,7 +1,7 @@
 import React from 'react';
 import useColorScheme from '../../../hooks/useColorScheme';
 import Colors from '../../../constants/Colors';
-import Occasions from '../../../components/authed/account/occasions/Occasions';
+import Occasions from '../../../components/occasions/Occasions';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, View } from 'react-native';
 

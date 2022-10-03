@@ -367,7 +367,6 @@ const ManualTransactionModal = ({
               value={date}
               param="date"
               onChange={handleTextChange}
-              placeholder={'Transaction date'}
               placeholderTextColor={Colors[colorScheme].text + '60'}
               style={{ marginLeft: 10, color: Colors[colorScheme].text }}
             />

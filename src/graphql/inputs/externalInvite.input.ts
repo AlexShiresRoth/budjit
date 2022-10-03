@@ -13,3 +13,9 @@ export class CreateExternalInviteInput {
   @Field({ nullable: true })
   occasionRef: string;
 }
+
+@InputType()
+export class FetchExternalInviteInput {
+  @Field()
+  _id: string;
+}

@@ -3,7 +3,7 @@ import * as contacts from 'expo-contacts';
 import { View } from 'react-native';
 import { useDispatch } from 'react-redux';
 import { setAlert } from '../../redux/reducers/alerts.reducers';
-import ContactsModal from './ContactsModal';
+import ContactsModal from '../contacts/ContactsModal';
 import AddButton from '../buttons/AddButton';
 import useColorScheme from '../../hooks/useColorScheme';
 import ContactList from './SelectedContactList';
@@ -115,7 +115,6 @@ const AddContacts = ({
       ) : null}
       {/* Modal of contacts to choose from */}
       <ContactsModal
-        contactsList={contactList}
         isModalVisible={isModalVisible}
         toggleModal={toggleModal}
         selectFunction={handleSelectContact}

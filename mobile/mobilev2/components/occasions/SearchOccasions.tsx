@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components/native';
 import { Animated } from 'react-native';
-import Colors from '../../../../constants/Colors';
-import useColorScheme from '../../../../hooks/useColorScheme';
+import Colors from '../../constants/Colors';
+import useColorScheme from '../../hooks/useColorScheme';
 
 const InputContainer = styled.View``;
 

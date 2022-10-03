@@ -7,14 +7,14 @@ import React, {
 } from 'react';
 import PropTypes from 'prop-types';
 import { Button, Text, View } from 'react-native';
-import EmptyState from '../../../reusable/EmptyState';
+import EmptyState from '../reusable/EmptyState';
 import styled from 'styled-components/native';
-import useColorScheme from '../../../../hooks/useColorScheme';
-import Colors from '../../../../constants/Colors';
+import useColorScheme from '../../hooks/useColorScheme';
+import Colors from '../../constants/Colors';
 import CreateOccasions from './CreateOccasions';
 import { useQuery } from '@apollo/client';
-import { LOAD_MY_OCCASIONS } from '../../../../graphql/queries/occasions.query';
-import LoadingSpinner from '../../../reusable/LoadingSpinner';
+import { LOAD_MY_OCCASIONS } from '../../graphql/queries/occasions.query';
+import LoadingSpinner from '../reusable/LoadingSpinner';
 
 const Container = styled.View`
   width: 100%;

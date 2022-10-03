@@ -1,3 +1,4 @@
+import { AntDesign } from '@expo/vector-icons';
 import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 import Colors from '../../constants/Colors';
@@ -13,24 +14,9 @@ const ModalCloseButton = ({ handleResetOnClose, buttonText }: Props) => {
   return (
     <TouchableOpacity
       onPress={() => handleResetOnClose()}
-      style={{
-        backgroundColor: Colors[colorScheme].cardBg,
-        padding: 5,
-        paddingLeft: 10,
-        paddingRight: 10,
-        borderRadius: 5,
-        borderWidth: 1,
-        borderColor: Colors[colorScheme].cardBg,
-      }}
+      style={{ alignItems: 'center' }}
     >
-      <Text
-        style={{
-          color: Colors[colorScheme].background,
-          fontSize: 12,
-        }}
-      >
-        {buttonText}
-      </Text>
+      <AntDesign name="close" size={20} color={Colors[colorScheme].text} />
     </TouchableOpacity>
   );
 };

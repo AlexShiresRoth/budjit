@@ -15,13 +15,14 @@ const DateContainer = styled.View`
 type ComponentProps = {
   value: string;
   onChange: (value: string, name: string) => void;
-  placeholder: string;
-  placeholderTextColor: string;
-  style: any;
-  param: string;
+  param: 'date' | 'time';
 };
 
-const DatePickerModal = ({ value, onChange, param }: ComponentProps) => {
+const DatePickerModal = ({
+  value,
+  onChange,
+  param = 'date',
+}: ComponentProps) => {
   const colorScheme = useColorScheme();
 
   const minDate = new Date('2000-01-01');
@@ -52,6 +53,8 @@ const DatePickerModal = ({ value, onChange, param }: ComponentProps) => {
       console.log('error', error);
     }
   };
+
+  console.log('date?', date);
 
   useEffect(() => {
     Animated.timing(slideIn, {
