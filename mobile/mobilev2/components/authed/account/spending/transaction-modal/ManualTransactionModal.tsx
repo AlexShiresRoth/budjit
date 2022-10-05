@@ -353,9 +353,18 @@ const ManualTransactionModal = ({
       title: 'Date',
       component: (
         <DateContainer
-          style={{ backgroundColor: Colors[colorScheme].tint + '45' }}
+          style={{
+            borderRadius: 5,
+            borderWidth: 1,
+            borderColor: Colors[colorScheme].tint,
+          }}
         >
-          <IconContainer>
+          <IconContainer
+            style={{
+              borderRightColor: Colors[colorScheme].tint,
+              borderRightWidth: 1,
+            }}
+          >
             <Ionicons
               name="md-calendar-sharp"
               color={Colors[colorScheme].tint}
@@ -367,8 +376,6 @@ const ManualTransactionModal = ({
               value={date}
               param="date"
               onChange={handleTextChange}
-              placeholderTextColor={Colors[colorScheme].text + '60'}
-              style={{ marginLeft: 10, color: Colors[colorScheme].text }}
             />
           </Column>
         </DateContainer>
@@ -407,7 +414,7 @@ const ManualTransactionModal = ({
       {isEditMode ? (
         <Row>
           <DeleteButton
-            handleDeleteTransaction={handleDeleteTransaction}
+            deleteFunction={handleDeleteTransaction}
             id={itemToEdit?._id.toString() ?? ''}
             buttonText="Delete Transaction"
           />
@@ -422,6 +429,7 @@ const ManualTransactionModal = ({
           callBack={submit}
           callBackArgs={currentStep + 1}
           colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+          disabled={false}
         />
       ) : (
         <LoadingSpinner />

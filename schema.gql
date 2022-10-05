@@ -28,6 +28,14 @@ type HistoryTypeDef {
 """Date custom scalar type"""
 scalar Date
 
+type UpdateTypeDef {
+  _id: String!
+  updateDetails: String!
+  groupRef: String!
+  userRef: String!
+  updateTime: String!
+}
+
 type OccasionTypeDef {
   _id: String!
   title: String!
@@ -36,6 +44,10 @@ type OccasionTypeDef {
   history: [HistoryTypeDef!]
   creator: String!
   initialBudget: String!
+  occasionStartDate: String!
+  externalInvites: [ExternalInviteTypeDef!]
+  invites: [InvitesTypeDef!]
+  updates: [UpdateTypeDef!]
 }
 
 type ExternalInviteTypeDef {
@@ -47,14 +59,6 @@ type ExternalInviteTypeDef {
   groupRef: GroupTypeDef
   occasionRef: OccasionTypeDef
   inviteType: String!
-}
-
-type UpdateTypeDef {
-  _id: String!
-  updateDetails: String!
-  groupRef: String!
-  userRef: String!
-  updateTime: String!
 }
 
 type GroupTypeDef {
@@ -303,6 +307,12 @@ type DeleteTransactionResponse {
   success: Boolean!
 }
 
+type CreateOccasionResponse {
+  Occasion: OccasionTypeDef!
+  message: String!
+  success: Boolean!
+}
+
 type LoadOccasionResponse {
   Occasion: OccasionTypeDef!
 }
@@ -388,6 +398,7 @@ type Mutation {
   changeGroupBackgroundImage(input: FetchGroupMembersInput!): CreateGroupResponse!
   deleteGroup(input: DeleteGroupInput!): DeleteGroupResponse!
   updateGroup(input: UpdateGroupInput!): UpdateGroupResponse!
+  createOccasion(createOccsionInput: CreateOccasionInput!): CreateOccasionResponse!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
@@ -490,6 +501,18 @@ input UpdateGroupInput {
   groupID: String!
   groupName: String
   image: String
+}
+
+input CreateOccasionInput {
+  title: String!
+  budget: String!
+  occasionStartDate: String
+  contacts: [Contact!]
+  members: [Member!]
+}
+
+input Member {
+  _id: String!
 }
 
 input ContributeToBudgetInput {

@@ -15,13 +15,15 @@ const DateContainer = styled.View`
 type ComponentProps = {
   value: string;
   onChange: (value: string, name: string) => void;
-  param: 'date' | 'time';
+  param: 'date' | 'occasionStartDate';
+  label: string;
 };
 
 const DatePickerModal = ({
   value,
   onChange,
   param = 'date',
+  label = 'Choose a date',
 }: ComponentProps) => {
   const colorScheme = useColorScheme();
 
@@ -42,7 +44,10 @@ const DatePickerModal = ({
       if (event.type === 'set') {
         const receivedDate = new Date(event.nativeEvent.timestamp ?? value);
         // //pass the value back to the parent
+
         onChange(
+          // Param is the  name of the value to change, basically the name of the input that assigns value to state
+          // like name="date" or name="occasionStartDate"
           param,
           new Date(new Date(receivedDate).getTime()).toLocaleDateString(),
         );
@@ -54,7 +59,7 @@ const DatePickerModal = ({
     }
   };
 
-  console.log('date?', date);
+  console.log('date?', value);
 
   useEffect(() => {
     Animated.timing(slideIn, {
@@ -82,7 +87,7 @@ const DatePickerModal = ({
         style={{
           padding: 5,
           borderRadius: 5,
-          marginLeft: 10,
+
           width: '100%',
         }}
       >
@@ -90,8 +95,13 @@ const DatePickerModal = ({
           onPress={() => toggleDatePicker(!showDatePicker)}
           style={{ width: '100%', display: 'flex' }}
         >
-          <Text style={{ color: Colors[colorScheme].text, fontWeight: '700' }}>
-            Choose Date:
+          <Text
+            style={{
+              fontSize: 12,
+              opacity: 0.7,
+            }}
+          >
+            {label}
           </Text>
           <Text style={{ color: Colors[colorScheme].text }}>
             {format(new Date(value).getTime(), 'PPPP')}

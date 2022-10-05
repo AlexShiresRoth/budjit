@@ -1,12 +1,14 @@
-import { Group } from 'src/mongo-schemas/group.model';
-import { InviteInterface } from './invite.interface';
+import mongoose from 'mongoose';
+import { ExternalInviteTypeDef } from 'src/graphql/schemas/externalInvite.schema';
+import { ExternalInvite } from 'src/mongo-schemas/ExternalInvite';
 
 export interface OccasionInterface {
   title: string;
   budget: string;
   creator: string;
-  group: Group;
-  invites: InviteInterface[] | Array<null>;
+  externalInvites: Array<{ _id: any }> | any[];
+  invites: Array<{ _id: any }> | any[];
+  members: string[];
   initialBudget: string;
   occasionStartDate: string;
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
+import IconContainerWithRightBorder from '../icons/IconContainerWithRightBorder';
 
 const Container = styled.View`
   display: flex;
@@ -10,15 +11,7 @@ const Container = styled.View`
   padding: 5px;
   border-radius: 5px;
 `;
-const IconContainer = styled.View`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  margin-right: 10px;
-  width: 50px;
-  border-right-width: 1px;
-`;
+
 const Column = styled.View`
   justify-content: center;
 `;
@@ -63,7 +56,7 @@ const Input = ({
 
   return (
     <Container style={{ borderColor: color, borderWidth: 1 }}>
-      <IconContainer style={{ borderRightColor: color }}>{icon}</IconContainer>
+      <IconContainerWithRightBorder icon={icon} borderRightColor={color} />
       <Column>
         {descriptor ? <Label style={labelStyle}>{descriptor}</Label> : null}
         <TextInput

@@ -1,9 +1,13 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Prop, raw, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 import * as mongoose from 'mongoose';
 import { History } from './history.model';
 import { Group } from './group.model';
 import { Account } from './account.model';
+import { ExternalInviteModule } from 'src/modules/externalInvite.module';
+import { ExternalInvite } from './ExternalInvite';
+import { Update } from './update.model';
+import { Invite } from './Invite.model';
 
 @Schema()
 export class Occasion {
@@ -27,8 +31,36 @@ export class Occasion {
   category: string;
   @Prop()
   creationDate: string;
-  @Prop()
+  @Prop({ default: Date.now })
   occasionStartDate: string;
+  @Prop(
+    raw([
+      {
+        invite_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'ExternalInvite',
+        },
+      },
+    ]),
+  )
+  externalInvites: ExternalInvite[];
+  @Prop(
+    raw([
+      { updateRef: { type: mongoose.Schema.Types.ObjectId, ref: 'Update' } },
+    ]),
+  )
+  updates: Update[];
+  @Prop(
+    raw([
+      {
+        invite_id: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Invite',
+        },
+      },
+    ]),
+  )
+  invites: Invite[];
 }
 
 export type OccasionDocument = Occasion & Document;

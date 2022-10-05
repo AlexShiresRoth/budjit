@@ -6,7 +6,9 @@ type Props = {
 };
 
 const Row = ({ children }: Props) => (
-  <View style={{ flexDirection: 'row', width: '100%' }}>{children}</View>
+  <View style={{ flexDirection: 'row', width: '100%', alignItems: 'center' }}>
+    {children}
+  </View>
 );
 
 export default Row;

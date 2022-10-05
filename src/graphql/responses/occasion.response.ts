@@ -4,8 +4,12 @@ import { OccasionTypeDef } from '../schemas/occasion.schema';
 
 @ObjectType()
 export class CreateOccasionResponse {
+  @Field(() => OccasionTypeDef)
+  Occasion: Occasion;
   @Field()
-  Occasion: OccasionTypeDef;
+  message: string;
+  @Field()
+  success: boolean;
 }
 
 @ObjectType()
