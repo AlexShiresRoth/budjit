@@ -11,6 +11,8 @@ import { Invite } from './Invite.model';
 
 @Schema()
 export class Occasion {
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  _id: string;
   @Prop({ required: true })
   title: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: false })
@@ -33,6 +35,10 @@ export class Occasion {
   creationDate: string;
   @Prop({ default: Date.now })
   occasionStartDate: string;
+  @Prop({ default: Date.now })
+  occasionEndDate: string;
+  @Prop({ default: Date.now })
+  occasionCreationDate: string;
   @Prop(
     raw([
       {

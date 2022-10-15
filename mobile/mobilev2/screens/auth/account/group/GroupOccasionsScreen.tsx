@@ -9,6 +9,7 @@ const GroupOccasionsScreen = () => {
   useEffect(() => {
     dispatch(showHeader({ show: false }));
   }, []);
+  
   return (
     <View>
       <Text>Group Occasions</Text>

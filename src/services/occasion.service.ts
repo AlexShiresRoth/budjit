@@ -46,10 +46,18 @@ export class OccasionService {
       if (!myAccount)
         throw new Error('Hmmm something went wrong locating your account');
 
+      //need to refetch occasions because only ids are provided from account
+      const foundOccasions = await Promise.all(
+        myAccount?.occasions.map(
+          async (occasion) => await this.occasionModel.findById(occasion),
+        ),
+      );
+
       return {
         message: 'Found your occasions',
         success: true,
-        Occasions: myAccount.occasions,
+        //ignore any null values
+        Occasions: foundOccasions.filter((o) => o),
       };
     } catch (error) {
       console.log(error);
@@ -57,6 +65,7 @@ export class OccasionService {
     }
   }
 
+  //@TODO: this will need to be refactored to handle new fields: see updated schema
   async create(
     input: CreateOccasionInput,
     user: AuthPayload,
