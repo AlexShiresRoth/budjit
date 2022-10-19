@@ -6,7 +6,6 @@ export const LOAD_MY_OCCASIONS = gql`
       message
       success
       Occasions {
-        initialBudget
         creator
         title
       }
