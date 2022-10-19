@@ -43,6 +43,8 @@ const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
     }
   }, [data]);
 
+  console.log('occasions', occasions);
+
   if (loading) {
     return (
       <Container>

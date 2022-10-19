@@ -46,6 +46,8 @@ export class OccasionService {
       if (!myAccount)
         throw new Error('Hmmm something went wrong locating your account');
 
+      console.log('myAccount', myAccount.occasions);
+
       return {
         message: 'Found your occasions',
         success: true,
