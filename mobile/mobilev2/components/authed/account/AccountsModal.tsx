@@ -173,7 +173,6 @@ const AccountData = ({
 
 const AccountItem = ({ item }: any) => {
   const colorScheme = useColorScheme();
-  console.log('im an item', item);
   return (
     <Column style={{ margin: 10 }}>
       <Row>

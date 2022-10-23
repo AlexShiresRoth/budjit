@@ -23,7 +23,6 @@ const AccountTabNavigator = () => {
 
   const { showBackButton, currentRoute } = useAppSelector(selectNavState);
 
-  console.log('showheader', currentRoute);
   return (
     <AccountTabs.Navigator
       screenOptions={{

@@ -1,21 +1,11 @@
-import { FontAwesome, MaterialIcons } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import {
-  FlatList,
-  Modal,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import styled from 'styled-components/native';
+import { FlatList, ScrollView, Text, View } from 'react-native';
+import { add } from 'date-fns';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
 import PrimaryButton from '../buttons/PrimaryButton';
 import ToggleButton from '../buttons/ToggleButton';
-import ContactsList from '../contacts/ContactsList';
-import ContactsModal from '../contacts/ContactsModal';
 import IconContainerWithRightBorder from '../icons/IconContainerWithRightBorder';
 import Input from '../inputs/Input';
 import RemovableUserItem from '../list-items/RemovableUserItem';
@@ -27,6 +17,11 @@ import RowSpaceBetween from '../reusable/layout/RowSpaceBetween';
 import Spacer from '../reusable/layout/Spacer';
 import Heading from '../text/Heading';
 import OccasionContacts from './OccasionContacts';
+import { useMutation } from '@apollo/client';
+import { CREATE_OCCASION } from '../../graphql/mutations/occasions.mutations';
+import LoadingSpinner from '../reusable/LoadingSpinner';
+import { useAppDispatch } from '../../hooks/reduxHooks';
+import { addOccasion } from '../../redux/reducers/occasions.reducer';
 
 type Props = {
   isVisible: boolean;
@@ -34,20 +29,27 @@ type Props = {
 };
 
 type OccasionParams = {
-  title: string;
-  group: string;
+  title: undefined | string;
   budget: string;
-  category: string;
   occasionStartDate: string;
+  occasionEndDate: string;
 };
 
 const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
   const colorScheme = useColorScheme();
+  //redux dispatch
+  const dispatch = useAppDispatch();
+  //need today's date to set a month from now as the default end date
+  const today = new Date();
   //set starting date to today
-  const OccasionDate = new Date().toISOString();
-
+  const OCCASION_START_DATE_TEMP = new Date().toISOString();
+  //set default end date to 1 month from today
+  const OCCASION_END_DATE_TEMP = add(today, { months: 1 }).toISOString();
   //contacts that the user selects, show these in a list
   const [selectedContacts, selectContacts] = useState<any[]>([]);
+  //mutation for creating occasions
+  const [createOccasion, { loading, data, error }] =
+    useMutation(CREATE_OCCASION);
 
   //handle the ability to create occasion by toggling button disabled
   const [canCreateOccasion, setCanCreateOccasion] = useState<boolean>(false);
@@ -57,14 +59,13 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
     useState<boolean>(false);
 
   const [occasionData, setOccasionData] = useState<OccasionParams>({
-    title: '',
-    group: '',
+    title: undefined,
     budget: '0.00',
-    category: '',
-    occasionStartDate: OccasionDate,
+    occasionStartDate: OCCASION_START_DATE_TEMP,
+    occasionEndDate: OCCASION_END_DATE_TEMP,
   });
 
-  const { title, group, budget, category, occasionStartDate } = occasionData;
+  const { title, budget, occasionStartDate, occasionEndDate } = occasionData;
 
   const handleSelectContact = (contact: any): void => {
     // console.log('in the hole', contact);
@@ -78,6 +79,13 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
   const removeSelectedContact = (contact: any): void =>
     selectContacts(selectedContacts.filter((c) => c.id !== contact.id));
 
+  const handleBudgetSanitization = (budget: string): void => {
+    //remove all non numeric characters
+    const sanitizedBudget = budget.replace(/[^\d.-]/g, '');
+
+    handleChangeEvent('budget', sanitizedBudget);
+  };
+
   //name must be first, and value second for date picker
   const handleChangeEvent = (name: string, value: string) =>
     setOccasionData({
@@ -89,10 +97,9 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
     //reset progress of creating new occasion
     setOccasionData({
       title: '',
-      group: '',
       budget: '0.00',
-      category: '',
-      occasionStartDate: OccasionDate,
+      occasionStartDate: OCCASION_START_DATE_TEMP,
+      occasionEndDate: OCCASION_END_DATE_TEMP,
     });
     //set step back to start
     selectContacts([]);
@@ -100,11 +107,37 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
     handleModalVisibility(false);
   };
 
-  const handleCreateOccasion = async () => {};
-
+  //reset contacts and members selected if back out
   const handleSubModalOnClose = () => {
     selectContacts([]);
     toggleContactsModal(false);
+  };
+
+  const handleCreateOccasion = async (data: OccasionParams): Promise<void> => {
+    try {
+      const newOccasion = await createOccasion({
+        variables: {
+          input: occasionData,
+        },
+      });
+
+      //@TODO: handle error with alert
+      if (!newOccasion?.data?.createOccasion?.success) {
+        return console.log(
+          'error creating occasion',
+          newOccasion?.data?.error?.message,
+        );
+      }
+      //Add occasion to redux store
+      dispatch(
+        addOccasion({ occasion: newOccasion?.data?.createOccasion?.Occasion }),
+      );
+      //display alert upon creation
+      //close out modal and return to main screen
+      handleResetOnClose();
+    } catch (error) {
+      console.error('error creating occasion', error);
+    }
   };
 
   const renderItem = ({ item }: any) => (
@@ -127,7 +160,7 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
 
   //only allow user to create occasion if title field is filled
   useEffect(() => {
-    if (title !== '') {
+    if (title && budget) {
       setCanCreateOccasion(true);
     }
   }, [title]);
@@ -150,7 +183,7 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
         <Spacer amount={10} />
         <Row>
           <Input
-            value={title}
+            value={title ?? ""}
             descriptor={'Give this occasion a name'}
             label={'Name'}
             callback={(text) => handleChangeEvent('title', text)}
@@ -176,7 +209,7 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
             value={budget}
             descriptor={'Set a max budget for this occasion'}
             label={'Budget'}
-            callback={(text) => handleChangeEvent('budget', text)}
+            callback={(text) => handleBudgetSanitization(text)}
             style={null}
             isSecure={false}
             labelStyle={null}
@@ -226,6 +259,40 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
         </Row>
         {/* DATE PICKER */}
 
+        {/* END DATE PICKER */}
+        <Spacer amount={10} />
+        <Row>
+          <View
+            style={{
+              borderWidth: 1,
+              borderRadius: 5,
+              borderColor: Colors[colorScheme].tint,
+              width: '100%',
+              flexDirection: 'row',
+              alignItems: 'center',
+            }}
+          >
+            <IconContainerWithRightBorder
+              icon={
+                <FontAwesome
+                  name="calendar"
+                  size={22}
+                  color={Colors[colorScheme].tint}
+                />
+              }
+              borderRightColor={Colors[colorScheme].tint}
+            />
+
+            <DatePickerModal
+              value={occasionEndDate}
+              onChange={handleChangeEvent}
+              param={'occasionEndDate'}
+              label={'Set an end date'}
+            />
+          </View>
+        </Row>
+        {/* END DATE PICKER */}
+
         {/* Contact List   */}
         <Spacer amount={10} />
         <RowSpaceBetween>
@@ -270,14 +337,20 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
         </RowSpaceBetween>
         {/* Member list */}
 
-        <PrimaryButton
-          buttonText="Create Occasion"
-          disabled={canCreateOccasion ? false : true}
-          colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
-          callBack={() => console.log('create occasion')}
-          callBackArgs={occasionData}
-          buttonTextColor={Colors[colorScheme].background}
-        />
+        {!loading ? (
+          <PrimaryButton
+            buttonText="Create Occasion"
+            disabled={canCreateOccasion ? false : true}
+            colorArr={[Colors[colorScheme].tint, Colors[colorScheme].tint]}
+            callBack={handleCreateOccasion}
+            callBackArgs={occasionData}
+            buttonTextColor={Colors[colorScheme].background}
+          />
+        ) : (
+          <View>
+            <LoadingSpinner />
+          </View>
+        )}
 
         <OccasionContacts
           selectFunction={handleSelectContact}

@@ -56,7 +56,7 @@ export class OccasionService {
       return {
         message: 'Found your occasions',
         success: true,
-        Occasions: foundOccasions.filter((o) => o),
+        Occasions: foundOccasions.filter((o) => o).reverse(),
       };
     } catch (error) {
       console.log(error);
@@ -74,6 +74,7 @@ export class OccasionService {
         title,
         budget = '0.00',
         occasionStartDate,
+        occasionEndDate,
         contacts,
         members,
       } = input;
@@ -91,8 +92,7 @@ export class OccasionService {
       const assessedBudget = manipulateBudgetString(budget);
 
       //validate a date string or set to current date
-      const validDate = (occasionStartDate: string) =>
-        new Date(occasionStartDate) ?? new Date();
+      const validDate = (date: string) => new Date(date) ?? new Date();
 
       //generate an id before saving in order to forward it to the invite service
       const occasionId = new mongoose.Types.ObjectId();
@@ -108,6 +108,9 @@ export class OccasionService {
         //set to default date if no valid date is provided
         occasionStartDate: validDate(occasionStartDate)
           ? occasionStartDate
+          : undefined,
+        occasionEndDate: validDate(occasionEndDate)
+          ? occasionEndDate
           : undefined,
         _id: occasionId,
       };
@@ -223,4 +226,5 @@ export class OccasionService {
       return error;
     }
   }
+  //@TODO: need to delete occasion for all members
 }

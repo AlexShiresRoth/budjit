@@ -5,6 +5,7 @@ import alertsReducers from './reducers/alerts.reducers';
 import groupsReducers from './reducers/groups.reducers';
 import navigationReducers from './reducers/navigation.reducers';
 import updatesReducers from './reducers/updates.reducers';
+import occasionsReducer from './reducers/occasions.reducer';
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     groups: groupsReducers,
     navigation: navigationReducers,
     updates: updatesReducers,
+    occasions: occasionsReducer,
   },
 });
 

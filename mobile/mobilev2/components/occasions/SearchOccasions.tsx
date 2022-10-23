@@ -5,7 +5,6 @@ import { Animated } from 'react-native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
 
-const InputContainer = styled.View``;
 
 const Input = styled.TextInput``;
 
@@ -27,7 +26,7 @@ const SearchOccasions = ({ isVisible }: Props) => {
     }).start();
   };
 
-  const dimiinish = () => {
+  const diminish = () => {
     // Will change fadeAnim value to 0 in 3 seconds
     Animated.timing(width, {
       toValue: 0,
@@ -50,7 +49,7 @@ const SearchOccasions = ({ isVisible }: Props) => {
   useEffect(() => {
     if (isVisible) {
       expand();
-    } else dimiinish();
+    } else diminish();
   }, [isVisible]);
 
   return (

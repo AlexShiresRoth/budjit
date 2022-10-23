@@ -1,6 +1,6 @@
 import format from 'date-fns/format';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../../../constants/Colors';
 import useColorScheme from '../../../hooks/useColorScheme';
 import { OccasionType } from '../../../types/Occasion.types';
@@ -18,14 +18,11 @@ const OccasionItem = ({ item }: Props) => {
     <View
       style={{
         width: '100%',
-        marginVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors[colorScheme].accountBg,
+        marginVertical: 3,
         alignItems: 'center',
-        paddingVertical: 10,
       }}
     >
-      <View style={{ width: '90%' }}>
+      <TouchableOpacity style={{ width: '95%', backgroundColor: Colors[colorScheme]?.accountBg + 50, padding:15, borderRadius:10 }}>
         <View
           style={{
             flexDirection: 'row',
@@ -40,7 +37,7 @@ const OccasionItem = ({ item }: Props) => {
           <Text>Initial Budget: ${item?.initialBudget}</Text>
           <Text>{item?.budget}</Text>
         </View>
-      </View>
+      </TouchableOpacity>
     </View>
   );
 };

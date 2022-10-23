@@ -22,10 +22,6 @@ const useFetchGroups = () => {
     refetch();
   }, [groups.length]);
 
-  console.log(
-    'my gorups',
-    groups.map((group) => group.name),
-  );
   return { groups, loading, error };
 };
 

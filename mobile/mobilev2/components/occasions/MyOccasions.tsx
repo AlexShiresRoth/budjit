@@ -1,22 +1,14 @@
-import React, {
-  ComponentProps,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
-import PropTypes from 'prop-types';
+import React, { Dispatch, SetStateAction } from 'react';
 import { Button, FlatList, Text, View } from 'react-native';
 import EmptyState from '../reusable/EmptyState';
 import styled from 'styled-components/native';
 import useColorScheme from '../../hooks/useColorScheme';
 import Colors from '../../constants/Colors';
 import CreateOccasions from './CreateOccasions';
-import { useQuery } from '@apollo/client';
-import { LOAD_MY_OCCASIONS } from '../../graphql/queries/occasions.query';
 import LoadingSpinner from '../reusable/LoadingSpinner';
 import { OccasionType } from '../../types/Occasion.types';
 import OccasionItem from './items/OccasionItem';
+import useFetchOccasions from '../../hooks/useFetchOccasions';
 
 const Container = styled.View`
   width: 100%;
@@ -32,22 +24,16 @@ type Props = {
   handleModalVisibility: Dispatch<SetStateAction<boolean>>;
 };
 
-const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
-  const [occasions, setOccasions] = useState<Array<any>>([]);
+//@TODO: add a new tag to any occasion with the current date
 
+const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
   const colorScheme = useColorScheme();
 
-  const { error, data, loading } = useQuery(LOAD_MY_OCCASIONS);
+  const { occasions, error, loading } = useFetchOccasions();
 
   const renderItem = ({ item }: { item: OccasionType }) => (
     <OccasionItem item={item} key={item?._id} />
   );
-
-  useEffect(() => {
-    if (data) {
-      setOccasions(data.loadMyOccasions.Occasions);
-    }
-  }, [data]);
 
   if (loading) {
     return (
@@ -110,7 +96,7 @@ const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
       <FlatList
         renderItem={renderItem}
         data={occasions}
-        style={{ width: '100%' }}
+        style={{ width: '100%', marginBottom: 60, marginTop:10 }}
       />
       <CreateOccasions
         isVisible={isVisible}

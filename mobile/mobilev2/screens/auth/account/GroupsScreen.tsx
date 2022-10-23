@@ -31,7 +31,6 @@ const GroupsScreen = ({ route, navigation }: Props) => {
   useEffect(() => {
     if (groupCreated) {
       //close modal on creation
-      console.log('group created');
       setModalVisible(false);
       //set an alert that it was created
       dispatch(setAlert({ message: 'Group Created', type: 'success' }));

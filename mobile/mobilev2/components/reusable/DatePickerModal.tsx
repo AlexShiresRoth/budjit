@@ -15,7 +15,7 @@ const DateContainer = styled.View`
 type ComponentProps = {
   value: string;
   onChange: (value: string, name: string) => void;
-  param: 'date' | 'occasionStartDate';
+  param: 'date' | 'occasionStartDate' | 'occasionEndDate';
   label: string;
 };
 

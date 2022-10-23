@@ -40,6 +40,7 @@ type OccasionTypeDef {
   _id: String!
   title: String!
   budget: String!
+  amountContributed: String!
   group: GroupTypeDef
   history: [HistoryTypeDef!]
   creator: String!
@@ -400,7 +401,7 @@ type Mutation {
   changeGroupBackgroundImage(input: FetchGroupMembersInput!): CreateGroupResponse!
   deleteGroup(input: DeleteGroupInput!): DeleteGroupResponse!
   updateGroup(input: UpdateGroupInput!): UpdateGroupResponse!
-  createOccasion(createOccsionInput: CreateOccasionInput!): CreateOccasionResponse!
+  createOccasion(input: CreateOccasionInput!): CreateOccasionResponse!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
 }
 
@@ -509,6 +510,7 @@ input CreateOccasionInput {
   title: String!
   budget: String!
   occasionStartDate: String
+  occasionEndDate: String
   contacts: [Contact!]
   members: [Member!]
 }

@@ -12,13 +12,9 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const Content = styled.View`
-  width: 90%;
-`;
-
 const SearchHeader = styled.View`
   width: 100%;
-  padding: 20px 0;
+  padding: 10px 0;
   align-items: center;
 `;
 

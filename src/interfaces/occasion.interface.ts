@@ -1,7 +1,3 @@
-import mongoose from 'mongoose';
-import { ExternalInviteTypeDef } from 'src/graphql/schemas/externalInvite.schema';
-import { ExternalInvite } from 'src/mongo-schemas/ExternalInvite';
-
 export interface OccasionInterface {
   title: string;
   budget: string;
@@ -11,4 +7,5 @@ export interface OccasionInterface {
   members: string[];
   initialBudget: string;
   occasionStartDate: string;
+  occasionEndDate: string;
 }

@@ -36,7 +36,7 @@ export class OccasionResolver {
   @Mutation(() => CreateOccasionResponse)
   @UseGuards(GraphqlAuthGuard)
   async createOccasion(
-    @Args('createOccsionInput') createOccasionInput: CreateOccasionInput,
+    @Args('input') createOccasionInput: CreateOccasionInput,
     @CurrentAccount() user: AuthPayload,
   ): Promise<CreateOccasionResponse> {
     return await this.occasionService.create(createOccasionInput, user);
