@@ -11,6 +11,7 @@ import SearchOccasions from './SearchOccasions';
 const Container = styled.View`
   align-items: center;
 `;
+
 const Content = styled.View`
   width: 90%;
 `;

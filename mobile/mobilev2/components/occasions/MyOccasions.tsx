@@ -6,7 +6,7 @@ import React, {
   useState,
 } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Text, View } from 'react-native';
+import { Button, FlatList, Text, View } from 'react-native';
 import EmptyState from '../reusable/EmptyState';
 import styled from 'styled-components/native';
 import useColorScheme from '../../hooks/useColorScheme';
@@ -15,6 +15,8 @@ import CreateOccasions from './CreateOccasions';
 import { useQuery } from '@apollo/client';
 import { LOAD_MY_OCCASIONS } from '../../graphql/queries/occasions.query';
 import LoadingSpinner from '../reusable/LoadingSpinner';
+import { OccasionType } from '../../types/Occasion.types';
+import OccasionItem from './items/OccasionItem';
 
 const Container = styled.View`
   width: 100%;
@@ -37,13 +39,15 @@ const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
 
   const { error, data, loading } = useQuery(LOAD_MY_OCCASIONS);
 
+  const renderItem = ({ item }: { item: OccasionType }) => (
+    <OccasionItem item={item} key={item?._id} />
+  );
+
   useEffect(() => {
     if (data) {
       setOccasions(data.loadMyOccasions.Occasions);
     }
   }, [data]);
-
-  console.log('occasions', occasions);
 
   if (loading) {
     return (
@@ -74,7 +78,7 @@ const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
     return (
       <Container>
         <EmptyContainer>
-          <EmptyState />
+          <EmptyState title="No Occasions Yet" />
           <Text
             style={{
               color: Colors[colorScheme].text,
@@ -100,8 +104,14 @@ const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
       </Container>
     );
   }
+
   return (
-    <View>
+    <View style={{ width: '100%' }}>
+      <FlatList
+        renderItem={renderItem}
+        data={occasions}
+        style={{ width: '100%' }}
+      />
       <CreateOccasions
         isVisible={isVisible}
         handleModalVisibility={handleModalVisibility}

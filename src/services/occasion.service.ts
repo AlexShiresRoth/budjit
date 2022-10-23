@@ -56,7 +56,6 @@ export class OccasionService {
       return {
         message: 'Found your occasions',
         success: true,
-        //ignore any null values
         Occasions: foundOccasions.filter((o) => o),
       };
     } catch (error) {

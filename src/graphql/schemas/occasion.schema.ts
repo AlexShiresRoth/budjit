@@ -16,6 +16,8 @@ export class OccasionTypeDef {
   title: string;
   @Field()
   budget: string;
+  @Field()
+  amountContributed: string;
   @Field(() => GroupTypeDef, { nullable: true })
   group: GroupTypeDef;
   @Field(() => [HistoryTypeDef], { nullable: true })

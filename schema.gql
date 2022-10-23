@@ -45,6 +45,8 @@ type OccasionTypeDef {
   creator: String!
   initialBudget: String!
   occasionStartDate: String!
+  occasionCreationDate: String!
+  occasionEndDate: String!
   externalInvites: [ExternalInviteTypeDef!]
   invites: [InvitesTypeDef!]
   updates: [UpdateTypeDef!]

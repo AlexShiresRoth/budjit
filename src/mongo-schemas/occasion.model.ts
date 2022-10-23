@@ -19,6 +19,8 @@ export class Occasion {
   group: Group;
   @Prop()
   budget: string;
+  @Prop({ default: '0.00' })
+  amountContributed: string;
   @Prop({
     type: [
       { type: mongoose.Schema.Types.ObjectId, ref: 'History', required: false },
