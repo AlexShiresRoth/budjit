@@ -9,6 +9,7 @@ import {
   AddMembersInput,
   ContributeToBudgetInput,
   CreateOccasionInput,
+  LoadOccasionInput,
 } from '../inputs/ocassion.input';
 import {
   CreateOccasionResponse,
@@ -23,8 +24,8 @@ export class OccasionResolver {
 
   @Query(() => LoadOccasionResponse)
   @UseGuards(GraphqlAuthGuard)
-  async loadOccasion(@Args('id') id: string) {
-    return await this.occasionService.findOneById(id);
+  async loadOccasion(@Args('input') input: LoadOccasionInput) {
+    return await this.occasionService.findOneById(input);
   }
 
   @Query(() => LoadMyOccasionsResponse)

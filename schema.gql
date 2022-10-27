@@ -317,6 +317,8 @@ type CreateOccasionResponse {
 }
 
 type LoadOccasionResponse {
+  message: String!
+  success: Boolean!
   Occasion: OccasionTypeDef!
 }
 
@@ -345,7 +347,7 @@ type Query {
   fetchGroupMembers(input: FetchGroupMembersInput!): FetchGroupMemberAccountsResponse!
   fetchExternalInvite(input: FetchExternalInviteInput!): FetchExternalInviteResponse!
   fetchUpdate(input: FetchUpdateInput!): FetchUpdateResponse!
-  loadOccasion(id: String!): LoadOccasionResponse!
+  loadOccasion(input: LoadOccasionInput!): LoadOccasionResponse!
   loadMyOccasions: LoadMyOccasionsResponse!
 }
 
@@ -380,6 +382,10 @@ input FetchExternalInviteInput {
 
 input FetchUpdateInput {
   updateId: String!
+}
+
+input LoadOccasionInput {
+  occasionID: String!
 }
 
 type Mutation {

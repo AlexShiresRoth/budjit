@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import mongoose from 'mongoose';
 import { Occasion } from 'src/mongo-schemas/occasion.model';
 import { Contact, Member } from './group.input';
 import { Invite } from './invite.input';
@@ -9,6 +10,12 @@ export class AddMembersInput {
   invites: Invite[];
   @Field()
   occasionID: string;
+}
+
+@InputType()
+export class LoadOccasionInput {
+  @Field()
+  occasionID: string ;
 }
 
 @InputType()

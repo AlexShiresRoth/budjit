@@ -43,7 +43,6 @@ const Occasions = ({ navigation, route }: Props) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
 
 
-
   return (
     <Container
       style={{

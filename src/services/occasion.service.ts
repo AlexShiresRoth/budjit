@@ -5,10 +5,12 @@ import {
   AddMembersInput,
   ContributeToBudgetInput,
   CreateOccasionInput,
+  LoadOccasionInput,
 } from 'src/graphql/inputs/ocassion.input';
 import {
   CreateOccasionResponse,
   LoadMyOccasionsResponse,
+  LoadOccasionResponse,
 } from 'src/graphql/responses/occasion.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { OccasionInterface } from 'src/interfaces/occasion.interface';
@@ -29,14 +31,28 @@ export class OccasionService {
     private readonly externalInviteService: ExternalInviteService,
   ) {}
 
-  async findOneById(id: string): Promise<Occasion> {
-    if (!id) throw new Error('Could not locate document');
+  async findOneById(input: LoadOccasionInput): Promise<LoadOccasionResponse> {
+    const { occasionID } = input;
+    try {
+      if (!occasionID) throw new Error('Could not locate document');
 
-    const foundOccasion = await this.occasionModel.findById(id);
+      const foundOccasion = await this.occasionModel.findById(occasionID);
 
-    if (!foundOccasion) throw new Error('Could not locate occasion');
+      if (!foundOccasion) throw new Error('Could not locate occasion');
 
-    return foundOccasion;
+      return {
+        message: 'Found your occasion',
+        success: true,
+        Occasion: foundOccasion,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error.message,
+        success: false,
+        Occasion: null,
+      };
+    }
   }
 
   async findAll(userId: string): Promise<LoadMyOccasionsResponse> {

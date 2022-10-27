@@ -50,7 +50,9 @@ export type GroupStackParamList = {
 };
 
 export type OccasionStackParamList = {
-  OccasionScreenNavigator: undefined | { params: { occasionId: string } };
+  OccasionScreenNavigator:
+    | undefined
+    | ({ screen: any } & { params: { occasionId: string } });
   OccasionScreen: undefined | { occasionId: string };
 };
 
