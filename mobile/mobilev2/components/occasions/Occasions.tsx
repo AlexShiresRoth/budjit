@@ -1,10 +1,11 @@
 import { AntDesign } from '@expo/vector-icons';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
 import Colors from '../../constants/Colors';
 import useColorScheme from '../../hooks/useColorScheme';
+import { RootTabParamList } from '../../types';
 import MyOccasions from './MyOccasions';
 import SearchOccasions from './SearchOccasions';
 
@@ -32,12 +33,16 @@ const Column = styled.View`
 
 const Text = styled.Text``;
 
-const Occasions = () => {
+type Props = BottomTabScreenProps<RootTabParamList, 'Occasions'>;
+
+const Occasions = ({ navigation, route }: Props) => {
   const colorScheme = useColorScheme();
 
   const [searchVisible, toggleVisibility] = useState<boolean>(false);
 
   const [modalVisible, setModalVisible] = useState<boolean>(false);
+
+
 
   return (
     <Container
@@ -105,6 +110,8 @@ const Occasions = () => {
       <MyOccasions
         isVisible={modalVisible}
         handleModalVisibility={setModalVisible}
+        navigation={navigation}
+        route={route}
       />
     </Container>
   );

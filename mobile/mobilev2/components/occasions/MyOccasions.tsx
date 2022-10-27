@@ -9,6 +9,8 @@ import LoadingSpinner from '../reusable/LoadingSpinner';
 import { OccasionType } from '../../types/Occasion.types';
 import OccasionItem from './items/OccasionItem';
 import useFetchOccasions from '../../hooks/useFetchOccasions';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { RootTabParamList } from '../../types';
 
 const Container = styled.View`
   width: 100%;
@@ -26,13 +28,15 @@ type Props = {
 
 //@TODO: add a new tag to any occasion with the current date
 
-const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
+type NavProps = BottomTabScreenProps<RootTabParamList, 'Occasions'>
+
+const MyOccasions = ({ isVisible, handleModalVisibility, navigation, route }: Props & NavProps) => {
   const colorScheme = useColorScheme();
 
   const { occasions, error, loading } = useFetchOccasions();
 
   const renderItem = ({ item }: { item: OccasionType }) => (
-    <OccasionItem item={item} key={item?._id} />
+    <OccasionItem item={item} key={item?._id} navigation={navigation} route={route}/>
   );
 
   if (loading) {
