@@ -2,6 +2,7 @@ import { useQuery } from '@apollo/client';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import React from 'react';
 import { SafeAreaView, Text } from 'react-native';
+import Occasion from '../../../../components/occasions/occasion/Occasion';
 import { LOAD_OCCASION } from '../../../../graphql/queries/occasions.query';
 import { OccasionStackParamList } from '../../../../types';
 
@@ -18,7 +19,10 @@ const OccasionScreen = ({ navigation, route }: NavProps) => {
     variables: { input: { occasionID: route?.params?.occasionId } },
   });
 
-  console.log('data?.occasion', data);
+
+
+  if (error) return null;
+
   if (loading)
     return (
       <SafeAreaView>
@@ -28,7 +32,7 @@ const OccasionScreen = ({ navigation, route }: NavProps) => {
 
   return (
     <SafeAreaView>
-      <Text>Occasion Screen</Text>
+      <Occasion occasion={data?.loadOccasion?.Occasion} />
     </SafeAreaView>
   );
 };

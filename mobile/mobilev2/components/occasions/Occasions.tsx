@@ -48,6 +48,7 @@ const Occasions = ({ navigation, route }: Props) => {
       style={{
         width: '100%',
         height: '100%',
+         backgroundColor: Colors[colorScheme]?.accountBg + 50,
       }}
     >
       <SearchHeader

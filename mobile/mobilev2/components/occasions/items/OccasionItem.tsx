@@ -40,7 +40,7 @@ const OccasionItem = ({ item, navigation, route }: Props & NavProps) => {
       <TouchableOpacity
         style={{
           width: '95%',
-          backgroundColor: Colors[colorScheme]?.accountBg + 50,
+          backgroundColor: Colors[colorScheme].background,
           padding: 15,
           borderRadius: 10,
         }}
