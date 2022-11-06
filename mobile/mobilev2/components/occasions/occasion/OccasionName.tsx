@@ -1,4 +1,4 @@
-import { AntDesign, EvilIcons } from '@expo/vector-icons';
+import { AntDesign, EvilIcons, Feather } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import {
   NativeSyntheticEvent,
@@ -11,7 +11,6 @@ import {
 import Colors from '../../../constants/Colors';
 import useColorScheme from '../../../hooks/useColorScheme';
 import { OccasionType } from '../../../types/Occasion.types';
-
 
 type Props = {
   occasion: OccasionType;
@@ -43,14 +42,14 @@ const OccasionName = ({ occasion }: Props) => {
             style={{
               fontSize: 12,
               color: Colors[colorScheme].text + '50',
-              marginBottom: -6,
+              marginBottom: -4,
             }}
           >
             Occasion Name
           </Text>
-          <Text style={{ fontSize: 30, fontWeight: '700' }}>
-            {occasion?.title ?? 'No Title'}{' '}
-            <EvilIcons name="pencil" size={30} />
+          <Text style={{ fontSize: 26, fontWeight: '700' }}>
+            {occasion?.title ?? 'No Title'}
+            <EvilIcons name="pencil" size={22} />
           </Text>
         </TouchableOpacity>
       ) : (
@@ -59,42 +58,62 @@ const OccasionName = ({ occasion }: Props) => {
             style={{
               fontSize: 12,
               color: Colors[colorScheme].text + '50',
-              marginBottom: -6,
+              marginBottom: -4,
             }}
           >
             Edit Occasion Name
           </Text>
           <View
             style={{
-              flexDirection: 'row',
-              alignItems: 'center',
               justifyContent: 'space-between',
+              width: '90%',
             }}
           >
             <TextInput
               value={occasionName}
               onChange={(text) => handleNameChange(text)}
               style={{
-                fontSize: 30,
+                fontSize: 26,
                 fontWeight: '700',
                 borderBottomWidth: 1,
                 borderBottomColor: Colors[colorScheme].text,
-                minWidth: '80%',
-                maxWidth:"80%"
+                width: '100%',
               }}
             />
-            <TouchableOpacity
-              onPress={() => toggleTitle(!isTitleToggled)}
+            <View
               style={{
-                backgroundColor: Colors[colorScheme].accountBg + '50',
-                padding: 5,
-                borderRadius: 999,
+                flexDirection: 'row',
+                marginTop: 5,
+                justifyContent: 'space-between',
               }}
             >
-              <Text>
-                <AntDesign name="closecircleo" size={25} />
-              </Text>
-            </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => toggleTitle(!isTitleToggled)}
+                style={{
+                  padding: 5,
+                  borderRadius: 999,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ marginRight: 5, fontSize: 13 }}>Save</Text>
+
+                <Feather name="save" size={13} />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => toggleTitle(!isTitleToggled)}
+                style={{
+                  padding: 5,
+                  borderRadius: 999,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                }}
+              >
+                <Text style={{ marginRight: 5, fontSize: 13 }}>Cancel</Text>
+
+                <AntDesign name="closecircleo" size={13} />
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       )}

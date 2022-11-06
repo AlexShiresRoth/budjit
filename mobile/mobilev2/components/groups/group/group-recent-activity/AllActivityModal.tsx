@@ -4,7 +4,6 @@ import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import ModalContainer from '../../../modals/ModalContainer';
 import ModalHeader from '../../../modals/ModalHeader';
-import ActivityCard from './ActivityCard';
 import AllActivityCard from './AllActivityCard';
 
 type Props = {

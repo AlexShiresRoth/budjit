@@ -8,9 +8,10 @@ type Props = {
 
 const EmptyState = ({ title }: Props) => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{title}</Text>
+    <View style={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
+      
       <EmptyStateSvg />
+      <Text style={{ fontWeight: 'bold', fontSize: 20 }}>{title}</Text>
     </View>
   );
 };

@@ -6,10 +6,12 @@ export class UpdateTypeDef {
   _id: string;
   @Field()
   updateDetails: string;
-  @Field()
+  @Field({ nullable: true })
   groupRef: string;
   @Field()
   userRef: string;
   @Field()
   updateTime: string;
+  @Field({ nullable: true })
+  occasionRef: string;
 }

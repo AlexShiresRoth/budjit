@@ -27,7 +27,7 @@ const OccasionItem = ({ item, navigation, route }: Props & NavProps) => {
       screen: 'OccasionScreen',
       params: { occasionId },
     });
-    // console.log("item", item)
+   
 
   return (
     <View

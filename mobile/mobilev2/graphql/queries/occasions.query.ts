@@ -49,6 +49,9 @@ export const LOAD_OCCASION = gql`
         invites {
           _id
         }
+        updates {
+          _id
+        }
       }
     }
   }

@@ -1,8 +1,8 @@
 import { useQuery } from '@apollo/client';
 import React from 'react';
 import { Text, View } from 'react-native';
-import { FETCH_ACCOUNT_PROFILE } from '../../../../graphql/queries/accounts.query';
-import SmallAvatarRound from '../../../images/SmallAvatarRound';
+import { FETCH_ACCOUNT_PROFILE } from '../../graphql/queries/accounts.query';
+import SmallAvatarRound from '../images/SmallAvatarRound';
 
 type Props = {
   userId: string;

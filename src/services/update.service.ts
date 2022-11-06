@@ -9,7 +9,6 @@ import {
   CreateUpdateResponse,
   FetchUpdateResponse,
 } from 'src/graphql/responses/update.response';
-import { AuthPayload } from 'src/interfaces/auth.interface';
 import { Update } from 'src/mongo-schemas/update.model';
 
 @Injectable()

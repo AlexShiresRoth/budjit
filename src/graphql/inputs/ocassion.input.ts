@@ -15,7 +15,7 @@ export class AddMembersInput {
 @InputType()
 export class LoadOccasionInput {
   @Field()
-  occasionID: string ;
+  occasionID: string;
 }
 
 @InputType()
@@ -44,4 +44,10 @@ export class ContributeToBudgetInput {
   date: Date;
   @Field(() => String)
   occasionID: Occasion;
+}
+
+@InputType()
+export class RemoveOccasionInput {
+  @Field()
+  occasionID: string;
 }

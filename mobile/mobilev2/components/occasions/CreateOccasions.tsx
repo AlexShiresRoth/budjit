@@ -128,7 +128,8 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
           newOccasion?.data?.error?.message,
         );
       }
-      //Add occasion to redux store
+
+      //add occasionmnm to redux store
       dispatch(
         addOccasion({ occasion: newOccasion?.data?.createOccasion?.Occasion }),
       );
@@ -183,7 +184,7 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
         <Spacer amount={10} />
         <Row>
           <Input
-            value={title ?? ""}
+            value={title ?? ''}
             descriptor={'Give this occasion a name'}
             label={'Name'}
             callback={(text) => handleChangeEvent('title', text)}
@@ -297,9 +298,8 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
         <Spacer amount={10} />
         <RowSpaceBetween>
           <ToggleButton
-            buttonColor={Colors[colorScheme].tint + '60'}
             text="Add contacts to occasion"
-            textColor={Colors[colorScheme].background}
+            textColor={Colors[colorScheme].text}
             onPress={() => toggleContactsModal(!isContactsModalVisible)}
           />
           <Text style={{ color: Colors[colorScheme].text + '60' }}>
@@ -323,12 +323,11 @@ const CreateOccasions = ({ isVisible, handleModalVisibility }: Props) => {
         {/* Contact List   */}
 
         {/* Member list */}
-        <Spacer amount={5} />
+        <Spacer amount={2} />
         <RowSpaceBetween>
           <ToggleButton
-            buttonColor={Colors[colorScheme].success + '60'}
             text="Add members to occasion"
-            textColor={Colors[colorScheme].background}
+            textColor={Colors[colorScheme].text}
             onPress={() => toggleContactsModal(!isContactsModalVisible)}
           />
           <Text style={{ color: Colors[colorScheme].text + '60' }}>

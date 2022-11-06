@@ -13,7 +13,7 @@ type NavProps = NativeStackScreenProps<
 
 //@TODO: Configure this screen, data loading works!
 const OccasionScreen = ({ navigation, route }: NavProps) => {
-  console.log('route.params.occasionId', route);
+  // console.log('route.params.occasionId', route);
 
   const { error, data, loading, refetch } = useQuery(LOAD_OCCASION, {
     variables: { input: { occasionID: route?.params?.occasionId } },

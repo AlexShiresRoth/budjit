@@ -1,18 +1,24 @@
 import { useQuery } from '@apollo/client';
 import React from 'react';
 import { Text, View } from 'react-native';
-import Colors from '../../../../constants/Colors';
-import { FETCH_UPDATE } from '../../../../graphql/queries/updates.query';
-import useColorScheme from '../../../../hooks/useColorScheme';
-import DateFormatDisplay from '../../../reusable/DateFormatDisplay';
-import Skeleton from '../../../reusable/Skeleton';
+import Colors from '../../constants/Colors';
+import { FETCH_UPDATE } from '../../graphql/queries/updates.query';
+import useColorScheme from '../../hooks/useColorScheme';
+import DateFormatDisplay from '../reusable/DateFormatDisplay';
+import Skeleton from '../reusable/Skeleton';
 import UserDisplay from './UserDisplay';
 
-const ActivityCard = ({ item }: any) => {
+type Props = {
+  item?: {
+    _id: string;
+  };
+};
+
+const ActivityCard = ({ item }: Props) => {
   const colorScheme = useColorScheme();
 
   const { error, data, loading } = useQuery(FETCH_UPDATE, {
-    variables: { input: { updateId: item._id } },
+    variables: { input: { updateId: item?._id ?? '' } },
   });
 
   if (loading) return <Skeleton verticalBars={1} />;

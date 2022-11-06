@@ -6,11 +6,13 @@ import {
   ContributeToBudgetInput,
   CreateOccasionInput,
   LoadOccasionInput,
+  RemoveOccasionInput,
 } from 'src/graphql/inputs/ocassion.input';
 import {
   CreateOccasionResponse,
   LoadMyOccasionsResponse,
   LoadOccasionResponse,
+  RemoveOccasionResponse,
 } from 'src/graphql/responses/occasion.response';
 import { AuthPayload } from 'src/interfaces/auth.interface';
 import { OccasionInterface } from 'src/interfaces/occasion.interface';
@@ -18,7 +20,7 @@ import { Occasion, OccasionDocument } from 'src/mongo-schemas/occasion.model';
 import { AccountsService } from './account.service';
 import { ExternalInviteService } from './externalInvite.service';
 import { GroupService } from './group.service';
-import { HistoryService } from './history.service';
+import { UpdateService } from './update.service';
 
 @Injectable()
 export class OccasionService {
@@ -27,7 +29,7 @@ export class OccasionService {
     private readonly occasionModel: Model<OccasionDocument>,
     private readonly groupService: GroupService,
     private readonly accountService: AccountsService,
-    private readonly historyService: HistoryService,
+    private readonly updateService: UpdateService,
     private readonly externalInviteService: ExternalInviteService,
   ) {}
 
@@ -119,14 +121,14 @@ export class OccasionService {
         creator: user.account.id,
         externalInvites: [],
         invites: [],
-        members: [user.account.id],
+        members: [{ _id: user.account.id }],
         initialBudget: assessedBudget,
         //set to default date if no valid date is provided
         occasionStartDate: validDate(occasionStartDate)
-          ? occasionStartDate
+          ? new Date(occasionStartDate).getTime()
           : undefined,
         occasionEndDate: validDate(occasionEndDate)
-          ? occasionEndDate
+          ? new Date(occasionEndDate).getTime()
           : undefined,
         _id: occasionId,
       };
@@ -171,8 +173,20 @@ export class OccasionService {
       }
 
       const occasion = new this.occasionModel({ ...newOccasion });
+
+      //create an initial update object
+      const { update } = await this.updateService.createUpdate({
+        updateDetails: 'Created occasion',
+        occasionRef: occasion,
+        groupRef: null,
+        userRef: user.account.id,
+      });
+
+      //add the update to the occasion model
+      occasion.updates.push(update);
       //save occasion
       await occasion.save();
+
       //add occasions to my account
       await this.accountService.addOccasion({
         occasion: occasion,
@@ -220,19 +234,9 @@ export class OccasionService {
 
       const newBudget = getNewTotal(foundOccasion.budget, paymentAmount);
 
-      const historyObj = await this.historyService.create({
-        paymentAmount,
-        date,
-        currentBudgetAmount: newBudget,
-        contributor: myAccount,
-        paymentMethod,
-        occasionRef: foundOccasion,
-      });
-
       //change budget accordingly based upon new contributution
       foundOccasion.budget = newBudget;
       //add new history object to occasion doc
-      foundOccasion.history.push(historyObj);
 
       await foundOccasion.save();
 
@@ -242,5 +246,51 @@ export class OccasionService {
       return error;
     }
   }
-  //@TODO: need to delete occasion for all members
+  //Deletes the occasion from db and on all members afilliated with occasion
+  async removeOccasion(
+    input: RemoveOccasionInput,
+    creator: AuthPayload,
+  ): Promise<RemoveOccasionResponse> {
+    try {
+      const { occasionID } = input;
+
+      //find existing occasion
+      const foundOccasion = await this.occasionModel.findById(occasionID);
+
+      //if no occasion, well stop then
+      if (!foundOccasion) throw new Error('Occasion not found');
+
+      //if user attempting to delete occasion is not the creator, deny authorization
+      if (foundOccasion.creator.toString() !== creator.account.id.toString())
+        throw new Error("You don't have permission to delete this occasion");
+
+      //if occasion is found, and user is the creator, remove occasion from all members
+      await Promise.all(
+        foundOccasion.members.map(async (member) => {
+          const foundMember = await this.accountService.findOneById(
+            member?._id,
+          );
+          //remove occasion from member
+          await this.accountService.removeOccasionFromAccount({
+            occasionID: foundOccasion?._id,
+            userID: foundMember._id,
+          });
+        }),
+      );
+
+      //then delete the occasion
+      await foundOccasion.delete();
+
+      return {
+        message: 'Occasion deleted',
+        success: true,
+      };
+    } catch (error) {
+      console.error(error);
+      return {
+        message: error.message,
+        success: false,
+      };
+    }
+  }
 }

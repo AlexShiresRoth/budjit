@@ -15,6 +15,8 @@ import EditOccasion from './EditOccasion';
 import OccasionName from './OccasionName';
 import OccasionBudget from './OccasionBudget';
 import OccasionBudgetUsed from './OccasionBudgetUsed';
+import OccasionCreator from './OccasionCreator';
+import OccasionActivityFeed from './OccasionActivityFeed';
 
 type Props = {
   occasion: OccasionType;
@@ -24,7 +26,7 @@ const Occasion = ({ occasion }: Props) => {
   const colorScheme = useColorScheme();
 
   const startDate = occasion?.occasionStartDate
-    ? format(new Date(occasion?.occasionStartDate ?? 0), 'PP')
+    ? format(new Date(occasion?.occasionStartDate ?? ''), 'PP')
     : format(new Date(), 'PP');
 
   return (
@@ -35,34 +37,54 @@ const Occasion = ({ occasion }: Props) => {
         backgroundColor: Colors[colorScheme]?.accountBg + 50,
       }}
     >
-      <View style={{ width: '95%', marginTop: 20 }}>
+      <View style={{ width: '95%', marginTop: 20, maxWidth: '95%' }}>
         <View
           style={{
             backgroundColor: Colors[colorScheme].background,
             padding: 15,
             borderRadius: 5,
+            justifyContent: 'space-between',
+            flexDirection: 'row',
             alignItems: 'flex-start',
           }}
         >
-          {occasion?.occasionStartDate ? (
-            <View
-              style={{
-                flexDirection: 'row',
-                padding: 5,
-                borderRadius: 5,
-                backgroundColor: Colors[colorScheme].tint + '20',
-              }}
-            >
-              <Text
-                style={{ fontSize: 12, color: Colors[colorScheme].text + '60' }}
+          <View style={{ width: '60%', alignItems: 'flex-start' }}>
+            {occasion?.occasionStartDate ? (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  padding: 5,
+                  borderRadius: 5,
+                  backgroundColor: Colors[colorScheme].tint + '20',
+                }}
               >
-                Start - {startDate}
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 10,
+                    color: Colors[colorScheme].text + '60',
+                  }}
+                >
+                  Start - {startDate}
+                </Text>
+              </View>
+            ) : null}
+            <OccasionName occasion={occasion} />
+          </View>
+          <View
+            style={{
+              backgroundColor: Colors[colorScheme].tint + '20',
+              padding: 5,
+              borderRadius: 5,
+              width: '40%',
+              alignItems: 'center',
+            }}
+          >
+            <View style={{ width: '95%' }}>
+              <OccasionCreator occasion={occasion} />
             </View>
-          ) : null}
-          <OccasionName occasion={occasion} />
+          </View>
         </View>
-        <View style={{ flexDirection: 'row', }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
           <View
             style={{
               backgroundColor: Colors[colorScheme].background,
@@ -71,7 +93,7 @@ const Occasion = ({ occasion }: Props) => {
               alignItems: 'flex-start',
               marginTop: 10,
               marginRight: 5,
-              flexGrow:1 
+              flexGrow: 1,
             }}
           >
             <OccasionBudget occasion={occasion} />
@@ -84,11 +106,22 @@ const Occasion = ({ occasion }: Props) => {
               alignItems: 'flex-start',
               marginTop: 10,
               marginLeft: 5,
-              flexGrow:1
+              flexGrow: 1,
             }}
           >
             <OccasionBudgetUsed occasion={occasion} />
           </View>
+        </View>
+        <View
+          style={{
+            marginVertical: 5,
+            padding: 5,
+            borderRadius: 5,
+            width: '100%',
+            overflow: 'hidden',
+          }}
+        >
+          <OccasionActivityFeed occasion={occasion} />
         </View>
       </View>
     </View>

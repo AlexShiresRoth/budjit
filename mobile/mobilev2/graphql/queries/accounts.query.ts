@@ -13,6 +13,18 @@ export const FETCH_ACCOUNT_PROFILE = gql`
   }
 `;
 
+export const FETCH_ACCOUNT = gql`
+  query fetchAccount($input: FetchAccountProfileInput!) {
+    fetchAccount(input: $input) {
+      message
+      success
+      account {
+        _id
+      }
+    }
+  }
+`;
+
 export const LOAD_PLAID_ACCOUNTS = gql`
   query loadPlaidAccounts {
     loadPlaidAccounts {

@@ -19,7 +19,7 @@ export class LoadOccasionResponse {
   @Field()
   success: boolean;
   @Field(() => OccasionTypeDef)
-  Occasion: Occasion
+  Occasion: Occasion;
 }
 
 @ObjectType()
@@ -30,4 +30,12 @@ export class LoadMyOccasionsResponse {
   success: boolean;
   @Field(() => [OccasionTypeDef])
   Occasions: Occasion[];
+}
+
+@ObjectType()
+export class RemoveOccasionResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
 }

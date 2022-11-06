@@ -31,9 +31,10 @@ scalar Date
 type UpdateTypeDef {
   _id: String!
   updateDetails: String!
-  groupRef: String!
+  groupRef: String
   userRef: String!
   updateTime: String!
+  occasionRef: String
 }
 
 type OccasionTypeDef {
@@ -45,9 +46,9 @@ type OccasionTypeDef {
   history: [HistoryTypeDef!]
   creator: String!
   initialBudget: String!
-  occasionStartDate: String!
-  occasionCreationDate: String!
-  occasionEndDate: String!
+  occasionStartDate: Float
+  occasionCreationDate: Float
+  occasionEndDate: Float
   externalInvites: [ExternalInviteTypeDef!]
   invites: [InvitesTypeDef!]
   updates: [UpdateTypeDef!]
@@ -184,6 +185,12 @@ type FetchAccountProfileResponse {
   message: String!
   success: Boolean!
   profile: ProfileTypeDef!
+}
+
+type FetchAccountResponse {
+  message: String!
+  success: Boolean!
+  account: AccountTypeDef!
 }
 
 type CreateInvitesResponse {
@@ -328,8 +335,14 @@ type LoadMyOccasionsResponse {
   Occasions: [OccasionTypeDef!]!
 }
 
+type RemoveOccasionResponse {
+  message: String!
+  success: Boolean!
+}
+
 type Query {
   account(id: String!): AccountTypeDef!
+  fetchAccount(input: FetchAccountProfileInput!): FetchAccountResponse!
   fetchAccountProfile(input: FetchAccountProfileInput!): FetchAccountProfileResponse!
   findMyAccount: AccountTypeDef!
   loadPlaidAccounts: LoadPlaidAccountsResponse!
@@ -409,6 +422,7 @@ type Mutation {
   updateGroup(input: UpdateGroupInput!): UpdateGroupResponse!
   createOccasion(input: CreateOccasionInput!): CreateOccasionResponse!
   contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
+  removeOccasion(input: RemoveOccasionInput!): RemoveOccasionResponse!
 }
 
 input GetPlaidTransactionsInput {
@@ -529,5 +543,9 @@ input ContributeToBudgetInput {
   paymentAmount: String!
   paymentMethod: String
   date: Date
+  occasionID: String!
+}
+
+input RemoveOccasionInput {
   occasionID: String!
 }

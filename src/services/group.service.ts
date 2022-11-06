@@ -350,6 +350,7 @@ export class GroupService {
       const update = await this.updateService.createUpdate({
         userRef: user.account.id,
         groupRef: foundGroup,
+        occasionRef: null,
         updateDetails: image
           ? 'Changed group image'
           : groupName
