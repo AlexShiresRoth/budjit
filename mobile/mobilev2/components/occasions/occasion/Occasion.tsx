@@ -14,7 +14,7 @@ import { EvilIcons } from '@expo/vector-icons';
 import EditOccasion from './EditOccasion';
 import OccasionName from './OccasionName';
 import OccasionBudget from './OccasionBudget';
-import OccasionBudgetUsed from './OccasionBudgetUsed';
+import OccasionBudgetUsed from './BudgetChartContainer';
 import OccasionCreator from './OccasionCreator';
 import OccasionActivityFeed from './OccasionActivityFeed';
 
@@ -38,6 +38,19 @@ const Occasion = ({ occasion }: Props) => {
       }}
     >
       <View style={{ width: '95%', marginTop: 20, maxWidth: '95%' }}>
+        <View style={{  marginBottom: 10 }}>
+          <View
+            style={{
+              backgroundColor: Colors[colorScheme].background,
+              padding: 15,
+              borderRadius: 5,
+              flexGrow: 1,
+            }}
+          >
+            <OccasionBudgetUsed occasion={occasion} />
+          </View>
+        
+        </View>
         <View
           style={{
             backgroundColor: Colors[colorScheme].background,
@@ -84,34 +97,7 @@ const Occasion = ({ occasion }: Props) => {
             </View>
           </View>
         </View>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-          <View
-            style={{
-              backgroundColor: Colors[colorScheme].background,
-              padding: 15,
-              borderRadius: 5,
-              alignItems: 'flex-start',
-              marginTop: 10,
-              marginRight: 5,
-              flexGrow: 1,
-            }}
-          >
-            <OccasionBudget occasion={occasion} />
-          </View>
-          <View
-            style={{
-              backgroundColor: Colors[colorScheme].background,
-              padding: 15,
-              borderRadius: 5,
-              alignItems: 'flex-start',
-              marginTop: 10,
-              marginLeft: 5,
-              flexGrow: 1,
-            }}
-          >
-            <OccasionBudgetUsed occasion={occasion} />
-          </View>
-        </View>
+
         <View
           style={{
             marginVertical: 5,

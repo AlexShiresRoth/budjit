@@ -8,21 +8,19 @@ type Props = {
   occasion: OccasionType;
 };
 
-const OccasionBudget = ({ occasion }: Props) => {
-  console.log('occasion', occasion);
-
+const BudgetUsed = ({ occasion }: Props) => {
   const colorScheme = useColorScheme();
 
   return (
     <View>
       <Text style={{ fontSize: 12, color: Colors[colorScheme].text + '60' }}>
-        Occasion Budget
+        Occasion Budget Used
       </Text>
       <Text style={{ fontSize: 16, fontWeight: '500' }}>
-        ${occasion?.initialBudget}
+        ${occasion?.amountContributed}
       </Text>
     </View>
   );
 };
 
-export default OccasionBudget;
+export default BudgetUsed;
