@@ -17,7 +17,7 @@ const useFetchGroups = () => {
     }
   }, [data]);
 
-  //refetch groups if any are removed or aded in db
+  //refetch groups if any are removed or added in db
   useEffect(() => {
     refetch();
   }, [groups.length]);

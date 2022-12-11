@@ -4,6 +4,7 @@ import Colors from '../../../constants/Colors';
 import useColorScheme from '../../../hooks/useColorScheme';
 import { OccasionType } from '../../../types/Occasion.types';
 import ActivityCard from '../../activity-feed/ActivityCard';
+import { Button } from '../../Themed';
 
 type Props = {
   occasion: OccasionType;
@@ -36,9 +37,6 @@ const OccasionActivityFeed = ({ occasion }: Props) => {
         horizontal={true}
         renderItem={renderItem}
       />
-      <TouchableOpacity style={{marginTop:5}}>
-        <Text>See All</Text>
-      </TouchableOpacity>
     </>
   );
 };

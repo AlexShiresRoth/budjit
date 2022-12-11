@@ -6,6 +6,7 @@ import { FETCH_UPDATE } from '../../graphql/queries/updates.query';
 import useColorScheme from '../../hooks/useColorScheme';
 import DateFormatDisplay from '../reusable/DateFormatDisplay';
 import Skeleton from '../reusable/Skeleton';
+import { ViewWithBG } from '../Themed';
 import UserDisplay from './UserDisplay';
 
 type Props = {
@@ -26,11 +27,10 @@ const ActivityCard = ({ item }: Props) => {
   if (error) return <Text>{error.message}</Text>;
 
   return (
-    <View
+    <ViewWithBG
       style={{
         marginRight: 10,
         borderRadius: 10,
-        backgroundColor: Colors[colorScheme].tint + '20',
         padding: 10,
       }}
     >
@@ -55,7 +55,7 @@ const ActivityCard = ({ item }: Props) => {
         dateTextColor={Colors[colorScheme].text + '55'}
         formatting={`p P`}
       />
-    </View>
+    </ViewWithBG>
   );
 };
 

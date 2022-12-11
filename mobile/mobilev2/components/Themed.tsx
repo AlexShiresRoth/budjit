@@ -4,14 +4,19 @@
  */
 
 import * as React from 'react';
-import { Text as DefaultText, View as DefaultView } from 'react-native';
+import {
+  Text as DefaultText,
+  View as DefaultView,
+  TouchableOpacity as DefaultTouchableOpacity,
+  TextInput as DefaultTextInput,
+} from 'react-native';
 
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 
 export function useThemeColor(
   props: { light?: string; dark?: string },
-  colorName: keyof typeof Colors.light & keyof typeof Colors.dark
+  colorName: keyof typeof Colors.light & keyof typeof Colors.dark,
 ) {
   const theme = useColorScheme();
   const colorFromProps = props[theme];
@@ -30,6 +35,9 @@ type ThemeProps = {
 
 export type TextProps = ThemeProps & DefaultText['props'];
 export type ViewProps = ThemeProps & DefaultView['props'];
+export type TouchableOpacityProps = ThemeProps &
+  DefaultTouchableOpacity['props'];
+export type TextInputProps = ThemeProps & DefaultTextInput['props'];
 
 export function Text(props: TextProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
@@ -40,7 +48,64 @@ export function Text(props: TextProps) {
 
 export function View(props: ViewProps) {
   const { style, lightColor, darkColor, ...otherProps } = props;
-  const backgroundColor = useThemeColor({ light: lightColor, dark: darkColor }, 'background');
 
-  return <DefaultView style={[{ backgroundColor }, style]} {...otherProps} />;
+  return <DefaultView style={style} {...otherProps} />;
+}
+
+export function ViewWithBG(props: ViewProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+
+  const backgroundColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    'background',
+  );
+
+  return (
+    <DefaultView
+      style={[{ backgroundColor }, style]}
+      {...otherProps}
+    ></DefaultView>
+  );
+}
+
+export function PrimaryButton(props: TouchableOpacityProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+
+  const backgroundColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    'primaryButton',
+  );
+  return (
+    <DefaultTouchableOpacity
+      style={[{ backgroundColor }, style]}
+      {...otherProps}
+    />
+  );
+}
+
+export function SecondaryButton(props: TouchableOpacityProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+
+  const backgroundColor = useThemeColor(
+    { light: lightColor, dark: darkColor },
+    'secondaryButton',
+  );
+  return (
+    <DefaultTouchableOpacity
+      style={[{ backgroundColor }, style]}
+      {...otherProps}
+    />
+  );
+}
+
+export function Button(props: TouchableOpacityProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+
+  return <DefaultTouchableOpacity style={style} {...otherProps} />;
+}
+
+export function TextInput(props: TextInputProps) {
+  const { style, lightColor, darkColor, ...otherProps } = props;
+
+  return <DefaultTextInput style={[style]} {...otherProps} />;
 }
