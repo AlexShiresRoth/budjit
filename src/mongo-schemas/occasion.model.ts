@@ -19,7 +19,7 @@ export class Occasion {
   group: Group;
   @Prop()
   budget: string;
-  @Prop({ default: '0.00' })
+  @Prop({ default: '0.00' }) 
   amountContributed: string;
   @Prop({
     type: [
