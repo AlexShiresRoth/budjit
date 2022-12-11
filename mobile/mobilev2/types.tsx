@@ -49,6 +49,13 @@ export type GroupStackParamList = {
   GroupsScreen: undefined;
 };
 
+export type OccasionStackParamList = {
+  OccasionScreenNavigator:
+    | undefined
+    | ({ screen: any } & { params: { occasionId: string } });
+  OccasionScreen: undefined | { occasionId: string };
+};
+
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =
   NativeStackScreenProps<RootStackParamList, Screen>;
 
@@ -75,6 +82,7 @@ export type RootTabParamList = {
   GroupsScreen: undefined | { groupId: string };
   GroupScreen: undefined | { groupId: string };
   GroupScreenNavigator: undefined | { groupId: string };
+  OccasionScreenNavigator: undefined | { occasionId: string };
 };
 
 export type RootTabScreenProps<Screen extends keyof RootTabParamList> =

@@ -9,6 +9,7 @@ import { ExternalInviteModule } from './externalInvite.module';
 import { GroupModule } from './group.module';
 import { HistoryModule } from './history.module';
 import { InviteModule } from './invite.module';
+import { UpdateModule } from './update.module';
 
 @Module({
   imports: [
@@ -16,8 +17,8 @@ import { InviteModule } from './invite.module';
     AccountsModule,
     InviteModule,
     GroupModule,
-    HistoryModule,
     ExternalInviteModule,
+    UpdateModule,
     MongooseModule.forFeature([
       { name: Occasion.name, schema: OccasionSchema },
     ]),

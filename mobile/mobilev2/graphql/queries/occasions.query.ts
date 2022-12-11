@@ -6,6 +6,7 @@ export const LOAD_MY_OCCASIONS = gql`
       message
       success
       Occasions {
+        _id
         creator
         title
         occasionCreationDate
@@ -17,6 +18,35 @@ export const LOAD_MY_OCCASIONS = gql`
           _id
         }
         externalInvites {
+          _id
+        }
+        updates {
+          _id
+        }
+      }
+    }
+  }
+`;
+
+export const LOAD_OCCASION = gql`
+  query ($input: LoadOccasionInput!) {
+    loadOccasion(input: $input) {
+      message
+      success
+      Occasion {
+        _id
+        title
+        initialBudget
+        creator
+        budget
+        amountContributed
+        occasionStartDate
+        occasionCreationDate
+        occasionEndDate
+        externalInvites {
+          _id
+        }
+        invites {
           _id
         }
         updates {

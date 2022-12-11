@@ -26,12 +26,12 @@ export class OccasionTypeDef {
   creator: string;
   @Field()
   initialBudget: string;
-  @Field()
-  occasionStartDate: string;
-  @Field()
-  occasionCreationDate: string;
-  @Field()
-  occasionEndDate: string;
+  @Field({ nullable: true })
+  occasionStartDate: number;
+  @Field({ nullable: true })
+  occasionCreationDate: number;
+  @Field({ nullable: true })
+  occasionEndDate: number;
   @Field(() => [ExternalInviteTypeDef], { nullable: true })
   externalInvites: ExternalInvite[];
   @Field(() => [InvitesTypeDef], { nullable: true })

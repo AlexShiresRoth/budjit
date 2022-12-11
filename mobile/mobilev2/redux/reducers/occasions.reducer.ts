@@ -21,11 +21,12 @@ export const occasionSlice = createSlice({
       state.occasions = action.payload?.occasions;
     },
     addOccasion: (state, action: PayloadAction<{ occasion: OccasionType }>) => {
-      state.occasions.push(action.payload.occasion);
+      // state.occasions.push(action.payload.occasion);
+      console.log('STATE WTF', state);
+      state.occasions = [...state.occasions, action.payload.occasion];
     },
   },
 });
-
 
 export const { fetchOccasions, addOccasion } = occasionSlice.actions;
 

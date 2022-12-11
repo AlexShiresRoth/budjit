@@ -9,11 +9,14 @@ import {
   AddMembersInput,
   ContributeToBudgetInput,
   CreateOccasionInput,
+  LoadOccasionInput,
+  RemoveOccasionInput,
 } from '../inputs/ocassion.input';
 import {
   CreateOccasionResponse,
   LoadMyOccasionsResponse,
   LoadOccasionResponse,
+  RemoveOccasionResponse,
 } from '../responses/occasion.response';
 import { OccasionTypeDef } from '../schemas/occasion.schema';
 
@@ -23,8 +26,8 @@ export class OccasionResolver {
 
   @Query(() => LoadOccasionResponse)
   @UseGuards(GraphqlAuthGuard)
-  async loadOccasion(@Args('id') id: string) {
-    return await this.occasionService.findOneById(id);
+  async loadOccasion(@Args('input') input: LoadOccasionInput) {
+    return await this.occasionService.findOneById(input);
   }
 
   @Query(() => LoadMyOccasionsResponse)
@@ -53,5 +56,14 @@ export class OccasionResolver {
       contributeToBudgetInput,
       user,
     );
+  }
+
+  @Mutation(() => RemoveOccasionResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async removeOccasion(
+    @Args('input') input: RemoveOccasionInput,
+    @CurrentAccount() user: AuthPayload,
+  ) {
+    return await this.occasionService.removeOccasion(input, user);
   }
 }

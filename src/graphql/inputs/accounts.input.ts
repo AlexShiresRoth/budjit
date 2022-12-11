@@ -85,3 +85,9 @@ export class FetchAccountProfileInput {
   @Field()
   accountId: string;
 }
+
+@InputType()
+export class FetchAccountInput {
+  @Field()
+  accountId: string;
+}

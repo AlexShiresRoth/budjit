@@ -10,6 +10,7 @@ export const FETCH_UPDATE = gql`
         updateTime
         updateDetails
         groupRef
+        occasionRef
       }
     }
   }

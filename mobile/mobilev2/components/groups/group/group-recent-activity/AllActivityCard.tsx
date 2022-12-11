@@ -6,7 +6,7 @@ import { FETCH_UPDATE } from '../../../../graphql/queries/updates.query';
 import useColorScheme from '../../../../hooks/useColorScheme';
 import DateFormatDisplay from '../../../reusable/DateFormatDisplay';
 import Skeleton from '../../../reusable/Skeleton';
-import UserDisplay from './UserDisplay';
+import UserDisplay from "../../../activity-feed/UserDisplay";
 
 const AllActivityCard = ({ item }: any) => {
   const colorScheme = useColorScheme();

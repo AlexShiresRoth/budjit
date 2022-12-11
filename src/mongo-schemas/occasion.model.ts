@@ -17,16 +17,19 @@ export class Occasion {
   title: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Group', required: false })
   group: Group;
+  @Prop(
+    raw([
+      {
+        account_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Account' },
+      },
+    ]),
+  )
+  members: Account[];
   @Prop()
   budget: string;
   @Prop({ default: '0.00' }) 
   amountContributed: string;
-  @Prop({
-    type: [
-      { type: mongoose.Schema.Types.ObjectId, ref: 'History', required: false },
-    ],
-  })
-  history: History[];
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
   creator: Account;
   @Prop()
@@ -36,11 +39,11 @@ export class Occasion {
   @Prop()
   creationDate: string;
   @Prop({ default: Date.now })
-  occasionStartDate: string;
+  occasionStartDate: number;
   @Prop({ default: Date.now })
-  occasionEndDate: string;
+  occasionEndDate: number;
   @Prop({ default: Date.now })
-  occasionCreationDate: string;
+  occasionCreationDate: number;
   @Prop(
     raw([
       {

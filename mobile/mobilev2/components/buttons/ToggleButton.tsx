@@ -2,10 +2,10 @@ import React from 'react';
 import { Text, TouchableOpacity } from 'react-native';
 
 type Props = {
-  buttonColor: string;
+  buttonColor?: string;
   text: string;
   onPress: (val: any) => void;
-  textColor: string;
+  textColor?: string;
 };
 
 const ToggleButton = ({ buttonColor, text, onPress, textColor }: Props) => {
@@ -17,10 +17,10 @@ const ToggleButton = ({ buttonColor, text, onPress, textColor }: Props) => {
         paddingLeft: 10,
         paddingRight: 10,
         borderRadius: 3,
-        backgroundColor: buttonColor,
+        backgroundColor: buttonColor ?? "transparent",
       }}
     >
-      <Text style={{ color: textColor, fontSize: 16 }}>{text}</Text>
+      <Text style={{ color: textColor ?? "transparent", fontSize: 16 }}>{text}</Text>
     </TouchableOpacity>
   );
 };

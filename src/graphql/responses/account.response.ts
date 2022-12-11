@@ -196,3 +196,13 @@ export class FetchAccountProfileResponse {
   @Field(() => ProfileTypeDef)
   profile: Profile;
 }
+
+@ObjectType()
+export class FetchAccountResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => AccountTypeDef)
+  account: Account;
+}

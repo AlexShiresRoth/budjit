@@ -11,6 +11,7 @@ import {
   AddInviteToAccountInput,
   CreateAccountInput,
   ExchangePublicTokenInput,
+  FetchAccountInput,
   FetchAccountProfileInput,
   GetPlaidInstitutionInput,
   GetPlaidTransactionsInput,
@@ -25,6 +26,7 @@ import {
   CreateAccountResponse,
   DeleteInviteFromAccountResponse,
   FetchAccountProfileResponse,
+  FetchAccountResponse,
   GetPlaidInstitutionResponse,
   GetPlaidTransactionsResponse,
   LoadPlaidAccountDataResponse,
@@ -51,6 +53,7 @@ import {
 import { SpendingService } from './spending.service';
 import { Transaction } from 'src/mongo-schemas/transaction.model';
 import { Group } from 'src/mongo-schemas/group.model';
+import { Occasion } from 'src/mongo-schemas/occasion.model';
 
 @Injectable()
 export class AccountsService {
@@ -147,6 +150,29 @@ export class AccountsService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+
+  async fetchAccountData(
+    input: FetchAccountInput,
+  ): Promise<FetchAccountResponse> {
+    try {
+      const foundAccount = await this.findOneById(input.accountId);
+
+      if (!foundAccount) throw new Error('Could not locate an account');
+
+      return {
+        message: 'Account found',
+        success: true,
+        account: foundAccount,
+      };
+    } catch (error) {
+      console.error('error locating account:', error);
+      return {
+        message: 'Could not locate an account',
+        success: false,
+        account: null,
+      };
     }
   }
 
@@ -651,6 +677,41 @@ export class AccountsService {
       console.error(error);
       return {
         message: 'Could not remove group from account',
+        success: false,
+      };
+    }
+  }
+
+  async removeOccasionFromAccount({
+    userID,
+    occasionID,
+  }: {
+    userID: string;
+    occasionID: string;
+  }): Promise<{ message: string; success: boolean }> {
+    try {
+      //find the user
+      const foundAccount = await this.accountModel.findById(userID);
+
+      if (!foundAccount) throw new Error('Could not locate account');
+      //find the occasion in the user's occasions
+      const filteredOccasions = foundAccount?.occasions?.filter(
+        (occasion: Occasion & { _id: mongoose.Types.ObjectId }) =>
+          occasion._id.toString() !== occasionID.toString(),
+      );
+      //remove the occasion from the user's occasions
+      foundAccount.occasions = filteredOccasions;
+      //save the user account without that occasion
+      await foundAccount.save();
+
+      return {
+        message: 'Removed occasion from account',
+        success: true,
+      };
+    } catch (error) {
+      console.error('ERROR REMOVING OCCASION FROM USER ACCOUNT::', error);
+      return {
+        message: 'Could not remove occasion',
         success: false,
       };
     }

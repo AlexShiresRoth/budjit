@@ -15,6 +15,7 @@ import {
 import {
   CreateAccountResponse,
   FetchAccountProfileResponse,
+  FetchAccountResponse,
   GetPlaidInstitutionResponse,
   GetPlaidTransactionsResponse,
   LoadPlaidAccountDataResponse,
@@ -33,6 +34,12 @@ export class AccountsResolver {
   @UseGuards(GraphqlAuthGuard)
   async account(@Args('id') id: string, @CurrentAccount() user: AuthPayload) {
     return await this.accountsService.findOneById(user.account.id);
+  }
+
+  @Query(() => FetchAccountResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async fetchAccount(@Args('input') input: FetchAccountProfileInput) {
+    return this.accountsService.fetchAccountData(input);
   }
 
   @Query(() => FetchAccountProfileResponse)

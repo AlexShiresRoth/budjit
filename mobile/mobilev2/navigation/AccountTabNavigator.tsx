@@ -7,11 +7,12 @@ import useColorScheme from '../hooks/useColorScheme';
 import { selectNavState } from '../redux/reducers/navigation.reducers';
 import AccountScreen from '../screens/auth/account/AccountScreen';
 import GroupsScreen from '../screens/auth/account/GroupsScreen';
-import OccasionsScreen from '../screens/auth/account/OccasionsScreen';
+import OccasionsScreen from '../screens/auth/account/occasions/OccasionsScreen';
 import SettingsScreen from '../screens/auth/settings/SettingsScreen';
 import { RootStackScreenProps, RootTabParamList } from '../types';
 import GroupStackNavigator from './GroupStackNavigator';
 import InviteTabNavigator from './InviteTabNavigator';
+import { OccasionStackNavigator } from './OccasionStackNavigator';
 import OccasionTabNavigator from './OccasionTabNavigator';
 import { ADTabBarIcon, ITabBarIcon } from './TabIcons';
 
@@ -45,7 +46,7 @@ const AccountTabNavigator = () => {
           ),
         })}
       />
-      <AccountTabs.Screen
+      {/* <AccountTabs.Screen
         component={InviteTabNavigator}
         name="InvitationsScreen"
         options={({
@@ -56,7 +57,7 @@ const AccountTabNavigator = () => {
           tabBarActiveTintColor: Colors[colorScheme].tabIconSelected,
           tabBarIcon: ({ color }) => <ADTabBarIcon name="mail" color={color} />,
         })}
-      />
+      /> */}
       <AccountTabs.Screen
         name="GroupsScreen"
         component={GroupsScreen}
@@ -98,6 +99,25 @@ const AccountTabNavigator = () => {
           ),
         })}
       />
+
+      <AccountTabs.Screen
+        component={OccasionStackNavigator}
+        name="OccasionScreenNavigator"
+        options={({ navigation }) => ({
+          title: 'Occasion',
+          headerShown: false,
+          tabBarItemStyle: { display: 'none' },
+          headerRight: () => {
+            return showBackButton ? (
+              <HeaderBackButton
+                navFunction={() =>
+                  navigation.getParent().navigate('OccasionsScreen')
+                }
+              />
+            ) : null;
+          },
+        })}
+      ></AccountTabs.Screen>
 
       <AccountTabs.Screen
         component={OccasionTabNavigator}

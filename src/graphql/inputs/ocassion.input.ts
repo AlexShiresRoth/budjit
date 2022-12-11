@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import mongoose from 'mongoose';
 import { Occasion } from 'src/mongo-schemas/occasion.model';
 import { Contact, Member } from './group.input';
 import { Invite } from './invite.input';
@@ -7,6 +8,12 @@ import { Invite } from './invite.input';
 export class AddMembersInput {
   @Field(() => [Invite])
   invites: Invite[];
+  @Field()
+  occasionID: string;
+}
+
+@InputType()
+export class LoadOccasionInput {
   @Field()
   occasionID: string;
 }
@@ -37,4 +44,10 @@ export class ContributeToBudgetInput {
   date: Date;
   @Field(() => String)
   occasionID: Occasion;
+}
+
+@InputType()
+export class RemoveOccasionInput {
+  @Field()
+  occasionID: string;
 }

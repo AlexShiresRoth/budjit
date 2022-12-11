@@ -5,7 +5,6 @@ import {
   fetchOccasions,
   selectOccasions,
 } from '../redux/reducers/occasions.reducer';
-import { OccasionType } from '../types/Occasion.types';
 import { useAppDispatch, useAppSelector } from './reduxHooks';
 
 //handling updates to fetch state
@@ -18,7 +17,7 @@ const useFetchOccasions = () => {
 
   useEffect(() => {
     if (data?.loadMyOccasions?.success && !error) {
-      const occasions = data?.loadMyOccasions?.occasions;
+      const occasions = data?.loadMyOccasions?.Occasions;
       dispatch(
         fetchOccasions({
           occasions,

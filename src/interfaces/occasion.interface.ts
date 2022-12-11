@@ -4,8 +4,9 @@ export interface OccasionInterface {
   creator: string;
   externalInvites: Array<{ _id: any }> | any[];
   invites: Array<{ _id: any }> | any[];
-  members: string[];
+  members: { _id: string }[];
   initialBudget: string;
-  occasionStartDate: string;
-  occasionEndDate: string;
+  occasionCreationDate?: number | string;
+  occasionStartDate: string | number;
+  occasionEndDate: string | number;
 }

@@ -9,6 +9,9 @@ import LoadingSpinner from '../reusable/LoadingSpinner';
 import { OccasionType } from '../../types/Occasion.types';
 import OccasionItem from './items/OccasionItem';
 import useFetchOccasions from '../../hooks/useFetchOccasions';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { RootTabParamList } from '../../types';
+import Spacer from '../reusable/layout/Spacer';
 
 const Container = styled.View`
   width: 100%;
@@ -26,13 +29,25 @@ type Props = {
 
 //@TODO: add a new tag to any occasion with the current date
 
-const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
+type NavProps = BottomTabScreenProps<RootTabParamList, 'Occasions'>;
+
+const MyOccasions = ({
+  isVisible,
+  handleModalVisibility,
+  navigation,
+  route,
+}: Props & NavProps) => {
   const colorScheme = useColorScheme();
 
   const { occasions, error, loading } = useFetchOccasions();
 
   const renderItem = ({ item }: { item: OccasionType }) => (
-    <OccasionItem item={item} key={item?._id} />
+    <OccasionItem
+      item={item}
+      key={item?._id}
+      navigation={navigation}
+      route={route}
+    />
   );
 
   if (loading) {
@@ -65,18 +80,8 @@ const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
       <Container>
         <EmptyContainer>
           <EmptyState title="No Occasions Yet" />
-          <Text
-            style={{
-              color: Colors[colorScheme].text,
-              marginTop: -50,
-              marginBottom: 30,
-              fontSize: 20,
-              fontWeight: '700',
-              textAlign: 'center',
-            }}
-          >
-            Nothing here yet!
-          </Text>
+
+          <Spacer amount={5} />
           <Button
             title="Create New Occasion"
             color={Colors[colorScheme].tint}
@@ -96,7 +101,7 @@ const MyOccasions = ({ isVisible, handleModalVisibility }: Props) => {
       <FlatList
         renderItem={renderItem}
         data={occasions}
-        style={{ width: '100%', marginBottom: 60, marginTop:10 }}
+        style={{ width: '100%', marginBottom: 60, marginTop: 10 }}
       />
       <CreateOccasions
         isVisible={isVisible}

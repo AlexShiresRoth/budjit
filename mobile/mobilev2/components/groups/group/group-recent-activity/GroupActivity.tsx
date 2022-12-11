@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { FlatList, Text, TouchableOpacity, View } from 'react-native';
 import Colors from '../../../../constants/Colors';
 import useColorScheme from '../../../../hooks/useColorScheme';
-import ActivityCard from './ActivityCard';
+import ActivityCard from '../../../activity-feed/ActivityCard';
 import AllActivityModal from './AllActivityModal';
 
 type Props = {
