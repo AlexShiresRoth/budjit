@@ -9,9 +9,9 @@ export class CreateUpdateInput {
   @Field()
   updateDetails: string;
   @Field(() => GroupTypeDef, { nullable: true })
-  groupRef: Group;
+  groupRef?: Group;
   @Field(() => OccasionTypeDef, { nullable: true })
-  occasionRef: Occasion;
+  occasionRef?: Occasion;
   @Field()
   userRef: string;
 }

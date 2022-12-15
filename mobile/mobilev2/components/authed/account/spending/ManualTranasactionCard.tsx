@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import FloatingButton from '../../../buttons/FloatingButton';
-import ManualTransactionModal from './transaction-modal/ManualTransactionModal';
+import ManualTransactionModal from '../../../modals/transaction-modal/ManualTransactionModal';
 
 const ManualTransactionCard = () => {
   const [modalVisible, toggleModal] = useState(false);

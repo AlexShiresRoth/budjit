@@ -19,9 +19,11 @@ export default function useCachedResources() {
           ...Feather.font,
           ...Ionicons.font,
           'space-mono': require('../assets/fonts/SpaceMono-Regular.ttf'),
+          'pt-sans': require('../assets/fonts/PTSans-Regular.ttf'),
+          'pt-sans-bold': require('../assets/fonts/PTSans-Bold.ttf'),
         });
 
-        console.log('font loaded?', FontAwesome.font);
+        console.log('font loaded?', Font.isLoaded('pt-sans-bold'));
       } catch (e) {
         // We might want to provide this error information to an error reporting service
         console.warn(e);

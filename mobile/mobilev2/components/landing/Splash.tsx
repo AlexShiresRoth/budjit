@@ -1,30 +1,36 @@
 import React from 'react';
-import styled from 'styled-components/native';
-const Main = styled.View`
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-`;
-
-const Logo = styled.Text`
-  font-weight: 700;
-  font-size: 60px;
-  color: #f9f8f8;
-`;
-
-const Text = styled.Text`
-  color: #fff;
-  font-weight: 700;
-  font-size: 20px;
-`;
+import { StyleSheet } from 'react-native';
+import { Text, View } from '../Themed';
 
 const Splash = () => {
   return (
-    <Main>
-      <Logo>Budjit</Logo>
-    </Main>
+    <View>
+      <View style={styles.content}>
+        <Text style={styles.heading}>Welcome to Happ</Text>
+        <Text style={styles.subheading}>Clearing up, who owes what</Text>
+      </View>
+    </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  content: {
+    width: '90%',
+  },
+  heading: {
+    fontSize: 40,
+    textAlign: 'center',
+    fontFamily: 'pt-sans-bold',
+  },
+  subheading: {
+    fontSize: 20,
+    textAlign: 'center',
+    fontFamily: 'pt-sans',
+  },
+});
 
 export default Splash;

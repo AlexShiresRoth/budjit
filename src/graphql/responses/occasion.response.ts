@@ -39,3 +39,6 @@ export class RemoveOccasionResponse {
   @Field()
   success: boolean;
 }
+
+@ObjectType()
+export class AddTransactionToOccasionResponse extends RemoveOccasionResponse {}

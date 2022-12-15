@@ -14,7 +14,12 @@ import useColorScheme from '../../../hooks/useColorScheme';
 
 //@TODO summon modal on add new button
 //@TODO navigate to transactions on view transactions button
-const OccasionActions = () => {
+
+type Props = {
+  toggleModal: (val: boolean) => void;
+  isModalVisible: boolean;
+};
+const OccasionActions = ({ toggleModal, isModalVisible }: Props) => {
   const colorScheme = useColorScheme();
   return (
     <View style={styles.container}>
@@ -41,7 +46,10 @@ const OccasionActions = () => {
             </Text>
             <AntDesign name="arrowright" size={12} />
           </Button>
-          <PrimaryButton style={styles.button}>
+          <PrimaryButton
+            style={styles.button}
+            onPress={() => toggleModal(!isModalVisible)}
+          >
             <AntDesign
               name="plus"
               size={12}

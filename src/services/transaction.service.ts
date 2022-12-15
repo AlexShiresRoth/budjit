@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
@@ -16,6 +16,8 @@ import {
   TransactionDocumentType,
 } from 'src/mongo-schemas/transaction.model';
 import { AccountsService } from './account.service';
+import { OccasionService } from './occasion.service';
+import { UpdateService } from './update.service';
 
 interface TransactionWithId extends Transaction {
   _id: Types.ObjectId;
@@ -26,15 +28,26 @@ export class TransactionService {
   constructor(
     @InjectModel(Transaction.name)
     private readonly TransactionModel: Model<TransactionDocumentType>,
+    @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
+    @Inject(forwardRef(() => OccasionService))
+    private readonly occasionService: OccasionService,
   ) {}
 
   async createTransaction(
     input: CreateTransactionInput & AuthPayload,
   ): Promise<CreateTransactionResponse> {
     try {
-      const { account, accountType, name, category, date, amount, location } =
-        input;
+      const {
+        account,
+        accountType,
+        name,
+        category,
+        date,
+        amount,
+        location,
+        occasionRef,
+      } = input;
 
       const newTransaction = new this.TransactionModel({
         accountType,
@@ -44,10 +57,29 @@ export class TransactionService {
         amount,
         location,
         account_id: 'manual_transaction',
+        personAccountRef: account.id,
       });
+
+      //only set this ref if it's coming from an occasion
+      if (occasionRef) newTransaction.occasionRef = occasionRef;
 
       await newTransaction.save();
 
+      //have to wait after saving transaction in order to retrieve the id
+      if (occasionRef) {
+        //update the occasion with the newly created transaction
+        //need to pass transaction amount as well in order to update the total amount
+        await this.occasionService.addTransaction(
+          {
+            occasionRef,
+            transactionRef: newTransaction,
+            transactionAmount: amount,
+          },
+          { account: account },
+        );
+      }
+
+      //add transaction to user account
       if (newTransaction)
         await this.accountService.addManualTransaction(
           newTransaction,
@@ -65,6 +97,7 @@ export class TransactionService {
     }
   }
 
+  //@TODO:need to configure edit transaction for occasions
   async editTransaction(
     input: EditTransactionInput,
     user: AuthPayload,

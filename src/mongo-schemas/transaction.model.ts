@@ -1,4 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
+import { Account } from './account.model';
+import { Occasion } from './occasion.model';
 
 @Schema()
 export class Transaction {
@@ -16,6 +19,14 @@ export class Transaction {
   accountType: string;
   @Prop()
   location: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
+  personAccountRef: Account;
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Occasion',
+    required: false,
+  })
+  occasionRef: Occasion;
 }
 
 export type TransactionDocumentType = Document & Transaction;

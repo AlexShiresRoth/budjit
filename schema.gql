@@ -355,13 +355,13 @@ type Query {
   loadMyProfile: ProfileTypeDef!
   findProfileByEmail(input: FindProfileByEmailInput!): FindProfileByEmailResponse!
   getAllManualTransactions: GetAllTransactionsResponse!
+  loadOccasion(input: LoadOccasionInput!): LoadOccasionResponse!
+  loadMyOccasions: LoadMyOccasionsResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   fetchGroups: FetchGroupsResponse!
   fetchGroupMembers(input: FetchGroupMembersInput!): FetchGroupMemberAccountsResponse!
   fetchExternalInvite(input: FetchExternalInviteInput!): FetchExternalInviteResponse!
   fetchUpdate(input: FetchUpdateInput!): FetchUpdateResponse!
-  loadOccasion(input: LoadOccasionInput!): LoadOccasionResponse!
-  loadMyOccasions: LoadMyOccasionsResponse!
 }
 
 input FetchAccountProfileInput {
@@ -381,6 +381,10 @@ input FindProfileByEmailInput {
   email: String!
 }
 
+input LoadOccasionInput {
+  occasionID: String!
+}
+
 input LoadGroupInput {
   groupID: String!
 }
@@ -395,10 +399,6 @@ input FetchExternalInviteInput {
 
 input FetchUpdateInput {
   updateId: String!
-}
-
-input LoadOccasionInput {
-  occasionID: String!
 }
 
 type Mutation {
@@ -416,13 +416,13 @@ type Mutation {
   createTransaction(input: CreateTransactionInput!): CreateTransactionResponse!
   editTransaction(input: EditTransactionInput!): CreateTransactionResponse!
   deleteTransaction(input: DeleteTransactionInput!): DeleteTransactionResponse!
+  createOccasion(input: CreateOccasionInput!): CreateOccasionResponse!
+  contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
+  removeOccasion(input: RemoveOccasionInput!): RemoveOccasionResponse!
   createGroup(input: CreateGroupInput!): CreateGroupResponse!
   changeGroupBackgroundImage(input: FetchGroupMembersInput!): CreateGroupResponse!
   deleteGroup(input: DeleteGroupInput!): DeleteGroupResponse!
   updateGroup(input: UpdateGroupInput!): UpdateGroupResponse!
-  createOccasion(input: CreateOccasionInput!): CreateOccasionResponse!
-  contributeToBudget(contributeToBudgetInput: ContributeToBudgetInput!): OccasionTypeDef!
-  removeOccasion(input: RemoveOccasionInput!): RemoveOccasionResponse!
 }
 
 input GetPlaidTransactionsInput {
@@ -487,6 +487,7 @@ input CreateTransactionInput {
   date: String!
   accountType: String
   location: String!
+  occasionRef: String
 }
 
 input EditTransactionInput {
@@ -496,34 +497,12 @@ input EditTransactionInput {
   date: String!
   accountType: String
   location: String!
+  occasionRef: String
   _id: String!
 }
 
 input DeleteTransactionInput {
   _id: String!
-}
-
-input CreateGroupInput {
-  groupName: String!
-  contacts: [Contact!]
-  members: [String!]
-  creator: String
-}
-
-input Contact {
-  name: String!
-  phone: String!
-}
-
-input DeleteGroupInput {
-  groupID: String!
-  creatorID: String
-}
-
-input UpdateGroupInput {
-  groupID: String!
-  groupName: String
-  image: String
 }
 
 input CreateOccasionInput {
@@ -533,6 +512,11 @@ input CreateOccasionInput {
   occasionEndDate: String
   contacts: [Contact!]
   members: [Member!]
+}
+
+input Contact {
+  name: String!
+  phone: String!
 }
 
 input Member {
@@ -548,4 +532,22 @@ input ContributeToBudgetInput {
 
 input RemoveOccasionInput {
   occasionID: String!
+}
+
+input CreateGroupInput {
+  groupName: String!
+  contacts: [Contact!]
+  members: [String!]
+  creator: String
+}
+
+input DeleteGroupInput {
+  groupID: String!
+  creatorID: String
+}
+
+input UpdateGroupInput {
+  groupID: String!
+  groupName: String
+  image: String
 }

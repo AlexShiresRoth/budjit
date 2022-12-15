@@ -1,5 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 import { Types } from 'mongoose';
+import { Occasion } from 'src/mongo-schemas/occasion.model';
 
 @InputType()
 export class CreateTransactionInput {
@@ -15,6 +16,8 @@ export class CreateTransactionInput {
   accountType: string;
   @Field(() => String)
   location: string;
+  @Field(() => String, { nullable: true })
+  occasionRef: Occasion;
 }
 
 @InputType()

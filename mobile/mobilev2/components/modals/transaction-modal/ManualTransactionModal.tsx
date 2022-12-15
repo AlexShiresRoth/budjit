@@ -1,42 +1,37 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import styled from 'styled-components/native';
-import Colors from '../../../../../constants/Colors';
-import useColorScheme from '../../../../../hooks/useColorScheme';
+import Colors from '../../../constants/Colors';
+import useColorScheme from '../../../hooks/useColorScheme';
 import {
   MaterialIcons,
   FontAwesome,
   Ionicons,
   MaterialCommunityIcons,
 } from '@expo/vector-icons';
-import Input from '../../../../inputs/Input';
-import InputList from '../../../../inputs/InputList';
-import DatePickerModal from '../../../../reusable/DatePickerModal';
-import PrimaryButton from '../../../../buttons/PrimaryButton';
+import Input from '../../inputs/Input';
+import InputList from '../../inputs/InputList';
+import DatePickerModal from '../../reusable/DatePickerModal';
+import PrimaryButton from '../../buttons/PrimaryButton';
 import { useMutation } from '@apollo/client';
 import {
   CREATE_TRANSACTION,
   DELETE_TRANSACTION,
   EDIT_TRANSACTION,
-} from '../../../../../graphql/mutations/spending.mutation';
-import LoadingSpinner from '../../../../reusable/LoadingSpinner';
-import Alert from '../../../../alerts/Alert';
-import {
-  useAppDispatch,
-  useAppSelector,
-} from '../../../../../hooks/reduxHooks';
-import {
-  selectAlert,
-  setAlert,
-} from '../../../../../redux/reducers/alerts.reducers';
+} from '../../../graphql/mutations/spending.mutation';
+import LoadingSpinner from '../../reusable/LoadingSpinner';
+import Alert from '../../alerts/Alert';
+import { useAppDispatch, useAppSelector } from '../../../hooks/reduxHooks';
+import { selectAlert, setAlert } from '../../../redux/reducers/alerts.reducers';
 import {
   addManualTransaction,
   insertEditedTransaction,
   deleteTransaction as deleteTransactionAction,
-} from '../../../../../redux/reducers/accounts.reducers';
-import { TransactionItemType } from '../../../../../types/Transaction.types';
-import DeleteButton from '../../../../buttons/DeleteButton';
-import ModalContainer from '../../../../modals/ModalContainer';
-import ModalHeader from '../../../../modals/ModalHeader';
+} from '../../../redux/reducers/accounts.reducers';
+import { TransactionItemType } from '../../../types/Transaction.types';
+import DeleteButton from '../../buttons/DeleteButton';
+import ModalContainer from '../ModalContainer';
+import ModalHeader from '../ModalHeader';
+import { OCCASION_addRefreshTrigger } from '../../../redux/reducers/occasions.reducer';
 
 const Row = styled.View`
   flex-direction: row;
@@ -63,15 +58,16 @@ const DateContainer = styled.View`
 type Props = {
   isModalVisible: boolean;
   toggleModal: Dispatch<SetStateAction<boolean>>;
-  itemToEdit: TransactionItemType | null;
-  modalTitle: string;
-  isEditMode: boolean;
+  itemToEdit?: TransactionItemType | null;
+  modalTitle?: string;
+  isEditMode?: boolean;
+  occasionRefId?: string;
 };
 
 type FormData = {
   name: string;
   category: string;
-  amount: string;
+  amount: string | number;
   date: string;
   accountType: string;
   location: string;
@@ -89,6 +85,7 @@ const ManualTransactionModal = ({
   itemToEdit,
   modalTitle,
   isEditMode,
+  occasionRefId,
 }: Props) => {
   const colorScheme = useColorScheme();
 
@@ -123,6 +120,7 @@ const ManualTransactionModal = ({
   const handleTextChange = (name: string, text: string) =>
     setData({ ...data, [name]: text });
 
+  //dissallow non-numeric characters
   const handleAmountFiltering = (text: string) => {
     const regex = new RegExp(/^\d*\.?\d*$/);
     if (regex.test(text)) {
@@ -179,14 +177,30 @@ const ManualTransactionModal = ({
   };
 
   const submit = async () => {
+    //extract amount in order to parse
     const { amount } = data;
+
     try {
+      // data names are specific to gql mutation variables
+      const submitData: typeof data & { occasionRef?: string; _id?: string } = {
+        ...data,
+        amount: typeof amount !== 'string' ? amount : parseFloat(amount),
+      };
+      //if transaction is coming from an occasion add the id of the occasion
+      if (occasionRefId) submitData.occasionRef = occasionRefId;
+      //id of transaction
+      if (itemToEdit) submitData._id = itemToEdit._id;
+
       let transaction;
 
       if (!isEditMode) {
         transaction = await createTransaction({
-          variables: { input: { ...data, amount: parseFloat(amount) } },
+          variables: { input: submitData },
         });
+
+        //trigger a refetch of the occasion if it exists
+        if (occasionRefId)
+          dispatch(OCCASION_addRefreshTrigger({ trigger: occasionRefId }));
 
         //add new transaction to redux store
         dispatch(
@@ -206,11 +220,7 @@ const ManualTransactionModal = ({
       if (isEditMode) {
         transaction = await editTransaction({
           variables: {
-            input: {
-              ...data,
-              amount: parseFloat(amount),
-              _id: itemToEdit?._id,
-            },
+            input: submitData,
           },
         });
 
@@ -219,8 +229,6 @@ const ManualTransactionModal = ({
             transaction?.data?.editTransaction?.Transaction,
           ),
         );
-
-        console.log('transaction', transaction?.data?.editransaction?.message);
 
         dispatch(
           setAlert({
@@ -287,7 +295,7 @@ const ManualTransactionModal = ({
       title: 'Amount',
       component: (
         <Input
-          value={amount}
+          value={typeof amount === 'string' ? amount : amount.toString()}
           callback={(e: string) => handleAmountFiltering(e)}
           style={{ color: Colors[colorScheme].text }}
           label={'Amount'}
@@ -373,6 +381,7 @@ const ManualTransactionModal = ({
           </IconContainer>
           <Column>
             <DatePickerModal
+              label="Select date"
               value={date}
               param="date"
               onChange={handleTextChange}
@@ -383,6 +392,7 @@ const ManualTransactionModal = ({
     },
   ];
 
+  //display error message if there is one
   useEffect(() => {
     if (error || editError || deleteError) {
       // @desc set alert in state
@@ -408,7 +418,7 @@ const ManualTransactionModal = ({
       handleResetOnClose={handleResetOnClose}
     >
       <ModalHeader
-        modalTitle="Manually Enter New Transaction"
+        modalTitle={modalTitle ?? 'New Transaction'}
         handleResetOnClose={handleResetOnClose}
       />
       {isEditMode ? (
@@ -424,7 +434,7 @@ const ManualTransactionModal = ({
 
       {!loading || !editLoading || !deleteLoading ? (
         <PrimaryButton
-          buttonText={'Submit transaction'}
+          buttonText={isEditMode ? 'Submit' : 'Create'}
           buttonTextColor={Colors[colorScheme].background}
           callBack={submit}
           callBackArgs={currentStep + 1}

@@ -1,14 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import {
   AddMembersInput,
+  AddTransactionToOccasionInput,
   ContributeToBudgetInput,
   CreateOccasionInput,
   LoadOccasionInput,
   RemoveOccasionInput,
 } from 'src/graphql/inputs/ocassion.input';
 import {
+  AddTransactionToOccasionResponse,
   CreateOccasionResponse,
   LoadMyOccasionsResponse,
   LoadOccasionResponse,
@@ -28,6 +30,7 @@ export class OccasionService {
     @InjectModel(Occasion.name)
     private readonly occasionModel: Model<OccasionDocument>,
     private readonly groupService: GroupService,
+    @Inject(forwardRef(() => AccountsService))
     private readonly accountService: AccountsService,
     private readonly updateService: UpdateService,
     private readonly externalInviteService: ExternalInviteService,
@@ -244,6 +247,59 @@ export class OccasionService {
     } catch (error) {
       console.error(error);
       return error;
+    }
+  }
+
+  calculateBudget(transactionAmount: number, currentAmount: number): string {
+    const newAmount = transactionAmount + currentAmount;
+    return newAmount.toFixed(2);
+  }
+
+  //receiving input from tranaction service that will provide occasion ref id and transaction ref
+  //Test worked
+  async addTransaction(
+    input: AddTransactionToOccasionInput,
+    user: AuthPayload,
+  ): Promise<AddTransactionToOccasionResponse> {
+    try {
+      //id passed from transaction service
+      const { occasionRef, transactionRef, transactionAmount } = input;
+
+      const foundOccasion = await this.occasionModel.findById(occasionRef);
+
+      //add new transaction to occasion
+      foundOccasion.transactions.unshift(transactionRef);
+      //contribute transaction amount to budget
+      //returns a stringified total
+      const newBudgetUsed = this.calculateBudget(
+        transactionAmount,
+        parseFloat(foundOccasion.amountContributed),
+      );
+      //add the new total to the occasion
+      foundOccasion.amountContributed = newBudgetUsed;
+      console.log('new budget used: ', newBudgetUsed);
+      //create an update object to display on occasion activity feed
+      const { update } = await this.updateService.createUpdate({
+        updateDetails: 'Updated budget used to $' + newBudgetUsed,
+        occasionRef: foundOccasion?._id,
+        userRef: user.account.id,
+      });
+
+      //add update to occasion
+      foundOccasion.updates.unshift(update);
+
+      //save occasion
+      await foundOccasion.save();
+
+      return {
+        message: 'Transaction added to occasion',
+        success: true,
+      };
+    } catch (error) {
+      return {
+        message: error.message,
+        success: false,
+      };
     }
   }
   //Deletes the occasion from db and on all members afilliated with occasion

@@ -5,7 +5,7 @@ import Colors from '../../../../../constants/Colors';
 import { TransactionItemType } from '../../../../../types/Transaction.types';
 import { format } from 'date-fns';
 import { Feather } from '@expo/vector-icons';
-import ManualTransactionModal from '../transaction-modal/ManualTransactionModal';
+import ManualTransactionModal from '../../../../modals/transaction-modal/ManualTransactionModal';
 
 const Item = styled.TouchableOpacity`
   padding: 20px;

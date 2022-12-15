@@ -10,11 +10,14 @@ import { SpendingService } from 'src/services/spending.service';
 import { TransactionService } from 'src/services/transaction.service';
 import { AccountsModule } from './account.module';
 import { AuthModule } from './auth.module';
+import { OccasionModule } from './occasion.module';
+import { UpdateModule } from './update.module';
 
 @Module({
   imports: [
     AuthModule,
     forwardRef(() => AccountsModule),
+    forwardRef(() => OccasionModule),
     MongooseModule.forFeature([
       { name: Transaction.name, schema: TransactionSchema },
     ]),

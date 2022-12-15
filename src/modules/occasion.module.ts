@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OccasionResolver } from 'src/graphql/resolvers/occasions.resolver';
 import { Occasion, OccasionSchema } from 'src/mongo-schemas/occasion.model';
@@ -7,14 +7,13 @@ import { AccountsModule } from './account.module';
 import { AuthModule } from './auth.module';
 import { ExternalInviteModule } from './externalInvite.module';
 import { GroupModule } from './group.module';
-import { HistoryModule } from './history.module';
 import { InviteModule } from './invite.module';
 import { UpdateModule } from './update.module';
 
 @Module({
   imports: [
     AuthModule,
-    AccountsModule,
+    forwardRef(() => AccountsModule),
     InviteModule,
     GroupModule,
     ExternalInviteModule,

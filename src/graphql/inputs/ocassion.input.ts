@@ -1,6 +1,7 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, Float, InputType, Int } from '@nestjs/graphql';
 import mongoose from 'mongoose';
 import { Occasion } from 'src/mongo-schemas/occasion.model';
+import { Transaction } from 'src/mongo-schemas/transaction.model';
 import { Contact, Member } from './group.input';
 import { Invite } from './invite.input';
 
@@ -50,4 +51,14 @@ export class ContributeToBudgetInput {
 export class RemoveOccasionInput {
   @Field()
   occasionID: string;
+}
+
+@InputType()
+export class AddTransactionToOccasionInput {
+  @Field(() => String)
+  transactionRef: Transaction;
+  @Field(() => String)
+  occasionRef: Occasion;
+  @Field(() => Float)
+  transactionAmount: number;
 }

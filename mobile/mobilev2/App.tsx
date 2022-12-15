@@ -18,7 +18,7 @@ import Navigation from './navigation';
 import useColorScheme from './hooks/useColorScheme';
 
 const appName = expo.name;
-const ngrok = 'https://d034-68-192-240-183.ngrok.io';
+const ngrok = 'https://bf76-68-192-240-183.ngrok.io';
 const link = createHttpLink({
   uri: `${ngrok}/graphql`,
   credentials: 'same-origin',
@@ -47,6 +47,7 @@ const client = new ApolloClient({
 const App: any = () => {
   const isLoadingComplete = useCachedResources();
   const colorScheme = useColorScheme();
+
   if (!isLoadingComplete) {
     return null;
   } else {

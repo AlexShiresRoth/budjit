@@ -8,6 +8,7 @@ import { ExternalInviteModule } from 'src/modules/externalInvite.module';
 import { ExternalInvite } from './ExternalInvite';
 import { Update } from './update.model';
 import { Invite } from './Invite.model';
+import { Transaction } from './transaction.model';
 
 @Schema()
 export class Occasion {
@@ -27,7 +28,7 @@ export class Occasion {
   members: Account[];
   @Prop()
   budget: string;
-  @Prop({ default: '0.00' }) 
+  @Prop({ default: '0.00' })
   amountContributed: string;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Account' })
@@ -72,6 +73,17 @@ export class Occasion {
     ]),
   )
   invites: Invite[];
+  @Prop(
+    raw([
+      {
+        transactionRef: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Transaction',
+        },
+      },
+    ]),
+  )
+  transactions: Transaction[];
 }
 
 export type OccasionDocument = Occasion & Document;

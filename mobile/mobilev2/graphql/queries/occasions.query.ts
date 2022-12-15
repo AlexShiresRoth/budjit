@@ -14,6 +14,7 @@ export const LOAD_MY_OCCASIONS = gql`
         occasionEndDate
         budget
         initialBudget
+        amountContributed
         invites {
           _id
         }
