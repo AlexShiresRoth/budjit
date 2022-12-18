@@ -289,7 +289,7 @@ type SetTimeFrameResponse {
   endDate: String!
 }
 
-type TransactionType {
+type TransactionTypeDef {
   name: String!
   category: String!
   amount: Float!
@@ -298,16 +298,18 @@ type TransactionType {
   location: String!
   _id: String!
   account_id: String!
+  occasionRef: OccasionTypeDef
+  personAccountRef: AccountTypeDef
 }
 
 type CreateTransactionResponse {
   message: String!
   success: Boolean!
-  Transaction: TransactionType!
+  Transaction: TransactionTypeDef!
 }
 
 type GetAllTransactionsResponse {
-  transactions: [TransactionType!]!
+  transactions: [TransactionTypeDef!]!
   message: String!
   success: Boolean!
 }
@@ -340,6 +342,12 @@ type RemoveOccasionResponse {
   success: Boolean!
 }
 
+type FetchOccasionTransactionsResponse {
+  message: String!
+  success: Boolean!
+  transactions: [TransactionTypeDef!]!
+}
+
 type Query {
   account(id: String!): AccountTypeDef!
   fetchAccount(input: FetchAccountProfileInput!): FetchAccountResponse!
@@ -357,6 +365,7 @@ type Query {
   getAllManualTransactions: GetAllTransactionsResponse!
   loadOccasion(input: LoadOccasionInput!): LoadOccasionResponse!
   loadMyOccasions: LoadMyOccasionsResponse!
+  batchFetchOccasionTransactions(input: FetchOccasionTransactionsInput!): FetchOccasionTransactionsResponse!
   loadGroup(input: LoadGroupInput!): LoadGroupResponse!
   fetchGroups: FetchGroupsResponse!
   fetchGroupMembers(input: FetchGroupMembersInput!): FetchGroupMemberAccountsResponse!
@@ -382,6 +391,10 @@ input FindProfileByEmailInput {
 }
 
 input LoadOccasionInput {
+  occasionID: String!
+}
+
+input FetchOccasionTransactionsInput {
   occasionID: String!
 }
 

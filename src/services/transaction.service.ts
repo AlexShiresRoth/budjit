@@ -2,11 +2,13 @@ import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import {
+  BatchFetchTransactionsInput,
   CreateTransactionInput,
   DeleteTransactionInput,
   EditTransactionInput,
 } from 'src/graphql/inputs/transactions.input';
 import {
+  BatchFetchTransactionsResponse,
   CreateTransactionResponse,
   GetAllTransactionsResponse,
 } from 'src/graphql/responses/transaction.response';
@@ -18,10 +20,6 @@ import {
 import { AccountsService } from './account.service';
 import { OccasionService } from './occasion.service';
 import { UpdateService } from './update.service';
-
-interface TransactionWithId extends Transaction {
-  _id: Types.ObjectId;
-}
 
 @Injectable()
 export class TransactionService {
@@ -97,6 +95,32 @@ export class TransactionService {
     }
   }
 
+  //fetching transactions from an array containing ids
+  async batchFetchTransactions(
+    input: BatchFetchTransactionsInput,
+  ): Promise<BatchFetchTransactionsResponse> {
+    try {
+      const { ids } = input;
+
+      const foundTransactions = await this.TransactionModel.find({
+        _id: { $in: ids },
+      });
+
+      return {
+        message: 'Fetched transactions',
+        success: true,
+        transactions: foundTransactions,
+      };
+    } catch (error) {
+      console.error('Error fetching transactions', error);
+      return {
+        message: 'Error fetching transactions',
+        success: false,
+        transactions: [],
+      };
+    }
+  }
+
   //@TODO:need to configure edit transaction for occasions
   async editTransaction(
     input: EditTransactionInput,
@@ -108,8 +132,8 @@ export class TransactionService {
 
       const myAccount = await this.accountService.findOneById(user.account.id);
 
-      const myTransactions = myAccount.transactions.map(
-        (transaction: TransactionWithId) => transaction._id.toString(),
+      const myTransactions = myAccount.transactions.map((transaction) =>
+        transaction._id.toString(),
       );
 
       const existsOnMyAccount = myTransactions.includes(_id.toString());
@@ -158,8 +182,8 @@ export class TransactionService {
 
       if (!myAccount) throw new Error('Could not locate an account');
 
-      const myTransactions = myAccount.transactions.map(
-        (transaction: TransactionWithId) => transaction._id.toString(),
+      const myTransactions = myAccount.transactions.map((transaction) =>
+        transaction._id.toString(),
       );
 
       const indexOfTransaction = myTransactions.indexOf(_id.toString());

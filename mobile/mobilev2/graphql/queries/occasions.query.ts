@@ -57,3 +57,24 @@ export const LOAD_OCCASION = gql`
     }
   }
 `;
+
+export const BATCH_FETCH_OCCASION_TRANSACTIONS = gql`
+  query fetchOccasionTransactions($input: FetchOccasionTransactionsInput!) {
+    batchFetchOccasionTransactions(input: $input) {
+      message
+      success
+      transactions {
+        _id
+        name
+        amount
+        date
+        occasionRef {
+          _id
+        }
+        personAccountRef {
+          _id
+        }
+      }
+    }
+  }
+`;

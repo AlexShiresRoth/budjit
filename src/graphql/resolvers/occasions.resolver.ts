@@ -2,18 +2,17 @@ import { UseGuards } from '@nestjs/common';
 import { Query, Args, Resolver, Mutation } from '@nestjs/graphql';
 import { CurrentAccount, GraphqlAuthGuard } from 'src/auth/auth.guard';
 import { AuthPayload } from 'src/interfaces/auth.interface';
-import { Occasion } from 'src/mongo-schemas/occasion.model';
-import { AuthService } from 'src/services/auth.service';
 import { OccasionService } from 'src/services/occasion.service';
 import {
-  AddMembersInput,
   ContributeToBudgetInput,
   CreateOccasionInput,
+  FetchOccasionTransactionsInput,
   LoadOccasionInput,
   RemoveOccasionInput,
 } from '../inputs/ocassion.input';
 import {
   CreateOccasionResponse,
+  FetchOccasionTransactionsResponse,
   LoadMyOccasionsResponse,
   LoadOccasionResponse,
   RemoveOccasionResponse,
@@ -34,6 +33,15 @@ export class OccasionResolver {
   @UseGuards(GraphqlAuthGuard)
   async loadMyOccasions(@CurrentAccount() user: AuthPayload) {
     return this.occasionService.findAll(user.account.id);
+  }
+
+  //query to fetch an array of transactions within an occasion
+  @Query(() => FetchOccasionTransactionsResponse)
+  @UseGuards(GraphqlAuthGuard)
+  async batchFetchOccasionTransactions(
+    @Args('input') input: FetchOccasionTransactionsInput,
+  ) {
+    return await this.occasionService.fetchOccasionTransactions(input);
   }
 
   @Mutation(() => CreateOccasionResponse)

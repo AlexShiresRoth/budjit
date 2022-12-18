@@ -18,8 +18,9 @@ import useColorScheme from '../../../hooks/useColorScheme';
 type Props = {
   toggleModal: (val: boolean) => void;
   isModalVisible: boolean;
+  navAction: (screen: 'OccasionTransactionsScreen') => void;
 };
-const OccasionActions = ({ toggleModal, isModalVisible }: Props) => {
+const OccasionActions = ({ toggleModal, isModalVisible, navAction }: Props) => {
   const colorScheme = useColorScheme();
   return (
     <View style={styles.container}>
@@ -35,7 +36,10 @@ const OccasionActions = ({ toggleModal, isModalVisible }: Props) => {
           <Text style={styles.heading}>Transactions</Text>
         </View>
         <View style={styles.row}>
-          <Button style={[styles.button]}>
+          <Button
+            style={[styles.button]}
+            onPress={() => navAction('OccasionTransactionsScreen')}
+          >
             <Text
               style={{
                 borderBottomWidth: 1,

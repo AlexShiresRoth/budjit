@@ -8,12 +8,14 @@ import { AuthModule } from './auth.module';
 import { ExternalInviteModule } from './externalInvite.module';
 import { GroupModule } from './group.module';
 import { InviteModule } from './invite.module';
+import { SpendingModule } from './spending.module';
 import { UpdateModule } from './update.module';
 
 @Module({
   imports: [
     AuthModule,
     forwardRef(() => AccountsModule),
+    forwardRef(() => SpendingModule),
     InviteModule,
     GroupModule,
     ExternalInviteModule,

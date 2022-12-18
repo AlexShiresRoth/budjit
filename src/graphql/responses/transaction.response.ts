@@ -1,24 +1,13 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Transaction } from 'src/mongo-schemas/transaction.model';
+import { TransactionTypeDef } from '../schemas/transactions.schema';
 
 @ObjectType()
-export class TransactionType {
+export class BaseResponse {
   @Field()
-  name: string;
+  message: string;
   @Field()
-  category: string;
-  @Field()
-  amount: number;
-  @Field()
-  date: string;
-  @Field({ nullable: true })
-  accountType: string;
-  @Field()
-  location: string;
-  @Field()
-  _id: string;
-  @Field()
-  account_id: string;
+  success: boolean;
 }
 
 @ObjectType()
@@ -27,13 +16,13 @@ export class CreateTransactionResponse {
   message: string;
   @Field()
   success: boolean;
-  @Field(() => TransactionType)
+  @Field(() => TransactionTypeDef)
   Transaction: Transaction;
 }
 
 @ObjectType()
 export class GetAllTransactionsResponse {
-  @Field(() => [TransactionType])
+  @Field(() => [TransactionTypeDef])
   transactions: Transaction[];
   @Field()
   message: string;
@@ -42,9 +31,10 @@ export class GetAllTransactionsResponse {
 }
 
 @ObjectType()
-export class DeleteTransactionResponse {
-  @Field()
-  message: string;
-  @Field()
-  success: boolean;
+export class DeleteTransactionResponse extends BaseResponse {}
+
+@ObjectType()
+export class BatchFetchTransactionsResponse extends BaseResponse {
+  @Field(() => [TransactionTypeDef])
+  transactions: Transaction[];
 }

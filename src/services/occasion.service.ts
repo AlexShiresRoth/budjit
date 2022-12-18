@@ -6,12 +6,14 @@ import {
   AddTransactionToOccasionInput,
   ContributeToBudgetInput,
   CreateOccasionInput,
+  FetchOccasionTransactionsInput,
   LoadOccasionInput,
   RemoveOccasionInput,
 } from 'src/graphql/inputs/ocassion.input';
 import {
   AddTransactionToOccasionResponse,
   CreateOccasionResponse,
+  FetchOccasionTransactionsResponse,
   LoadMyOccasionsResponse,
   LoadOccasionResponse,
   RemoveOccasionResponse,
@@ -22,6 +24,7 @@ import { Occasion, OccasionDocument } from 'src/mongo-schemas/occasion.model';
 import { AccountsService } from './account.service';
 import { ExternalInviteService } from './externalInvite.service';
 import { GroupService } from './group.service';
+import { TransactionService } from './transaction.service';
 import { UpdateService } from './update.service';
 
 @Injectable()
@@ -34,6 +37,8 @@ export class OccasionService {
     private readonly accountService: AccountsService,
     private readonly updateService: UpdateService,
     private readonly externalInviteService: ExternalInviteService,
+    @Inject(forwardRef(() => TransactionService))
+    private readonly transactionService: TransactionService,
   ) {}
 
   async findOneById(input: LoadOccasionInput): Promise<LoadOccasionResponse> {
@@ -302,6 +307,38 @@ export class OccasionService {
       };
     }
   }
+
+  async fetchOccasionTransactions(
+    input: FetchOccasionTransactionsInput,
+  ): Promise<FetchOccasionTransactionsResponse> {
+    try {
+      const { occasionID } = input;
+
+      const foundOccasion = await this.occasionModel.findById(occasionID);
+
+      if (!foundOccasion) throw new Error('Occasion not found');
+
+      const foundTransactions =
+        await this.transactionService.batchFetchTransactions({
+          ids: foundOccasion.transactions.map((transaction) => transaction._id),
+        });
+
+      if (!foundTransactions) throw new Error('No transactions found');
+
+      return {
+        message: 'Transactions found',
+        success: true,
+        transactions: foundTransactions?.transactions,
+      };
+    } catch (error) {
+      return {
+        message: error.message,
+        success: false,
+        transactions: null,
+      };
+    }
+  }
+
   //Deletes the occasion from db and on all members afilliated with occasion
   async removeOccasion(
     input: RemoveOccasionInput,

@@ -5,6 +5,8 @@ import { Occasion } from './occasion.model';
 
 @Schema()
 export class Transaction {
+  @Prop({ type: mongoose.Schema.Types.ObjectId })
+  _id: string;
   @Prop({ default: 'manual_transaction' })
   account_id: string;
   @Prop()

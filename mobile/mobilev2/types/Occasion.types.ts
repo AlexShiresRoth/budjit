@@ -13,3 +13,20 @@ export type OccasionType = {
   updates: Array<any>;
   invites: Array<{ _id: string }>;
 };
+
+export type OccasionTransactionsType = {
+  message: string;
+  success: boolean;
+  transactions: Array<{
+    _id: string;
+    name: string;
+    amount: number;
+    date: string;
+    occasionRef: {
+      _id: string;
+    };
+    personAccountRef: {
+      _id: string;
+    };
+  }>;
+};

@@ -13,17 +13,22 @@ import OccasionActions from './OccasionActions';
 import OccasionStartDate from './OccasionStartDate';
 import ManualTransactionModal from '../../modals/transaction-modal/ManualTransactionModal';
 import useFetchOccasion from '../../../hooks/useFetchOccasion';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { OccasionStackParamList } from '../../../types';
 
 type Props = {
   occasion: OccasionType;
 };
 
-const Occasion = ({ occasion: { _id } }: Props) => {
+type NavProps = NativeStackScreenProps<
+  OccasionStackParamList,
+  'OccasionScreen'
+>;
+
+const Occasion = ({ occasion: { _id }, navigation }: Props & NavProps) => {
   const { occasion, loading } = useFetchOccasion({
     occasionID: _id ?? '',
   });
-
-  console.log('occasion fetched', loading);
 
   const colorScheme = useColorScheme();
 
@@ -32,6 +37,9 @@ const Occasion = ({ occasion: { _id } }: Props) => {
     : format(new Date(), 'PP');
 
   const [isModalVisible, toggleModal] = useState<boolean>(false);
+
+  const handleNavToScreen = (screen: 'OccasionTransactionsScreen') =>
+    navigation.navigate(screen, { occasionId: occasion?._id });
 
   return (
     <>
@@ -71,6 +79,7 @@ const Occasion = ({ occasion: { _id } }: Props) => {
             <OccasionActions
               isModalVisible={isModalVisible}
               toggleModal={toggleModal}
+              navAction={handleNavToScreen}
             />
           </View>
 

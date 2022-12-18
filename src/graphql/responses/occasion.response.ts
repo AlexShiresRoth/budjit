@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Occasion } from 'src/mongo-schemas/occasion.model';
 import { OccasionTypeDef } from '../schemas/occasion.schema';
+import { TransactionTypeDef } from '../schemas/transactions.schema';
 
 @ObjectType()
 export class CreateOccasionResponse {
@@ -42,3 +43,13 @@ export class RemoveOccasionResponse {
 
 @ObjectType()
 export class AddTransactionToOccasionResponse extends RemoveOccasionResponse {}
+
+@ObjectType()
+export class FetchOccasionTransactionsResponse {
+  @Field()
+  message: string;
+  @Field()
+  success: boolean;
+  @Field(() => [TransactionTypeDef])
+  transactions: TransactionTypeDef[];
+}

@@ -54,6 +54,7 @@ export type OccasionStackParamList = {
     | undefined
     | ({ screen: any } & { params: { occasionId: string } });
   OccasionScreen: undefined | { occasionId: string };
+  OccasionTransactionsScreen: undefined | { occasionId: string };
 };
 
 export type RootStackScreenProps<Screen extends keyof RootStackParamList> =

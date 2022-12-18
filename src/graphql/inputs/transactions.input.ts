@@ -31,3 +31,9 @@ export class DeleteTransactionInput {
   @Field()
   _id: string;
 }
+
+@InputType()
+export class BatchFetchTransactionsInput {
+  @Field(() => [String])
+  ids: string[];
+}

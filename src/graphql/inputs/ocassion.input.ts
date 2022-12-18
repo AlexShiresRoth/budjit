@@ -20,6 +20,9 @@ export class LoadOccasionInput {
 }
 
 @InputType()
+export class FetchOccasionTransactionsInput extends LoadOccasionInput {}
+
+@InputType()
 export class CreateOccasionInput {
   @Field()
   title: string;
